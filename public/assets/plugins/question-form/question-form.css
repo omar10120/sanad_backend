@@ -1,0 +1,45 @@
+.form-card {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.photo-upload {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+.photo-preview {
+  max-height: 200px;
+  margin: 0 auto;
+}
+.select2-container {
+  width: 100% !important;
+}
+.math-preview {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #f9f9f9;
+}
+.format-buttons {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+.format-buttons button {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+.format-buttons button:hover {
+  background-color: #e9ecef;
+}
+
+.question-editor{
+    font-size: 20px !important;
+}
+
+.ltr{
+    direction: ltr;
+}

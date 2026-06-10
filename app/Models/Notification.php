@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Notification extends Model
+{
+    use HasFactory;
+    
+    protected $fillable = [
+        'title', 'body', 'type', 'target_type', 'target_ids', 
+        'created_by', 'status', 'scheduled_at', 'sent_at',
+        'total_recipients', 'successful_sends', 'failed_sends', 
+        'send_results', 'is_active'
+    ];
+    
+    protected $casts = [
+        'target_ids' => 'array',
+        'send_results' => 'array',
+        'scheduled_at' => 'datetime',
+        'sent_at' => 'datetime',
+        'is_active' => 'boolean',
+    ];
+    
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+    
+    public function getTargetStudentsQuery()
+    {
+        $query = Student::where('status', 1);
+        
+        switch ($this->target_type) {
+            case 'type':
+                return $query->whereIn('type_id', $this->target_ids ?? []);
+            case 'student':
+                return $query->whereIn('id', $this->target_ids ?? []);
+            case 'all':
+            default:
+                return $query;
+        }
+    }
+    
+    public function canBeSent(): bool
+    {
+        return $this->status === 'draft' && $this->is_active;
+    }
+    
+    public function getSuccessRateAttribute(): float
+    {
+        if ($this->total_recipients === 0) return 0;
+        return ($this->successful_sends / $this->total_recipients) * 100;
+    }
+}

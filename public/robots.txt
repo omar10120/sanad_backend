@@ -1,0 +1,14 @@
+# Robots.txt for sanadaltaleb.com
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /login
+Disallow: /register
+
+# Sitemap location
+Sitemap: https://sanadaltaleb.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1

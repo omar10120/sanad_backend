@@ -1,0 +1,21 @@
+#<IfModule mod_rewrite.c>
+#    RewriteEngine On
+#RewriteCond %{HTTP_HOST} sanadaltaleb\.com [NC]
+#RewriteCond %{SERVER_PORT} 80
+#RewriteRule ^(.*)$ https://sanadaltaleb.com/$1 [R,L]
+
+    # Redirect to public directory
+#    RewriteRule ^(.*)$ public/$1 [L]
+#</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # التحويل إلى HTTPS
+    RewriteCond %{HTTP_HOST} sanadaltaleb\.com [NC]
+    RewriteCond %{SERVER_PORT} 80
+    RewriteRule ^(.*)$ https://sanadaltaleb.com/$1 [R,L]
+
+    # توجيه إلى مجلد public
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

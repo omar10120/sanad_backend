@@ -1,0 +1,48 @@
+{
+    "data": {
+        "subjects": [
+            {
+                "id": 1,
+                "name": "الرياضيات",
+                "icon": "calculate",
+                "link": "https://t.me/sanad_sln_maths",
+                "number_of_lessons": 14,
+                "number_of_tags": 0,
+                "number_of_exams": 2,
+                "number_of_questions": 937,
+                "teacher": "عبد العزيز شملان",
+                "description": "اختبر مهاراتك و سرعتك في حل بنك ضخم من الأتمتات المتنوعة بمختلف الأبحاث المصنعة و انتبه للمؤقت و قدرتك على انجاز أكبر قدر بأقل وقت",
+                "is_locked": false
+            },
+            {
+                "id": 2,
+                "name": "English",
+                "icon": "abc",
+                "link": "https://t.me/sanad_sln_english",
+                "number_of_lessons": 13,
+                "number_of_tags": 1,
+                "number_of_exams": 1,
+                "number_of_questions": 6,
+                "teacher": "sanad",
+                "description": "...",
+                "is_locked": false
+            }
+        ],
+        "question_types": [
+            {
+                "id": 1,
+                "name": "اختر الإجابة"
+            },
+            {
+                "id": 2,
+                "name": "صح أو غلط"
+            },
+            {
+                "id": 3,
+                "name": "عرف"
+            }
+        ]
+    },
+    "message": "All Subjects and Types Questions",
+    "status": 200
+}

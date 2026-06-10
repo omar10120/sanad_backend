@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.timeofcode.sanadaltaleb",
+      "sha256_cert_fingerprints": [
+        "88:5F:78:7C:1F:1A:6B:20:B7:5F:FF:37:08:CA:51:1A:39:FC:EE:DD:4B:40:9D:63:9E:8A:C5:43:BF:78:56:56"
+      ]
+    }
+  }
+]
