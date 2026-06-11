@@ -213,6 +213,36 @@ class UserService
     }
 
     /**
+     * Get soft-deleted users
+     */
+    public function getArchivedUsers(): Collection
+    {
+        return User::onlyTrashed()->get();
+    }
+
+    /**
+     * Restore a soft-deleted user
+     */
+    public function restoreUser(int $userId): bool
+    {
+        $user = User::onlyTrashed()->findOrFail($userId);
+
+        return (bool) $user->restore();
+    }
+
+    /**
+     * Permanently delete a soft-deleted user
+     */
+    public function forceDeleteUser(int $userId): bool
+    {
+        $user = User::onlyTrashed()->findOrFail($userId);
+
+        $this->deleteUserPhoto($user->id, $user->photo);
+
+        return (bool) $user->forceDelete();
+    }
+
+    /**
      * Prepare user data for creation
      *
      * @param Request $request

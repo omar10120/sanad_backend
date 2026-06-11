@@ -171,6 +171,7 @@ Route::group(
 
     Route::resource('roles','App\Http\Controllers\RoleController');
     Route::resource('users', 'App\Http\Controllers\UserController');
+    Route::resource('archived-user', 'App\Http\Controllers\ArchivedUserController');
     Route::get('/profile', [App\Http\Controllers\UserController::class, 'profile']);
     Route::post('/updatePassword', [App\Http\Controllers\UserController::class, 'updatePassword']);
 
