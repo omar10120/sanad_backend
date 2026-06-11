@@ -33,11 +33,29 @@
         <div class="col-xl-12">
             <div class="card">
                 <div class="card-header pb-0">
-                    @can('Student-add')
-                        <div class="d-flex justify-content-between">
-                            <a class="btn btn-outline-primary btn-block" href="{{ route('student.create') }}">{{ trans('main_trans.Add_student') }}</a>
-                        </div>
-                    @endcan
+                    <div class="row">
+                        @can('Student-add')
+                            <div class="col-12 col-sm-12 col-lg-6
+                                @can('Student-show-deleted')
+                                    @if(\App\Models\Student::onlyTrashed()->count())
+                                        col-xl-6
+                                    @else
+                                        col-xl-12
+                                    @endif
+                                @endcan
+                                @cannot('Student-show-deleted') col-xl-12 @endcannot
+                            ">
+                                <a class="btn btn-outline-primary btn-block" href="{{ route('student.create') }}">{{ trans('main_trans.Add_student') }}</a>
+                            </div>
+                        @endcan
+                        @can('Student-show-deleted')
+                            @if(\App\Models\Student::onlyTrashed()->count())
+                                <div class="col-12 col-sm-12 col-lg-6 col-xl-6">
+                                    <a class="btn btn-outline-primary btn-block" href="{{ route('archived-student.index') }}">{{ trans('main_trans.Deleted_students') }}</a>
+                                </div>
+                            @endif
+                        @endcan
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive hoverable-table">

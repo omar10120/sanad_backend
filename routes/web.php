@@ -178,6 +178,7 @@ Route::group(
 
 
     Route::resource('student','App\Http\Controllers\StudentController');
+    Route::resource('archived-student', 'App\Http\Controllers\ArchivedStudentController');
     Route::get('/student-current-academic-year', [App\Http\Controllers\StudentController::class, 'currentAcademicYear'])
         ->name('student.current-academic-year');
     Route::delete('/student/{student}/device-id', [App\Http\Controllers\StudentController::class, 'deleteDeviceId'])

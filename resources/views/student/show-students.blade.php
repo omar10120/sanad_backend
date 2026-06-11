@@ -35,15 +35,18 @@
                 <div class="card-header pb-0">
                     <div class="d-flex justify-content-between">
                         <div class="alert alert-info">
+                            
                             <i class="fas fa-info-circle"></i> {{ trans('main_trans.Read_only_view_2024_2025') }}
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive hoverable-table">
+                        
                         <table class="table table-hover" id="example1" data-page-length='100' style=" text-align: center;">
                             <thead>
                             <tr>
+                                
                                 <th class="wd-5p-f border-bottom-0">#</th>
                                 <th class="wd-5p-f border-bottom-0"></th>
                                 <th class="wd-5p border-bottom-0">{{ trans('main_trans.First_name') }}</th>

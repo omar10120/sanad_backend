@@ -20,6 +20,7 @@
     <div class="col-lg-4">
         <div class="card">
             <div class="card-body text-center">
+        
                 @if($student->photo)
                     <img src="{{URL::asset('assets/image/Students/'.$student->id.'/'.$student->photo)}}"
                          alt="Student Photo"
@@ -118,6 +119,7 @@
                     <div class="text-center py-4">
                         <i class="fas fa-crown fa-3x text-warning mb-3"></i>
                         <h5>{{ trans('main_trans.Pro_Feature_Title') }}</h5>
+                        
                         <p class="text-muted">{{ trans('main_trans.Pro_Feature_Message') }}</p>
                     </div>
                 @elseif($student->studentDevices->count() > 0)
@@ -125,6 +127,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
+                                    
                                     <th>{{trans('main_trans.Device_info')}}</th>
                                     <th>{{trans('main_trans.OS')}}</th>
                                     <th>{{trans('main_trans.First_login')}}</th>

@@ -185,13 +185,52 @@ class StudentService
     {
         $student = Student::findOrFail($id);
 
-        // Delete photo if exists
-        $path = 'assets/image/Students/' . $id . '/' . $student->photo;
-        if (file_exists($path)) {
-            unlink($path);
-        }
+        $this->deleteStudentPhoto($student->id, $student->photo);
 
         return $student->delete();
+    }
+
+    /**
+     * Get soft-deleted students
+     */
+    public function getArchivedStudents(): Collection
+    {
+        return Student::onlyTrashed()->with('type')->get();
+    }
+
+    /**
+     * Restore a soft-deleted student
+     */
+    public function restoreStudent(int $id): bool
+    {
+        $student = Student::onlyTrashed()->findOrFail($id);
+
+        return (bool) $student->restore();
+    }
+
+    /**
+     * Permanently delete a soft-deleted student
+     */
+    public function forceDeleteStudent(int $id): bool
+    {
+        $student = Student::onlyTrashed()->findOrFail($id);
+
+        $this->deleteStudentPhoto($student->id, $student->photo);
+
+        return (bool) $student->forceDelete();
+    }
+
+    /**
+     * Delete student photo from storage
+     */
+    public function deleteStudentPhoto(int $studentId, ?string $photoName): void
+    {
+        if ($photoName) {
+            $path = 'assets/image/Students/' . $studentId . '/' . $photoName;
+            if (file_exists($path)) {
+                unlink($path);
+            }
+        }
     }
 
     /**
