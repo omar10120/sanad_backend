@@ -30,7 +30,7 @@ class UpdateUserRequest extends FormRequest
             'name_ar' => ['required', 'string', 'max:255'],
             'name_en' => ['required', 'string', 'max:255'],
             'email' => [
-                'required',
+                'nullable',
                 'string',
                 'email',
                 'max:255',
@@ -58,7 +58,7 @@ class UpdateUserRequest extends FormRequest
         return [
             'name_ar.required' => trans('main_trans.Name_ar_required'),
             'name_en.required' => trans('main_trans.Name_en_required'),
-            'email.required' => trans('main_trans.Email_required'),
+            'email.nullable' => trans('main_trans.Email_nullable'),
             'email.email' => trans('main_trans.Email_invalid'),
             'email.unique' => trans('main_trans.Email_exists'),
             'roles_name.required' => trans('main_trans.Role_required'),

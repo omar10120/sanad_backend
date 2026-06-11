@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('icon');
             $table->string('link');
             $table->string('teacher');
+            $table->boolean('is_active')->default(true);
             $table->string('description');
             $table->softDeletes();
             $table->timestamps();
