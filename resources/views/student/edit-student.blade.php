@@ -74,8 +74,8 @@
 
                         <div class="row mg-b-20">
                             <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
-                                <label for="email" class="card-title mb-1">{{ trans('main_trans.Email') }} <span class="tx-danger">*</span></label>
-                                <input class="form-control mg-b-20" id="email" value="{{$student->email}}" required
+                                <label for="email" class="card-title mb-1">{{ trans('main_trans.Email') }} </label>
+                                <input class="form-control mg-b-20" id="email" value="{{$student->email}}" 
                                        data-parsley-class-handler="#lnWrapper" name="email" type="email" placeholder="{{ trans('main_trans.Email') }}">
                             </div>
 

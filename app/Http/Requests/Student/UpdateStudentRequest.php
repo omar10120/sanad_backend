@@ -31,7 +31,7 @@ class UpdateStudentRequest extends FormRequest
             'father_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => [
-                'required',
+                'nullable',
                 'string',
                 'email',
                 'max:255',
@@ -64,7 +64,7 @@ class UpdateStudentRequest extends FormRequest
             'last_name.required' => trans('main_trans.Last_name_required'),
             'last_name.string' => trans('main_trans.Last_name_must_be_string'),
             'last_name.max' => trans('main_trans.Last_name_max_length'),
-            'email.required' => trans('main_trans.Email_required'),
+            'email.nullable' => trans('main_trans.Email_nullable'),
             'email.email' => trans('main_trans.Email_invalid'),
             'email.unique' => trans('main_trans.Email_exists'),
             'phone.required' => trans('main_trans.Phone_required'),
