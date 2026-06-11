@@ -115,7 +115,11 @@ class StudentService
         } else {
             $studentData['photo'] = null;
         }
+        
+     
+     
 
+        $studentData['phone_verified_at'] = now();
         $student = Student::create($studentData);
 
         // Move photo to storage if uploaded
@@ -151,6 +155,8 @@ class StudentService
             $student->update(['photo' => $photoName]);
             $request->photo->move(public_path('assets/image/Students/' . $student->id), $photoName);
         }
+
+        $student->markPhoneAsVerified();
 
         // Update other fields
         $student->update([
