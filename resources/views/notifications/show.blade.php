@@ -190,7 +190,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover" id="sendResultsTable">
+                            <table class="table table-hover" id="sendResultsTable" data-page-length='12' style=" text-align: center;">
                                 <thead>
                                 <tr>
                                     <th class="wd-10p-f border-bottom-0">{{ trans('main_trans.Student_id') }}</th>
@@ -244,16 +244,17 @@
     <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.responsive.min.js') }}"></script>
     <script src="{{ URL::asset('assets/plugins/notify/js/notifIt.js') }}"></script>
     <script src="{{ URL::asset('assets/plugins/notify/js/notifit-custom.js') }}"></script>
+    @if($notification->status === 'sent' && $notification->send_results && config('features.advanced_notifications'))
     <script>
-        @if($notification->status === 'sent' && $notification->send_results && config('features.advanced_notifications'))
         $('#sendResultsTable').DataTable({
             responsive: true,
+            pageLength: 12,
             language: {
                 searchPlaceholder: 'Search...',
                 sSearch: '',
                 lengthMenu: '_MENU_',
             }
         });
-        @endif
     </script>
+    @endif
 @endsection

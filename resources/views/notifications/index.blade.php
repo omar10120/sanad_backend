@@ -41,7 +41,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive hoverable-table">
-                        <table class="table table-hover" id="example1" data-page-length='100' style=" text-align: center;">
+                        <table class="table table-hover" id="example1" data-page-length='12' style=" text-align: center;">
                             <thead>
                             <tr>
                                 <th class="wd-5p-f border-bottom-0">#</th>
@@ -166,6 +166,7 @@
     <script>
         $('#example1').DataTable({
             responsive: true,
+            pageLength: 12,
             language: {
                 searchPlaceholder: 'Search...',
                 sSearch: '',

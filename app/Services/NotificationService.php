@@ -7,16 +7,17 @@ use App\Models\Student;
 use Exception;
 use Google\Client as GoogleClient;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class NotificationService
 {
-    public function getAllNotifications()
+    public function getAllNotifications(): Collection
     {
         return Notification::with('creator')
             ->latest()
-            ->paginate(12);
+            ->get();
     }
 
     public function createNotification(array $data): Notification
