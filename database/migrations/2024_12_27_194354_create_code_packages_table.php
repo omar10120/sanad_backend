@@ -22,6 +22,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('code_package_id')->constrained('code_packages')->onDelete('cascade');
             $table->foreignId('subject_id')->constrained('subjects')->onDelete('cascade');
+            
+
         });
     }
 
