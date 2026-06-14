@@ -1,0 +1,57 @@
+<?php
+
+namespace App\Http\Requests\YoutubeLinkVideo;
+
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
+
+class UpdateYoutubeLinkVideoRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'id' => ['required', 'integer', 'exists:youtube_links_video,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'youtube_link' => ['required', 'string', 'max:500', 'url'],
+            'video_time' => ['nullable', 'integer', 'min:0'],
+            'lesson_video_id' => ['required', 'integer', 'exists:lessons_video,id'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'id.required' => trans('main_trans.Youtube_link_video_id_required'),
+            'id.integer' => trans('main_trans.Youtube_link_video_id_must_be_integer'),
+            'id.exists' => trans('main_trans.Youtube_link_video_not_exists'),
+            'name.required' => trans('main_trans.Youtube_link_video_name_required'),
+            'name.string' => trans('main_trans.Youtube_link_video_name_must_be_string'),
+            'name.max' => trans('main_trans.Youtube_link_video_name_max_length'),
+            'youtube_link.required' => trans('main_trans.Youtube_link_required'),
+            'youtube_link.string' => trans('main_trans.Youtube_link_must_be_string'),
+            'youtube_link.max' => trans('main_trans.Youtube_link_max_length'),
+            'youtube_link.url' => trans('main_trans.Youtube_link_must_be_url'),
+            'video_time.integer' => trans('main_trans.Video_time_must_be_integer'),
+            'video_time.min' => trans('main_trans.Video_time_min'),
+            'lesson_video_id.required' => trans('main_trans.Lesson_video_id_required'),
+            'lesson_video_id.integer' => trans('main_trans.Lesson_video_id_must_be_integer'),
+            'lesson_video_id.exists' => trans('main_trans.Lesson_video_not_exists'),
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'id' => trans('main_trans.Youtube_link_video_id'),
+            'name' => trans('main_trans.Youtube_link_video_name'),
+            'youtube_link' => trans('main_trans.Youtube_link'),
+            'video_time' => trans('main_trans.Video_time'),
+            'lesson_video_id' => trans('main_trans.Lesson'),
+        ];
+    }
+}

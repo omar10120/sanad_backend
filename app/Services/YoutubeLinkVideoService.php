@@ -1,0 +1,80 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\LessonVideo;
+use App\Models\SubjectVideo;
+use App\Models\Teacher;
+use App\Models\Unit;
+use App\Models\YoutubeLinkVideo;
+use Illuminate\Database\Eloquent\Collection;
+
+class YoutubeLinkVideoService
+{
+    public function getYoutubeLinksByLessonVideo(int $lessonVideoId): Collection
+    {
+        return YoutubeLinkVideo::where('lesson_video_id', $lessonVideoId)
+            ->orderBy('order')
+            ->get();
+    }
+
+    public function getLessonVideoById(int $id): LessonVideo
+    {
+        return LessonVideo::findOrFail($id);
+    }
+
+    public function getUnitById(int $id): Unit
+    {
+        return Unit::findOrFail($id);
+    }
+
+    public function getTeacherById(int $id): Teacher
+    {
+        return Teacher::findOrFail($id);
+    }
+
+    public function getSubjectVideoById(int $id): SubjectVideo
+    {
+        return SubjectVideo::findOrFail($id);
+    }
+
+    public function getLessonVideosByUnit(int $unitId): Collection
+    {
+        return LessonVideo::where('unit_id', $unitId)->orderBy('order')->get();
+    }
+
+    public function lessonVideoBelongsToContext(
+        int $lessonVideoId,
+        int $unitId,
+        int $teacherId,
+        int $subjectVideoId
+    ): bool {
+        return LessonVideo::where('id', $lessonVideoId)
+            ->where('unit_id', $unitId)
+            ->whereHas('unit', function ($query) use ($teacherId, $subjectVideoId) {
+                $query->where('teacher_id', $teacherId)
+                    ->whereHas('teacher.subjectVideos', fn ($subQuery) => $subQuery->where('subject_video_id', $subjectVideoId));
+            })
+            ->exists();
+    }
+
+    public function createYoutubeLinkVideo(array $data): YoutubeLinkVideo
+    {
+        return YoutubeLinkVideo::create($data);
+    }
+
+    public function updateYoutubeLinkVideo(int $id, array $data): YoutubeLinkVideo
+    {
+        $youtubeLinkVideo = YoutubeLinkVideo::findOrFail($id);
+        $youtubeLinkVideo->update($data);
+
+        return $youtubeLinkVideo;
+    }
+
+    public function deleteYoutubeLinkVideo(int $id): bool
+    {
+        $youtubeLinkVideo = YoutubeLinkVideo::findOrFail($id);
+
+        return (bool) $youtubeLinkVideo->delete();
+    }
+}

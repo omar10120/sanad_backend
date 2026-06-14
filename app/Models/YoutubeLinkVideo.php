@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
 
 class YoutubeLinkVideo extends Model
 {
@@ -17,8 +18,34 @@ class YoutubeLinkVideo extends Model
         'video_time',
     ];
 
+    protected $casts = [
+        'video_time' => 'integer',
+    ];
+
     public function lessonVideo(): BelongsTo
     {
         return $this->belongsTo(LessonVideo::class, 'lesson_video_id');
+    }
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function (YoutubeLinkVideo $youtubeLinkVideo) {
+            if (empty($youtubeLinkVideo->order)) {
+                $lastOrder = self::where('lesson_video_id', $youtubeLinkVideo->lesson_video_id)->max('order') ?? 0;
+                $youtubeLinkVideo->order = $lastOrder + 1;
+            }
+        });
+    }
+
+    public function updateOrder(array $orderedIds): void
+    {
+        DB::transaction(function () use ($orderedIds) {
+            foreach ($orderedIds as $order => $id) {
+                self::where('id', $id)->where('lesson_video_id', $this->lesson_video_id)
+                    ->update(['order' => $order + 1]);
+            }
+        });
     }
 }
