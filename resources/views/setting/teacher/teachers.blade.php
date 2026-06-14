@@ -116,7 +116,7 @@
                                         <td>{{ $teacher->estimation_time }}</td>
                                         <td>
                                             @can('Unit-show')
-                                                <a class="btn btn-success" href="#" title="{{ trans('main_trans.Units') }}">
+                                                <a class="btn btn-success" href="{{ route('teacher.unit', ['teacher' => $teacher->id, 'subject_video' => $subject_video_selected->id]) }}" title="{{ trans('main_trans.Units') }}">
                                                     <i class="fas fa-layer-group"></i> {{ trans('main_trans.Units') }}
                                                 </a>
                                             @endcan

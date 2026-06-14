@@ -12,6 +12,7 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SubjectVideoController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\ArchivedTeacherController;
+use App\Http\Controllers\UnitController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\PhoneVerificationCodeController;
 use App\Http\Controllers\TypeController;
@@ -141,6 +142,14 @@ Route::group(
         ->name('archived-teacher.update');
     Route::delete('/archived-teacher/destroy', [ArchivedTeacherController::class, 'destroy'])
         ->name('archived-teacher.destroy');
+
+    Route::get('/teacher-unit/{teacher}', [UnitController::class, 'byTeacher'])
+        ->name('teacher.unit');
+    Route::post('/unit', [UnitController::class, 'store'])->name('unit.store');
+    Route::patch('/unit/update', [UnitController::class, 'update'])->name('unit.update');
+    Route::delete('/unit/destroy', [UnitController::class, 'destroy'])->name('unit.destroy');
+    Route::post('/teachers/{teacher}/units/reorder', [UnitController::class, 'reorder'])
+        ->name('units.reorder');
 
     Route::get('/tag-subject/{subject}', [TagController::class, 'showBySubject'])
         ->name('tag.showBySubject');

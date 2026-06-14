@@ -6,12 +6,14 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 class Unit extends Model
 {
     protected $fillable = [
         'teacher_id',
         'name',
+        'order',
     ];
 
     public function teacher(): BelongsTo
@@ -33,9 +35,26 @@ class Unit extends Model
     {
         parent::boot();
 
+        static::creating(function (Unit $unit) {
+            if (empty($unit->order)) {
+                $lastOrder = self::where('teacher_id', $unit->teacher_id)->max('order') ?? 0;
+                $unit->order = $lastOrder + 1;
+            }
+        });
+
         static::deleting(function (Unit $unit) {
             if (!$unit->canBeDeleted()) {
                 throw new Exception(trans('main_trans.Unit_has_related_data'));
+            }
+        });
+    }
+
+    public function updateOrder(array $orderedIds): void
+    {
+        DB::transaction(function () use ($orderedIds) {
+            foreach ($orderedIds as $order => $id) {
+                self::where('id', $id)->where('teacher_id', $this->teacher_id)
+                    ->update(['order' => $order + 1]);
             }
         });
     }
