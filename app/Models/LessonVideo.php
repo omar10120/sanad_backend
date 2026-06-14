@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class LessonVideo extends Model
 {
@@ -17,6 +18,7 @@ class LessonVideo extends Model
     protected $fillable = [
         'title',
         'unit_id',
+        'order',
     ];
 
     public function unit(): BelongsTo
@@ -38,9 +40,26 @@ class LessonVideo extends Model
     {
         parent::boot();
 
+        static::creating(function (LessonVideo $lessonVideo) {
+            if (empty($lessonVideo->order)) {
+                $lastOrder = self::where('unit_id', $lessonVideo->unit_id)->max('order') ?? 0;
+                $lessonVideo->order = $lastOrder + 1;
+            }
+        });
+
         static::deleting(function (LessonVideo $lessonVideo) {
             if (!$lessonVideo->canBeDeleted()) {
                 throw new Exception(trans('main_trans.Lesson_video_has_related_data'));
+            }
+        });
+    }
+
+    public function updateOrder(array $orderedIds): void
+    {
+        DB::transaction(function () use ($orderedIds) {
+            foreach ($orderedIds as $order => $id) {
+                self::where('id', $id)->where('unit_id', $this->unit_id)
+                    ->update(['order' => $order + 1]);
             }
         });
     }

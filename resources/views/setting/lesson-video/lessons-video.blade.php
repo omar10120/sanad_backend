@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    {{ trans('main_trans.Units') }} - {{ $teacher_selected->name }}
+    {{ trans('main_trans.Lessons') }} - {{ $unit_selected->name }}
 @endsection
 @section('css')
     <link href="{{URL::asset('assets/plugins/datatable/css/dataTables.bootstrap4.min.css')}}" rel="stylesheet" />
@@ -22,7 +22,7 @@
         <div class="my-auto">
             <div class="d-flex">
                 <h4 class="content-title mb-0 my-auto">{{ trans('main_trans.Coures') }}</h4>
-                <span class="text-muted mt-1 tx-13 mr-2 mb-0">/ {{ trans('main_trans.Units') }} - {{ $teacher_selected->name }}</span>
+                <span class="text-muted mt-1 tx-13 mr-2 mb-0">/ {{ trans('main_trans.Lessons') }} - {{ $unit_selected->name }}</span>
             </div>
         </div>
     </div>
@@ -36,28 +36,45 @@
             <div class="card">
                 <div class="card-header pb-0 row" style="margin-right: 0; margin-left: 0;">
                     <div class="col-12 col-sm-12 col-lg-2 col-xl-2">
-                        <a class="btn btn-primary btn-block" href="{{ route('subject-video.teacher', $subject_video_selected->id) }}">
+                        <a class="btn btn-primary btn-block" href="{{ route('teacher.unit', ['teacher' => $teacher_selected->id, 'subject_video' => $subject_video_selected->id]) }}">
                             <i class="fas fa-arrow-right"></i> {{ trans('main_trans.Back') }}
                         </a>
                     </div>
-                    @can('Unit-add')
-                        <div class="col-12 col-sm-12 col-lg-4 col-xl-6">
+                    @can('LessonVideo-add')
+                        <div class="col-12 col-sm-12 col-lg-4
+                            @can('LessonVideo-show-deleted')
+                                @if($archivedLessonVideosCount)
+                                    col-xl-4
+                                @else
+                                    col-xl-6
+                                @endif
+                            @endcan
+                            @cannot('LessonVideo-show-deleted') col-xl-6 @endcannot">
                             <a class="modal-effect btn btn-outline-primary btn-block" data-effect="effect-flip-vertical" data-toggle="modal" href="#modal1">
-                                {{ trans('main_trans.Add_unit') }}
+                                {{ trans('main_trans.Add_lesson_video') }}
                             </a>
                         </div>
                     @endcan
-                    @can('Unit-edit')
+                    @can('LessonVideo-edit')
                         <div class="col-12 col-sm-12 col-lg-4 col-xl-4">
                             <button id="reorder-btn" class="btn btn-info btn-block">
                                 <i class="fas fa-sort"></i> {{ trans('main_trans.Reorder') }}
                             </button>
                         </div>
                     @endcan
+                    @can('LessonVideo-show-deleted')
+                        @if($archivedLessonVideosCount)
+                            <div class="col-12 col-sm-12 col-lg-4 col-xl-2">
+                                <a class="btn btn-outline-primary btn-block" href="{{ route('archived-lesson-video.unit', ['unit' => $unit_selected->id, 'subject_video' => $subject_video_selected->id, 'teacher' => $teacher_selected->id]) }}">
+                                    {{ trans('main_trans.Deleted_lesson_videos') }}
+                                </a>
+                            </div>
+                        @endif
+                    @endcan
                 </div>
 
                 <div class="card-body">
-                    @if($units->count() > 0)
+                    @if($lessonVideos->count() > 0)
                         <div class="table-responsive hoverable-table">
                             <table class="table table-hover" id="sortable-table" data-page-length='50' style="text-align: center;">
                                 <thead>
@@ -65,36 +82,36 @@
                                     <th class="wd-5p-f drag-handle border-bottom-0" style="display: none;">{{ trans('main_trans.Order') }}</th>
                                     <th class="wd-5p-f border-bottom-0">#</th>
                                     <th class="wd-10p border-bottom-0">{{ trans('main_trans.Name') }}</th>
-                                    <th class="wd-5p border-bottom-0">{{ trans('main_trans.Number_of_lessons') }}</th>
+                                    <th class="wd-5p border-bottom-0">{{ trans('main_trans.Number_of_videos') }}</th>
                                     <th class="wd-10p border-bottom-0">{{ trans('main_trans.Actions') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody id="sortable-body">
-                                @foreach ($units as $unit)
-                                    <tr data-id="{{ $unit->id }}">
+                                @foreach ($lessonVideos as $lessonVideo)
+                                    <tr data-id="{{ $lessonVideo->id }}">
                                         <td class="drag-handle" style="display: none;">
                                             <i class="fas fa-grip-vertical text-muted"></i>
                                         </td>
-                                        <td>{{ $unit->id }}</td>
-                                        <td>{{ $unit->name }}</td>
-                                        <td>{{ $unit->lesson_videos_count }}</td>
+                                        <td>{{ $lessonVideo->id }}</td>
+                                        <td>{{ $lessonVideo->title }}</td>
+                                        <td>{{ $lessonVideo->youtube_links_count }}</td>
                                         <td>
-                                            @can('LessonVideo-show')
-                                                <a class="btn btn-success" href="{{ route('unit.lesson-video', ['unit' => $unit->id, 'subject_video' => $subject_video_selected->id, 'teacher' => $teacher_selected->id]) }}" title="{{ trans('main_trans.Lessons') }}">
-                                                    <i class="fas fa-book"></i> {{ trans('main_trans.Lessons') }}
+                                            @can('YoutubeLinkVideo-show')
+                                                <a class="btn btn-success" href="#" title="{{ trans('main_trans.Videos') }}">
+                                                    <i class="fab fa-youtube"></i> {{ trans('main_trans.Videos') }}
                                                 </a>
                                             @endcan
-                                            @can('Unit-edit')
+                                            @can('LessonVideo-edit')
                                                 <a class="modal-effect btn btn-info" data-effect="effect-flip-vertical"
-                                                   data-id="{{ $unit->id }}" data-name="{{ $unit->name }}"
-                                                   data-teacher_selected="{{ $unit->teacher_id }}" data-toggle="modal"
+                                                   data-id="{{ $lessonVideo->id }}" data-title="{{ $lessonVideo->title }}"
+                                                   data-unit_selected="{{ $lessonVideo->unit_id }}" data-toggle="modal"
                                                    href="#modal2" title="{{ trans('main_trans.Edit') }}">
                                                     <i class="fas fa-pen"></i> {{ trans('main_trans.Edit') }}
                                                 </a>
                                             @endcan
-                                            @can('Unit-delete')
+                                            @can('LessonVideo-delete')
                                                 <a class="modal-effect btn btn-danger" data-effect="effect-flip-vertical"
-                                                   data-id="{{ $unit->id }}" data-name="{{ $unit->name }}" data-toggle="modal"
+                                                   data-id="{{ $lessonVideo->id }}" data-title="{{ $lessonVideo->title }}" data-toggle="modal"
                                                    href="#modal3" title="{{ trans('main_trans.Delete') }}">
                                                     <i class="fas fa-trash"></i> {{ trans('main_trans.Delete') }}
                                                 </a>
@@ -107,8 +124,8 @@
                         </div>
                     @else
                         <div class="text-center py-5">
-                            <h5>{{ trans('main_trans.No_units_available') }}</h5>
-                            <p class="text-muted">{{ trans('main_trans.No_units_available_description') }}</p>
+                            <h5>{{ trans('main_trans.No_lesson_videos_available') }}</h5>
+                            <p class="text-muted">{{ trans('main_trans.No_lesson_videos_available_description') }}</p>
                         </div>
                     @endif
                 </div>
@@ -116,31 +133,31 @@
         </div>
     </div>
 
-    <!-- Add modal -->
     <div class="modal" id="modal1">
         <div class="modal-dialog" role="document">
             <div class="modal-content modal-content-demo">
                 <div class="modal-header">
-                    <h6 class="modal-title">{{ trans('main_trans.Add_unit') }}</h6>
+                    <h6 class="modal-title">{{ trans('main_trans.Add_lesson_video') }}</h6>
                     <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form action="{{ route('unit.store') }}" method="post">
+                <form action="{{ route('lesson-video.store') }}" method="post">
                     {{ csrf_field() }}
                     <input type="hidden" name="subject_video" value="{{ $subject_video_selected->id }}">
+                    <input type="hidden" name="teacher" value="{{ $teacher_selected->id }}">
                     <div class="modal-body">
                         <div class="row mb-3 mx-1">
-                            <label for="name" class="col-sm-2 col-form-label">{{ trans('main_trans.Name') }}</label>
+                            <label for="title" class="col-sm-2 col-form-label">{{ trans('main_trans.Name') }}</label>
                             <div class="col-sm-10">
-                                <input class="form-control" name="name" id="name" type="text" required>
+                                <input class="form-control" name="title" id="title" type="text" required>
                             </div>
                         </div>
                         <div class="row mb-3 mx-1">
-                            <label for="teacher_id" class="col-sm-2 col-form-label">{{ trans('main_trans.Teacher') }}</label>
+                            <label for="unit_id" class="col-sm-2 col-form-label">{{ trans('main_trans.Unit') }}</label>
                             <div class="col-sm-10">
-                                <select class="form-control" name="teacher_id" id="teacher_id" required>
-                                    <option value="">{{ trans('main_trans.Select_teacher') }}</option>
-                                    @foreach($teachers as $teacher)
-                                        <option value="{{ $teacher->id }}" {{ $teacher->id == $teacher_selected->id ? 'selected' : '' }}>{{ $teacher->name }}</option>
+                                <select class="form-control" name="unit_id" id="unit_id" required>
+                                    <option value="">{{ trans('main_trans.Select_unit') }}</option>
+                                    @foreach($units as $unit)
+                                        <option value="{{ $unit->id }}" {{ $unit->id == $unit_selected->id ? 'selected' : '' }}>{{ $unit->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -155,33 +172,33 @@
         </div>
     </div>
 
-    <!-- Edit modal -->
     <div class="modal" id="modal2">
         <div class="modal-dialog" role="document">
             <div class="modal-content modal-content-demo">
                 <div class="modal-header">
-                    <h6 class="modal-title">{{ trans('main_trans.Edit_unit') }}</h6>
+                    <h6 class="modal-title">{{ trans('main_trans.Edit_lesson_video') }}</h6>
                     <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form action="{{ route('unit.update', 'unit') }}" method="post">
+                <form action="{{ route('lesson-video.update', 'lesson-video') }}" method="post">
                     {{ method_field('patch') }}
                     {{ csrf_field() }}
                     <input type="hidden" name="subject_video" value="{{ $subject_video_selected->id }}">
+                    <input type="hidden" name="teacher" value="{{ $teacher_selected->id }}">
                     <div class="modal-body">
                         <input type="hidden" name="id" id="id" value="">
                         <div class="row mb-3 mx-1">
-                            <label for="name" class="col-sm-2 col-form-label">{{ trans('main_trans.Name') }}</label>
+                            <label for="title" class="col-sm-2 col-form-label">{{ trans('main_trans.Name') }}</label>
                             <div class="col-sm-10">
-                                <input class="form-control" name="name" id="name" type="text" required>
+                                <input class="form-control" name="title" id="title" type="text" required>
                             </div>
                         </div>
                         <div class="row mb-3 mx-1">
-                            <label for="teacher_id" class="col-sm-2 col-form-label">{{ trans('main_trans.Teacher') }}</label>
+                            <label for="unit_id" class="col-sm-2 col-form-label">{{ trans('main_trans.Unit') }}</label>
                             <div class="col-sm-10">
-                                <select class="form-control" name="teacher_id" id="teacher_id" required>
-                                    <option value="">{{ trans('main_trans.Select_teacher') }}</option>
-                                    @foreach($teachers as $teacher)
-                                        <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
+                                <select class="form-control" name="unit_id" id="unit_id" required>
+                                    <option value="">{{ trans('main_trans.Select_unit') }}</option>
+                                    @foreach($units as $unit)
+                                        <option value="{{ $unit->id }}">{{ $unit->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -196,23 +213,23 @@
         </div>
     </div>
 
-    <!-- Delete modal -->
     <div class="modal" id="modal3">
         <div class="modal-dialog" role="document">
             <div class="modal-content modal-content-demo">
                 <div class="modal-header">
-                    <h6 class="modal-title">{{ trans('main_trans.Delete_unit') }}</h6>
+                    <h6 class="modal-title">{{ trans('main_trans.Delete_lesson_video') }}</h6>
                     <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form action="{{ route('unit.destroy', 'unit') }}" method="post">
+                <form action="{{ route('lesson-video.destroy', 'lesson-video') }}" method="post">
                     {{ method_field('delete') }}
                     {{ csrf_field() }}
                     <input type="hidden" name="subject_video" value="{{ $subject_video_selected->id }}">
+                    <input type="hidden" name="teacher" value="{{ $teacher_selected->id }}">
                     <div class="modal-body">
                         <p>{{ trans('main_trans.Are_you_sure_to_delete') }}</p><br>
                         <input type="hidden" name="id" id="id" value="">
                         <div class="row mb-3 mx-1">
-                            <input class="form-control" name="name" id="name" type="text" readonly>
+                            <input class="form-control" name="title" id="title" type="text" readonly>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -249,23 +266,23 @@
 <script>
     $('#modal1').on('show.bs.modal', function() {
         var modal = $(this);
-        modal.find('.modal-body #name').val('');
-        modal.find('.modal-body #teacher_id').val('{{ $teacher_selected->id }}');
+        modal.find('.modal-body #title').val('');
+        modal.find('.modal-body #unit_id').val('{{ $unit_selected->id }}');
     });
 
     $('#modal2').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget);
         var modal = $(this);
         modal.find('.modal-body #id').val(button.data('id'));
-        modal.find('.modal-body #name').val(button.data('name'));
-        modal.find('.modal-body #teacher_id').val(button.data('teacher_selected'));
+        modal.find('.modal-body #title').val(button.data('title'));
+        modal.find('.modal-body #unit_id').val(button.data('unit_selected'));
     });
 
     $('#modal3').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget);
         var modal = $(this);
         modal.find('.modal-body #id').val(button.data('id'));
-        modal.find('.modal-body #name').val(button.data('name'));
+        modal.find('.modal-body #title').val(button.data('title'));
     });
 
     $(document).ready(function() {
@@ -297,7 +314,7 @@
             });
 
             $.ajax({
-                url: '{{ route("units.reorder", $teacher_selected->id) }}',
+                url: '{{ route("lessons-video.reorder", $unit_selected->id) }}',
                 method: 'POST',
                 data: {
                     ordered_ids: orderedIds,

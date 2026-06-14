@@ -13,6 +13,8 @@ use App\Http\Controllers\SubjectVideoController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\ArchivedTeacherController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\LessonVideoController;
+use App\Http\Controllers\ArchivedLessonVideoController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\PhoneVerificationCodeController;
 use App\Http\Controllers\TypeController;
@@ -150,6 +152,20 @@ Route::group(
     Route::delete('/unit/destroy', [UnitController::class, 'destroy'])->name('unit.destroy');
     Route::post('/teachers/{teacher}/units/reorder', [UnitController::class, 'reorder'])
         ->name('units.reorder');
+
+    Route::get('/unit-lesson-video/{unit}', [LessonVideoController::class, 'byUnit'])
+        ->name('unit.lesson-video');
+    Route::post('/lesson-video', [LessonVideoController::class, 'store'])->name('lesson-video.store');
+    Route::patch('/lesson-video/update', [LessonVideoController::class, 'update'])->name('lesson-video.update');
+    Route::delete('/lesson-video/destroy', [LessonVideoController::class, 'destroy'])->name('lesson-video.destroy');
+    Route::post('/units/{unit}/lessons-video/reorder', [LessonVideoController::class, 'reorder'])
+        ->name('lessons-video.reorder');
+    Route::get('/archived-lesson-video/{unit}', [ArchivedLessonVideoController::class, 'show'])
+        ->name('archived-lesson-video.unit');
+    Route::patch('/archived-lesson-video/update', [ArchivedLessonVideoController::class, 'update'])
+        ->name('archived-lesson-video.update');
+    Route::delete('/archived-lesson-video/destroy', [ArchivedLessonVideoController::class, 'destroy'])
+        ->name('archived-lesson-video.destroy');
 
     Route::get('/tag-subject/{subject}', [TagController::class, 'showBySubject'])
         ->name('tag.showBySubject');
