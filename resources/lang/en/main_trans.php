@@ -46,6 +46,7 @@ return [
     'Read_more'=>'Read More',
     'Share'=>'Share',
     'Study'=>'Study',
+    'Coures'=>'Courses',
     'Name'=>'Name',
     'Title'=>'Title',
     'Phone'=>'Phone',
@@ -962,4 +963,33 @@ return [
     'Pro_Feature_Title' => 'This feature is available in Pro version only',
     'Pro_Feature_Message' => 'To access this feature, please upgrade to the Pro version of the application.',
     'Pro_Only' => 'Pro Only',
+
+    // Courses (video)
+    'Course_subjects' => 'Course Subjects',
+    'Number_of_course_subjects' => 'Number of Course Subjects',
+    'Add_course_subject' => 'Add Course Subject',
+    'Edit_course_subject' => 'Edit Course Subject',
+    'Delete_course_subject' => 'Delete Course Subject',
+    'Subject_video_add_successfully' => 'Course subject added successfully',
+    'Subject_video_edit_successfully' => 'Course subject updated successfully',
+    'Subject_video_delete_successfully' => 'Course subject deleted successfully',
+    'Subject_video_has_related_data' => 'Cannot delete course subject because it has related teachers',
+    'No_course_subjects_available' => 'No course subjects available',
+    'No_course_subjects_available_description' => 'Add a course subject to get started.',
+    'Number_of_teachers' => 'Number of Teachers',
+    'Teachers' => 'Teachers',
+    'Teacher_has_related_data' => 'Cannot delete teacher because it has related units',
+    'Unit_has_related_data' => 'Cannot delete unit because it has related lessons',
+    'Lesson_video_has_related_data' => 'Cannot delete lesson because it has related videos',
+
+
+    // LessonVideo (video)
+    'LessonVideo-restore-deleted' => 'Lesson Videos',
+    'YoutubeLinkVideo-show' => 'YoutubeLinkVideo_show',
+    'YoutubeLinkVideo-add' => 'YoutubeLinkVideo-add',
+    'YoutubeLinkVideo-edit' => 'YoutubeLinkVideo-edit',
+    'YoutubeLinkVideo-delete' => 'YoutubeLinkVideo-delete',
+    'YoutubeLinkVideo-show-deleted' => 'YoutubeLinkVideo-show-deleted',
+    'YoutubeLinkVideo-restore-deleted' => 'YoutubeLinkVideo-restore-deleted',
+    
 ];

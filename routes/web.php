@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CourseTypeController;
 use App\Http\Controllers\CodePackageController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FcmController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionGroupController;
 use App\Http\Controllers\QuestionReportController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\SubjectVideoController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\PhoneVerificationCodeController;
 use App\Http\Controllers\TypeController;
@@ -112,6 +114,16 @@ Route::group(
         ->name('tags.reorder');
     Route::get('/subject-tag/{subject}', [SubjectController::class, 'tags'])
         ->name('subject.tag');
+
+    Route::get('/course-type', [CourseTypeController::class, 'index'])->name('course-type.index');
+    Route::get('/type-subject-video/{type}', [SubjectVideoController::class, 'byType'])
+        ->name('type.subject-video');
+    Route::post('/subject-video', [SubjectVideoController::class, 'store'])->name('subject-video.store');
+    Route::patch('/subject-video/update', [SubjectVideoController::class, 'update'])->name('subject-video.update');
+    Route::delete('/subject-video/destroy', [SubjectVideoController::class, 'destroy'])->name('subject-video.destroy');
+    Route::patch('/subjects-video/{subjectVideo}/toggle', [SubjectVideoController::class, 'toggle'])
+        ->name('subjects-video.toggle');
+
     Route::get('/tag-subject/{subject}', [TagController::class, 'showBySubject'])
         ->name('tag.showBySubject');
     Route::resource('archived-tag','App\Http\Controllers\ArchivedTagController');

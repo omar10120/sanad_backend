@@ -28,8 +28,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             PermissionSeeder::class,
-//            SubjectSeeder::class,
-//            AdminSeeder::class,
+           SubjectSeeder::class,
+           AdminSeeder::class,
         ]);
     }
 }

@@ -34,6 +34,11 @@ class Type extends Model
         return $this->belongsToMany(Subject::class, 'type_has_subject', 'type_id', 'subject_id');
     }
 
+    public function subjectVideos(): BelongsToMany
+    {
+        return $this->belongsToMany(SubjectVideo::class, 'type_has_subject_video', 'type_id', 'subject_video_id');
+    }
+
     public function students(): HasMany
     {
         return $this->hasMany(Student::class);
@@ -45,8 +50,9 @@ class Type extends Model
      */
     public function canBeDeleted(): bool
     {
-        return $this->students()->count() === 0 && 
-               $this->subjects()->count() === 0;
+        return $this->students()->count() === 0 &&
+               $this->subjects()->count() === 0 &&
+               $this->subjectVideos()->count() === 0;
     }
 
     /**
