@@ -29,7 +29,8 @@ class Teacher extends Model
 
     public function subjectVideos(): BelongsToMany
     {
-        return $this->belongsToMany(SubjectVideo::class, 'teacher_has_subject_video', 'teacher_id', 'subject_video_id');
+        return $this->belongsToMany(SubjectVideo::class, 'teacher_has_subject_video', 'teacher_id', 'subject_video_id')
+            ->withPivot('order');
     }
 
     public function units(): HasMany

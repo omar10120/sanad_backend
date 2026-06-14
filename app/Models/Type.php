@@ -36,7 +36,8 @@ class Type extends Model
 
     public function subjectVideos(): BelongsToMany
     {
-        return $this->belongsToMany(SubjectVideo::class, 'type_has_subject_video', 'type_id', 'subject_video_id');
+        return $this->belongsToMany(SubjectVideo::class, 'type_has_subject_video', 'type_id', 'subject_video_id')
+            ->orderBy('subjects_video.order');
     }
 
     public function students(): HasMany

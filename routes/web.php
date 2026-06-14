@@ -10,6 +10,8 @@ use App\Http\Controllers\QuestionGroupController;
 use App\Http\Controllers\QuestionReportController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SubjectVideoController;
+use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\ArchivedTeacherController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\PhoneVerificationCodeController;
 use App\Http\Controllers\TypeController;
@@ -123,6 +125,22 @@ Route::group(
     Route::delete('/subject-video/destroy', [SubjectVideoController::class, 'destroy'])->name('subject-video.destroy');
     Route::patch('/subjects-video/{subjectVideo}/toggle', [SubjectVideoController::class, 'toggle'])
         ->name('subjects-video.toggle');
+    Route::post('/subjects-video/reorder', [SubjectVideoController::class, 'reorder'])
+        ->name('subjects-video.reorder');
+
+    Route::get('/subject-video-teacher/{subject_video}', [TeacherController::class, 'bySubjectVideo'])
+        ->name('subject-video.teacher');
+    Route::post('/teacher', [TeacherController::class, 'store'])->name('teacher.store');
+    Route::patch('/teacher/update', [TeacherController::class, 'update'])->name('teacher.update');
+    Route::delete('/teacher/destroy', [TeacherController::class, 'destroy'])->name('teacher.destroy');
+    Route::post('/subject-video/{subjectVideo}/teachers/reorder', [TeacherController::class, 'reorder'])
+        ->name('teachers.reorder');
+    Route::get('/archived-teacher/{subject_video}', [ArchivedTeacherController::class, 'show'])
+        ->name('archived-teacher.subject-video');
+    Route::patch('/archived-teacher/update', [ArchivedTeacherController::class, 'update'])
+        ->name('archived-teacher.update');
+    Route::delete('/archived-teacher/destroy', [ArchivedTeacherController::class, 'destroy'])
+        ->name('archived-teacher.destroy');
 
     Route::get('/tag-subject/{subject}', [TagController::class, 'showBySubject'])
         ->name('tag.showBySubject');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\PermissionEnum;
 use App\Http\Requests\SubjectVideo\DeleteSubjectVideoRequest;
+use App\Http\Requests\SubjectVideo\ReorderSubjectVideoRequest;
 use App\Http\Requests\SubjectVideo\StoreSubjectVideoRequest;
 use App\Http\Requests\SubjectVideo\UpdateSubjectVideoRequest;
 use App\Models\SubjectVideo;
@@ -86,5 +87,15 @@ class SubjectVideoController extends Controller
 
         $this->subjectVideoService->toggleSubjectVideoStatus($subjectVideo);
         return back();
+    }
+
+    public function reorder(ReorderSubjectVideoRequest $request)
+    {
+        $this->checkPermission(PermissionEnum::SUBJECT_VIDEO_EDIT);
+
+        $subjectVideo = new SubjectVideo();
+        $subjectVideo->updateOrder($request->ordered_ids);
+
+        return response()->json(['success' => true]);
     }
 }

@@ -10,6 +10,13 @@
     <link href="{{URL::asset('assets/plugins/datatable/css/responsive.dataTables.min.css')}}" rel="stylesheet">
     <link href="{{URL::asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/ui-lightness/jquery-ui.css">
+    <style>
+        .drag-handle { cursor: move; width: 30px; text-align: center; }
+        .ui-sortable-helper { background-color: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .ui-state-highlight { height: 45px; background-color: #e3f2fd; border: 2px dashed #2196f3; }
+        #sortable-body tr:hover .drag-handle { color: #007bff; }
+    </style>
 @endsection
 @section('page-header')
     <div class="breadcrumb-header justify-content-between">
@@ -40,14 +47,22 @@
                                data-toggle="modal" href="#modal1">{{ trans('main_trans.Add_course_subject') }}</a>
                         </div>
                     @endcan
+                    @can('SubjectVideo-edit')
+                        <div class="col-12 col-sm-12 col-lg-4 col-xl-4">
+                            <button id="reorder-btn" class="btn btn-info btn-block">
+                                <i class="fas fa-sort"></i> {{ __('main_trans.Reorder') }}
+                            </button>
+                        </div>
+                    @endcan
                 </div>
 
                 <div class="card-body">
                     @if($subjectVideos->count() > 0)
                         <div class="table-responsive hoverable-table">
-                            <table class="table table-hover" id="example1" data-page-length='50' style="text-align: center;">
+                            <table class="table table-hover" id="sortable-table" data-page-length='50' style="text-align: center;">
                                 <thead>
                                 <tr>
+                                    <th class="wd-5p-f drag-handle border-bottom-0" style="display: none;">{{ trans('main_trans.Order') }}</th>
                                     <th class="wd-5p-f border-bottom-0">#</th>
                                     <th class="wd-5p-f border-bottom-0">{{ trans('main_trans.Icon') }}</th>
                                     <th class="wd-10p border-bottom-0">{{ trans('main_trans.Name') }}</th>
@@ -56,9 +71,12 @@
                                     <th class="wd-30p-f border-bottom-0">{{ trans('main_trans.Actions') }}</th>
                                 </tr>
                                 </thead>
-                                <tbody>
-                                @foreach ($subjectVideos as $subjectVideo)
-                                    <tr>
+                                <tbody id="sortable-body">
+                                @foreach ($subjectVideos->sortBy('order') as $subjectVideo)
+                                    <tr data-id="{{ $subjectVideo->id }}">
+                                        <td class="drag-handle" style="display: none;">
+                                            <i class="fas fa-grip-vertical text-muted"></i>
+                                        </td>
                                         <td>{{ $subjectVideo->id }}</td>
                                         <td>
                                             @if($subjectVideo->icon)
@@ -76,7 +94,7 @@
                                         <td>{{ $subjectVideo->teachers->count() }}</td>
                                         <td>
                                             @can('Teacher-show')
-                                                <a class="btn btn-success" href="#" title="{{ trans('main_trans.Teachers') }}">
+                                                <a class="btn btn-success" href="{{ route('subject-video.teacher', $subjectVideo->id) }}" title="{{ trans('main_trans.Teachers') }}">
                                                     <i class="fas fa-chalkboard-teacher"></i> {{ trans('main_trans.Teachers') }}
                                                 </a>
                                             @endcan
@@ -161,7 +179,7 @@
                         <div class="row mb-3">
                             <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Certificate_types') }}</label>
                             <div class="col-md-8">
-                                <select name="types[]" class="form-control" required multiple>
+                                <select name="types[]" class="form-control types-select" required multiple>
                                     @foreach ($types as $type)
                                         <option value="{{ $type->id }}" {{ $type->id == $type_selected->id ? 'selected' : '' }}>{{ $type->name }}</option>
                                     @endforeach
@@ -217,7 +235,7 @@
                         <div class="row mb-3">
                             <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Certificate_types') }}</label>
                             <div class="col-md-8">
-                                <select name="types[]" id="edit_types" class="form-control" required multiple>
+                                <select name="types[]" id="edit_types" class="form-control types-select" required multiple>
                                     @foreach ($types as $type)
                                         <option value="{{ $type->id }}">{{ $type->name }}</option>
                                     @endforeach
@@ -263,19 +281,15 @@
     <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.dataTables.min.js') }}"></script>
     <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.responsive.min.js') }}"></script>
     <script src="{{ URL::asset('assets/plugins/datatable/js/responsive.dataTables.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/datatable/js/jquery.dataTables.js') }}"></script>
     <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.bootstrap4.js') }}"></script>
+    <script src="{{ URL::asset('assets/js/table-data.js') }}"></script>
+    <script src="{{ URL::asset('assets/js/modal.js') }}"></script>
     <script src="{{ URL::asset('assets/plugins/select2/js/select2.min.js') }}"></script>
-    <script>
-        $('#example1').DataTable({
-            responsive: true,
-            language: {
-                searchPlaceholder: 'Search...',
-                sSearch: '',
-                lengthMenu: '_MENU_',
-            }
-        });
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
-        $('select[name="types[]"]').select2({ width: '100%' });
+    <script>
+        $('.types-select').select2({ width: '100%' });
 
         $('#modal2').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
@@ -292,6 +306,58 @@
             var button = $(event.relatedTarget);
             $('#delete_id').val(button.data('id'));
             $('#delete_name').val(button.data('name'));
+        });
+
+        $(document).ready(function () {
+            let isReorderMode = false;
+
+            $('#reorder-btn').click(function () {
+                if (!isReorderMode) {
+                    enterReorderMode();
+                } else {
+                    exitReorderMode();
+                }
+            });
+
+            function enterReorderMode() {
+                isReorderMode = true;
+                $('#reorder-btn').removeClass('btn-info').addClass('btn-success').html('<i class="fas fa-check"></i> {{ __("main_trans.Save Order") }}');
+                $('.drag-handle').show();
+                $("#sortable-body").sortable({
+                    handle: '.drag-handle',
+                    placeholder: 'ui-state-highlight'
+                }).disableSelection();
+            }
+
+            function exitReorderMode() {
+                const orderedIds = [];
+                $('#sortable-body tr').each(function () {
+                    orderedIds.push($(this).data('id'));
+                });
+
+                $.ajax({
+                    url: '{{ route("subjects-video.reorder") }}',
+                    method: 'POST',
+                    data: {
+                        ordered_ids: orderedIds,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            toastr.success('{{ __("main_trans.Order updated successfully") }}');
+                            setTimeout(() => location.reload(), 1000);
+                        }
+                    },
+                    error: function () {
+                        toastr.error('{{ __("main_trans.Error updating order") }}');
+                    }
+                });
+
+                $("#sortable-body").sortable("destroy");
+                $('.drag-handle').hide();
+                $('#reorder-btn').removeClass('btn-success').addClass('btn-info').html('<i class="fas fa-sort"></i> {{ __("main_trans.Reorder") }}');
+                isReorderMode = false;
+            }
         });
     </script>
 @endsection
