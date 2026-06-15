@@ -56,6 +56,11 @@ class TypeController extends Controller
         $this->typeService->createType($request->validated());
 
         session()->flash('add', trans('main_trans.Type_add_successfully'));
+
+        if ($request->input('return_to') === 'course-type') {
+            return redirect()->route('course-type.index');
+        }
+
         return redirect('type');
     }
 
