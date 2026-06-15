@@ -3,11 +3,14 @@
 use App\Http\Controllers\Api\ApiAuthController;
 use App\Http\Controllers\Api\ApiCodeController;
 use App\Http\Controllers\Api\ApiLessonController;
+use App\Http\Controllers\Api\ApiLessonVideoController;
 use App\Http\Controllers\Api\ApiQuestionController;
 use App\Http\Controllers\Api\ApiSubjectController;
 use App\Http\Controllers\Api\ApiSubjectVideoController;
 use App\Http\Controllers\Api\ApiTagController;
+use App\Http\Controllers\Api\ApiTeacherController;
 use App\Http\Controllers\Api\ApiTypeController;
+use App\Http\Controllers\Api\ApiUnitController;
 use App\Http\Controllers\Api\ApiAppUpdateController;
 use App\Http\Middleware\CheckSanctumToken;
 use Illuminate\Support\Facades\Route;
@@ -57,6 +60,21 @@ Route::group(
         Route::get('/{id}', [ApiSubjectVideoController::class, 'show']);
         Route::get('/{id}/sync', [ApiSubjectVideoController::class, 'sync']);
         Route::get('/{id}/teachers', [ApiSubjectVideoController::class, 'teachers']);
+    });
+
+    Route::prefix('teacher')->group(function () {
+        Route::get('/{id}', [ApiTeacherController::class, 'show']);
+        Route::get('/{id}/units', [ApiTeacherController::class, 'units']);
+    });
+
+    Route::prefix('unit')->group(function () {
+        Route::get('/{id}', [ApiUnitController::class, 'show']);
+        Route::get('/{id}/lesson-videos', [ApiUnitController::class, 'lessonVideos']);
+    });
+
+    Route::prefix('lesson-video')->group(function () {
+        Route::get('/{id}', [ApiLessonVideoController::class, 'show']);
+        Route::get('/{id}/youtube-links', [ApiLessonVideoController::class, 'youtubeLinks']);
     });
 
     Route::prefix('lesson')->group(function () {

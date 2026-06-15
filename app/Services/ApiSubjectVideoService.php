@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\CodePackage;
 use App\Models\LessonVideo;
 use App\Models\SubjectVideo;
+use App\Models\Teacher;
 use App\Models\Type;
 use App\Models\Unit;
 use App\Models\YoutubeLinkVideo;
@@ -114,5 +115,57 @@ class ApiSubjectVideoService
         return Type::with(['subjectVideos' => function ($query) {
             $query->where('is_active', true)->orderBy('order');
         }])->find($typeId);
+    }
+
+    public function findTeacher(int $id): ?Teacher
+    {
+        return Teacher::withCount('units')->find($id);
+    }
+
+    public function getUnitsByTeacher(int $teacherId): Collection
+    {
+        return Unit::where('teacher_id', $teacherId)
+            ->withCount('lessonVideos')
+            ->orderBy('order')
+            ->get();
+    }
+
+    public function findUnit(int $id): ?Unit
+    {
+        return Unit::withCount('lessonVideos')->find($id);
+    }
+
+    public function getLessonVideosByUnit(int $unitId, bool $isLocked): Collection
+    {
+        $query = LessonVideo::where('unit_id', $unitId)
+            ->withCount('youtubeLinks')
+            ->orderBy('order');
+
+        if ($isLocked) {
+            return $query->limit(1)->get();
+        }
+
+        return $query->get();
+    }
+
+    public function findLessonVideo(int $id): ?LessonVideo
+    {
+        return LessonVideo::with(['unit'])->withCount('youtubeLinks')->find($id);
+    }
+
+    public function getYoutubeLinksByLessonVideo(int $lessonVideoId, bool $isLocked): Collection
+    {
+        $query = YoutubeLinkVideo::where('lesson_video_id', $lessonVideoId)->orderBy('order');
+
+        if ($isLocked) {
+            return $query->limit(1)->get();
+        }
+
+        return $query->get();
+    }
+
+    public function isUnitLocked(int $studentId, int $unitId): bool
+    {
+        return !$this->studentHasUnitAccess($studentId, $unitId);
     }
 }
