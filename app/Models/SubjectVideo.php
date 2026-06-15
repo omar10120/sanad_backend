@@ -39,12 +39,6 @@ class SubjectVideo extends Model
             ->orderByPivot('order');
     }
 
-    public function codePackages(): BelongsToMany
-    {
-        return $this->belongsToMany(CodePackage::class, 'code_package_subject', 'subject_id', 'code_package_id')
-            ->withPivot('unit_id');
-    }
-
     public function checkStudentAccess(int $studentId, ?int $unitId = null): bool
     {
         $student = Student::find($studentId);
@@ -52,20 +46,42 @@ class SubjectVideo extends Model
         if ($student && in_array($student->type_id, [7, 11], true)) {
             return true;
         }
+        
+        $unitIds = Unit::whereHas('teacher.subjectVideos', function ($query) {
+            $query->where('subjects_video.id', $this->id);
+        })->when($unitId, fn ($query) => $query->where('id', $unitId))
+            ->pluck('id');
 
-        return $this->codePackages()
-            ->where('expires_at', '>', now())
-            ->whereHas('codes', function ($query) use ($studentId) {
-                $query->where('student_id', $studentId);
-            })
-            ->whereHas('codePackageSubjects', function ($query) use ($unitId) {
-                $query->where('subject_id', $this->id);
-                if ($unitId) {
-                    $query->where('unit_id', $unitId);
-                }
-            })
+        if ($unitIds->isEmpty()) {
+            return false;
+        }
+
+        return CodePackage::where('expires_at', '>', now())
+            ->whereHas('codes', fn ($query) => $query->where('student_id', $studentId))
+            ->whereHas('codePackageSubjects', fn ($query) => $query->whereIn('unit_id', $unitIds))
             ->exists();
     }
+
+    // public function checkStudentAccess($studentId, ?int $unitId = null): bool
+    // {
+    //     $student = Student::find($studentId);
+
+    //     if ($student && in_array($student->type_id, [7, 11], true)) {
+    //         return true;
+    //     }
+
+    //     $query = $this->codePackages()
+    //         ->whereHas('codes', function ($query) use ($studentId) {
+    //             $query->where('student_id', $studentId);
+    //         })
+    //         ->where('expires_at', '>', now());
+
+    //     if ($unitId !== null) {
+    //         $query->wherePivot('unit_id', $unitId);
+    //     }
+
+    //     return $query->exists();
+    // }
 
     public function canBeDeleted(): bool
     {

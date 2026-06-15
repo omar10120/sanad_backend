@@ -96,26 +96,26 @@ class AuthService
             ];
         }
 
-        // $device = $this->createOrUpdateDevice($data);
+        $device = $this->createOrUpdateDevice($data);
 
-        // $existingStudentDevice = $student->studentDevices()
-        //     ->where('device_id', $device->id)
-        //     ->first();
+        $existingStudentDevice = $student->studentDevices()
+            ->where('device_id', $device->id)
+            ->first();
 
-        // if ($existingStudentDevice) {
-        //     $existingStudentDevice->setAsCurrent();
-        //     $existingStudentDevice->updateLastLogin();
-        // } else {
-        //     if (!$student->canAddDevice()) {
-        //         return [
-        //             'success' => false,
-        //             'message' => 'هذا الحساب مسجل على جهاز آخر مسبقاً.',
-        //             'status' => 403
-        //         ];
-        //     }
+        if ($existingStudentDevice) {
+            $existingStudentDevice->setAsCurrent();
+            $existingStudentDevice->updateLastLogin();
+        } else {
+            if (!$student->canAddDevice()) {
+                return [
+                    'success' => false,
+                    'message' => 'هذا الحساب مسجل على جهاز آخر مسبقاً.',
+                    'status' => 403
+                ];
+            }
 
-        //     $student->attachDevice($device, true);
-        // }
+            $student->attachDevice($device, true);
+        }
 
         $student->tokens()->delete();
         $token = $student->createToken($student->first_name . '-AuthToken')->plainTextToken;

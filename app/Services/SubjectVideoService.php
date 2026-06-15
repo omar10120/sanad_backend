@@ -2,10 +2,13 @@
 
 namespace App\Services;
 
+use App\Http\Resources\TypeHasSubjectVideoResource;
 use App\Models\SubjectVideo;
 use App\Models\Type;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\DB;
 
 class SubjectVideoService
 {
@@ -81,4 +84,30 @@ class SubjectVideoService
     {
         return Type::orderBy('order')->get();
     }
+
+     /**
+     * Get type_has_subject relationships for a student.
+     */
+
+
+     public function getTypeHasSubjectVideoRelationshipsByType(int $typeId): AnonymousResourceCollection
+     {
+         $relationships = DB::table('type_has_subject_video')
+             ->join('types', 'type_has_subject_video.type_id', '=', 'types.id')
+             ->where('type_id', $typeId)
+             ->join('subjects_video', 'type_has_subject_video.subject_video_id', '=', 'subjects_video.id')
+             ->where('subjects_video.is_active', 1)
+             ->select(
+                 'type_has_subject_video.type_id',
+                 'type_has_subject_video.subject_video_id',
+                 'types.id as type_id',
+                 'types.name as type_name',
+                 'subjects_video.id as subject_video_id',
+                 'subjects_video.name as subject_video_name',
+             )
+             ->get();
+ 
+             return TypeHasSubjectVideoResource::collection($relationships);
+     }
+ 
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ApiCodeController;
 use App\Http\Controllers\Api\ApiLessonController;
 use App\Http\Controllers\Api\ApiQuestionController;
 use App\Http\Controllers\Api\ApiSubjectController;
+use App\Http\Controllers\Api\ApiSubjectVideoController;
 use App\Http\Controllers\Api\ApiTagController;
 use App\Http\Controllers\Api\ApiTypeController;
 use App\Http\Controllers\Api\ApiAppUpdateController;
@@ -37,6 +38,7 @@ Route::group(
     Route::prefix('type')->group(function () {
         Route::get('/{id}', [ApiTypeController::class, 'show']);
         Route::get('/{id}/subjects', [ApiTypeController::class, 'subjects']);
+        Route::get('/{id}/subject-videos', [ApiTypeController::class, 'subjectVideos']);
     });
 
     Route::prefix('subject')->group(function () {
@@ -48,6 +50,13 @@ Route::group(
         Route::get('/{id}/tags', [ApiSubjectController::class, 'tags']);
         Route::get('/{id}/exams', [ApiSubjectController::class, 'exams']);
         Route::get('/{id}/questions_edited', [ApiSubjectController::class, 'questions_edited']);
+    });
+
+    Route::prefix('subject-video')->group(function () {
+        Route::get('/', [ApiSubjectVideoController::class, 'index']);
+        Route::get('/{id}', [ApiSubjectVideoController::class, 'show']);
+        Route::get('/{id}/sync', [ApiSubjectVideoController::class, 'sync']);
+        Route::get('/{id}/teachers', [ApiSubjectVideoController::class, 'teachers']);
     });
 
     Route::prefix('lesson')->group(function () {

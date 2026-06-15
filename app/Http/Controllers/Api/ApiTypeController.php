@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SubjectResource;
+use App\Http\Resources\SubjectVideoResource;
 use App\Http\Resources\TypeResource;
 use App\Models\Type;
 use App\Services\TypeService;
@@ -44,5 +45,19 @@ class ApiTypeController extends Controller
         }
         $subjects = SubjectResource::collection($type->subjects);
         return $this->apiResponse($subjects, 'المواد في النوع ' . $type->id, 200);
+    }
+
+    public function subjectVideos($id): JsonResponse
+    {
+        $type = $this->typeService->findType($id);
+        if (!$type) {
+            return $this->apiResponse(null, 'النوع غير موجود', 400);
+        }
+
+        $subjectVideos = SubjectVideoResource::collection(
+            $type->subjectVideos()->where('is_active', true)->orderBy('order')->get()
+        );
+
+        return $this->apiResponse($subjectVideos, 'مواد الكورسات في النوع ' . $type->id, 200);
     }
 }

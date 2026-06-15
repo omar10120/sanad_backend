@@ -119,7 +119,7 @@ class ApiSubjectController extends Controller
 
         // Check if subject is locked (you can implement your own logic here)
         $is_locked = !($subject->checkStudentAccess(Auth::user()->id));
-
+        
         $data = $this->subjectService->getAllSubjectData($id, $is_locked);
 
         // Transform data using resources
