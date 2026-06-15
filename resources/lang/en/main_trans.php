@@ -1079,5 +1079,9 @@ return [
     'YoutubeLinkVideo-delete' => 'YoutubeLinkVideo-delete',
     'YoutubeLinkVideo-show-deleted' => 'YoutubeLinkVideo-show-deleted',
     'YoutubeLinkVideo-restore-deleted' => 'YoutubeLinkVideo-restore-deleted',
-    
+    'Subject_unit_pairs' => 'Subject & Unit pairs',
+    'Add_row' => 'Add row',
+    'Package_items_required' => 'At least one subject and unit pair is required',
+    'At_least_one_subject_unit_required' => 'Please add at least one subject and unit pair',
+    'Course_subject' => 'Course Subject',
 ];

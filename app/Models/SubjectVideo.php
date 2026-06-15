@@ -39,6 +39,34 @@ class SubjectVideo extends Model
             ->orderByPivot('order');
     }
 
+    public function codePackages(): BelongsToMany
+    {
+        return $this->belongsToMany(CodePackage::class, 'code_package_subject', 'subject_id', 'code_package_id')
+            ->withPivot('unit_id');
+    }
+
+    public function checkStudentAccess(int $studentId, ?int $unitId = null): bool
+    {
+        $student = Student::find($studentId);
+
+        if ($student && in_array($student->type_id, [7, 11], true)) {
+            return true;
+        }
+
+        return $this->codePackages()
+            ->where('expires_at', '>', now())
+            ->whereHas('codes', function ($query) use ($studentId) {
+                $query->where('student_id', $studentId);
+            })
+            ->whereHas('codePackageSubjects', function ($query) use ($unitId) {
+                $query->where('subject_id', $this->id);
+                if ($unitId) {
+                    $query->where('unit_id', $unitId);
+                }
+            })
+            ->exists();
+    }
+
     public function canBeDeleted(): bool
     {
         return $this->teachers()->count() === 0;

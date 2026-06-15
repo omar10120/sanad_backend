@@ -112,9 +112,18 @@
                                     <td>{{ $package->name }}</td>
 {{--                                    <td>{{ $package->subjects->pluck('name')->toArray() }}</td>--}}
                                     <td>
-                                        @foreach($package->subjects->pluck('name') as $name)
-                                            <label class="badge badge-success" style="font-size: 12px !important;">{{ $name }}</label>
-                                        @endforeach
+                                        @forelse($packageSubjectsGrouped as $group)
+                                            <div class="text-left mb-2">
+                                                <strong>{{ $group['subject_name'] }}</strong>
+                                                <ul class="mb-0 pl-3">
+                                                    @foreach($group['units'] as $unit)
+                                                        <li>├─ {{ $unit['name'] }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        @empty
+                                            <span class="text-muted">-</span>
+                                        @endforelse
                                     </td>
                                     <td>{{ $code->code }}</td>
                                     <td>{{ $package->expires_at }}</td>
@@ -218,18 +227,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label for="subject_ids">{{ trans('main_trans.Subjects') }}</label>
-                                <select class="form-control" id="subject_ids" name="subject_ids[]" multiple required style="height: 120px;">
-                                    @foreach($subjects as $subject)
-                                        <option value="{{ $subject->id }}" 
-                                            {{ $package->subjects->contains($subject->id) ? 'selected' : '' }}>
-                                            {{ $subject->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <small class="form-text text-muted">{{ trans('main_trans.Hold_Ctrl_to_select_multiple') }}</small>
+                            <div class="mb-2 d-flex justify-content-between align-items-center">
+                                <label class="mb-0 font-weight-bold">{{ trans('main_trans.Subject_unit_pairs') }}</label>
+                                <button type="button" class="btn btn-sm btn-outline-primary" id="add-edit-package-item">
+                                    <i class="fas fa-plus"></i> {{ trans('main_trans.Add_row') }}
+                                </button>
                             </div>
+                            <div id="edit-package-items-container"></div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ trans('main_trans.Close') }}</button>
@@ -269,40 +273,111 @@
     <script src="{{ URL::asset('assets/js/modal.js') }}"></script>
 
     <script>
-        $('#modal2').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget)
-            var id = button.data('id')
-            var name = button.data('name')
-            var modal = $(this)
-            modal.find('.modal-body #id').val(id);
-            modal.find('.modal-body #name').val(name);
-        })
+        const subjects = [
+            @foreach($subjects as $subject)
+                { id: {{ $subject->id }}, name: @json($subject->name) },
+            @endforeach
+        ];
+        const units = [
+            @foreach($units as $unit)
+                { id: {{ $unit->id }}, name: @json($unit->name) },
+            @endforeach
+        ];
+        const packageItems = @json($package->codePackageSubjects->map(function ($item) {
+            return ['subject_id' => $item->subject_id, 'unit_id' => $item->unit_id];
+        })->values());
 
-        $('#modal3').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget)
-            var id = button.data('id')
-            var name = button.data('name')
-            var modal = $(this)
-            modal.find('.modal-body #id').val(id);
-            modal.find('.modal-body #name').val(name);
-        })
+        function populateUnitSelect(unitSelect, selectedUnitId = '') {
+            unitSelect.html(`<option value="">{{ trans('main_trans.Select_unit') }}</option>`);
+            units.forEach(function(unit) {
+                unitSelect.append(`<option value="${unit.id}">${unit.name}</option>`);
+            });
+            if (selectedUnitId) {
+                unitSelect.val(selectedUnitId);
+            }
+        }
 
-        // تحسين تجربة المستخدم في modal التعديل
-        $('#editPackageModal').on('show.bs.modal', function(event) {
-            // تأكد من أن الحقول مملوءة بالبيانات الحالية
-            console.log('Edit package modal opened');
+        function buildPackageItemRow(container, index, selectedSubjectId = '', selectedUnitId = '') {
+            const row = $(`
+                <div class="package-item-row" data-index="${index}" style="border:1px solid #e8ebf1;border-radius:6px;padding:12px;margin-bottom:10px;">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <label class="mb-1">{{ trans('main_trans.Subject') }}</label>
+                            <select class="form-control package-subject-select" name="package_items[${index}][subject_id]" required>
+                                <option value="">{{ trans('main_trans.Select_subject') }}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="mb-1">{{ trans('main_trans.Unit') }}</label>
+                            <select class="form-control package-unit-select" name="package_items[${index}][unit_id]" required>
+                                <option value="">{{ trans('main_trans.Select_unit') }}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="button" class="btn btn-outline-danger btn-block remove-package-item">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            subjects.forEach(function(subject) {
+                row.find('.package-subject-select').append(`<option value="${subject.id}">${subject.name}</option>`);
+            });
+
+            container.append(row);
+            populateUnitSelect(row.find('.package-unit-select'), selectedUnitId);
+
+            if (selectedSubjectId) {
+                row.find('.package-subject-select').val(selectedSubjectId);
+            }
+        }
+
+        function reindexPackageItems(container) {
+            container.find('.package-item-row').each(function(index) {
+                $(this).attr('data-index', index);
+                $(this).find('.package-subject-select').attr('name', `package_items[${index}][subject_id]`);
+                $(this).find('.package-unit-select').attr('name', `package_items[${index}][unit_id]`);
+            });
+        }
+
+        $('#add-edit-package-item').on('click', function() {
+            const container = $('#edit-package-items-container');
+            buildPackageItemRow(container, container.find('.package-item-row').length);
         });
 
-        // إضافة تأكيد قبل التحديث
-        $('#editPackageModal form').on('submit', function(e) {
-            var selectedSubjects = $('#subject_ids option:selected').length;
-            if (selectedSubjects === 0) {
-                e.preventDefault();
-                alert('{{ trans("main_trans.Please_select_at_least_one_subject") }}');
-                return false;
+        $(document).on('click', '.remove-package-item', function() {
+            const container = $('#edit-package-items-container');
+            $(this).closest('.package-item-row').remove();
+            reindexPackageItems(container);
+        });
+
+        $('#editPackageModal').on('show.bs.modal', function() {
+            const container = $('#edit-package-items-container');
+            container.empty();
+
+            if (packageItems.length === 0) {
+                buildPackageItemRow(container, 0);
+            } else {
+                packageItems.forEach(function(item, index) {
+                    buildPackageItemRow(container, index, item.subject_id, item.unit_id);
+                });
             }
         });
 
+        $('#editPackageModal form').on('submit', function(e) {
+            if ($(this).find('.package-item-row').length === 0) {
+                e.preventDefault();
+                alert('{{ trans('main_trans.At_least_one_subject_unit_required') }}');
+            }
+        });
+
+        $('#modal3').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            $(this).find('.modal-body #id').val(button.data('id'));
+            $(this).find('.modal-body #name').val(button.data('name'));
+        });
     </script>
 
 @endsection

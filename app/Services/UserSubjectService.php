@@ -49,16 +49,15 @@ class UserSubjectService
     /**
      * Check if a user has access to a specific subject
      */
-    public function userHasAccessToSubject(int $userId, int $subjectId): bool
+    public function userHasAccessToSubject(int $userId, int $subjectId, ?int $unitId = null): bool
     {
         $user = User::findOrFail($userId);
 
-        // Owner role has access to all subjects
         if ($user->hasRole('Owner')) {
             return true;
         }
 
-        return $user->hasAccessToSubject($subjectId);
+        return $user->hasAccessToSubject($subjectId, $unitId);
     }
 
     /**

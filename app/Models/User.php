@@ -45,11 +45,27 @@ class User extends Authenticatable
     public function subjects(): BelongsToMany
     {
         return $this->belongsToMany(Subject::class, 'user_has_subject', 'user_id', 'subject_id')
+            ->withPivot('unit_id')
             ->withTimestamps();
     }
 
+    public function hasAccessToSubject(int $subjectId, ?int $unitId = null): bool
+    {
+        if ($this->hasRole('Owner')) {
+            return true;
+        }
+
+        $query = $this->subjects()->where('subjects.id', $subjectId);
+
+        if ($unitId !== null) {
+            $query->wherePivot('unit_id', $unitId);
+        }
+
+        return $query->exists();
+    }
+
     /**
-     * الحصول على IDs المواد المسموحة للمستخدم
+     * @deprecated Use hasAccessToSubject() with optional unit scope.
      */
     public function getAllowedSubjectIds(): array
     {

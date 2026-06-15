@@ -1081,4 +1081,9 @@ return [
      'YoutubeLinkVideo-delete' => 'حذف فيديو يوتيوب',
      'YoutubeLinkVideo-show-deleted' => 'عرض فيديوهات يوتيوب المحذوفة',
      'YoutubeLinkVideo-restore-deleted' => 'استعادة فيديوهات يوتيوب المحذوفة',
+     'Subject_unit_pairs' => 'أزواج المادة والوحدة',
+     'Add_row' => 'إضافة صف',
+     'Package_items_required' => 'مطلوب زوج واحد على الأقل من المادة والوحدة',
+     'At_least_one_subject_unit_required' => 'يرجى إضافة زوج واحد على الأقل من المادة والوحدة',
+     'Course_subject' => 'مادة الكورس',
 ];

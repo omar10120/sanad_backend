@@ -3,11 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CodePackage extends Model
 {
@@ -18,8 +15,14 @@ class CodePackage extends Model
         return $this->hasMany(Code::class, 'package_id');
     }
 
+    public function codePackageSubjects(): HasMany
+    {
+        return $this->hasMany(CodePackageSubject::class, 'code_package_id');
+    }
+
     public function subjects(): BelongsToMany
     {
-        return $this->belongsToMany(Subject::class, 'code_package_subject', 'code_package_id', 'subject_id');
+        return $this->belongsToMany(Subject::class, 'code_package_subject', 'code_package_id', 'subject_id')
+            ->withPivot('unit_id');
     }
 }

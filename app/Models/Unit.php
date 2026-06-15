@@ -26,6 +26,29 @@ class Unit extends Model
         return $this->hasMany(LessonVideo::class, 'unit_id');
     }
 
+    public function codePackageSubjects(): HasMany
+    {
+        return $this->hasMany(CodePackageSubject::class, 'unit_id');
+    }
+
+    public function checkStudentAccess(int $studentId): bool
+    {
+        $student = Student::find($studentId);
+
+        if ($student && in_array($student->type_id, [7, 11], true)) {
+            return true;
+        }
+
+        return CodePackage::where('expires_at', '>', now())
+            ->whereHas('codePackageSubjects', function ($query) {
+                $query->where('unit_id', $this->id);
+            })
+            ->whereHas('codes', function ($query) use ($studentId) {
+                $query->where('student_id', $studentId);
+            })
+            ->exists();
+    }
+
     public function canBeDeleted(): bool
     {
         return $this->lessonVideos()->count() === 0;

@@ -4,70 +4,93 @@ namespace App\Services;
 
 use App\Models\Code;
 use App\Models\CodePackage;
+use App\Models\CodePackageSubject;
 use App\Models\Subject;
+use App\Models\Unit;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class CodeService
 {
-    /**
-     * Get all code packages with code count
-     *
-     * @return Collection
-     */
     public function getAllPackages(): Collection
     {
-        return CodePackage::withCount('codes')->get();
+        return CodePackage::withCount('codes')
+            ->with(['codePackageSubjects.subject', 'codePackageSubjects.unit'])
+            ->get();
     }
 
-    /**
-     * Get all subjects for package creation/editing
-     *
-     * @return Collection
-     */
     public function getAllSubjects(): Collection
     {
-        return Subject::all();
+        return Subject::orderBy('name')->get();
     }
 
-    /**
-     * Get package by ID
-     *
-     * @param int $id
-     * @return CodePackage|null
-     */
+    public function getAllUnits(): Collection
+    {
+        return Unit::orderBy('order')->get();
+    }
+
     public function findPackage($id): ?CodePackage
     {
-        return CodePackage::findOrFail($id);
+        return CodePackage::with(['codes.student', 'codePackageSubjects.subject', 'codePackageSubjects.unit'])
+            ->findOrFail($id);
     }
 
-    /**
-     * Create a new code package with generated codes
-     *
-     * @param array $packageData
-     * @param array $subjectIds
-     * @param int $codesCount
-     * @return CodePackage
-     */
-    public function createPackage(array $packageData, array $subjectIds, int $codesCount): CodePackage
+    public function createPackage(array $packageData, array $packageItems, int $codesCount): CodePackage
     {
-        return DB::transaction(function () use ($packageData, $subjectIds, $codesCount) {
+        return DB::transaction(function () use ($packageData, $packageItems, $codesCount) {
             $package = CodePackage::create($packageData);
-            $package->subjects()->sync($subjectIds);
+            $this->syncPackageSubjects($package, $packageItems);
             $this->generateCodes($package->id, $codesCount);
 
-            return $package;
+            return $package->load(['codePackageSubjects.subject', 'codePackageSubjects.unit']);
         });
     }
 
-    /**
-     * Generate unique codes for a package
-     *
-     * @param int $packageId
-     * @param int $count
-     * @return void
-     */
+    public function updatePackage(int $packageId, array $packageData, array $packageItems): CodePackage
+    {
+        return DB::transaction(function () use ($packageId, $packageData, $packageItems) {
+            $package = CodePackage::findOrFail($packageId);
+            $package->update($packageData);
+            $this->syncPackageSubjects($package, $packageItems);
+
+            return $package->load(['codePackageSubjects.subject', 'codePackageSubjects.unit']);
+        });
+    }
+
+    public function syncPackageSubjects(CodePackage $package, array $packageItems): void
+    {
+        $package->codePackageSubjects()->delete();
+
+        foreach ($packageItems as $item) {
+            CodePackageSubject::create([
+                'code_package_id' => $package->id,
+                'subject_id' => $item['subject_id'],
+                'unit_id' => $item['unit_id'],
+            ]);
+        }
+    }
+
+    public function formatPackageSubjectsForDisplay(CodePackage $package): array
+    {
+        return $package->codePackageSubjects
+            ->groupBy('subject_id')
+            ->map(function ($items) {
+                $subject = $items->first()->subject;
+
+                return [
+                    'subject_id' => $subject?->id,
+                    'subject_name' => $subject?->name,
+                    'units' => $items->map(fn ($item) => [
+                        'id' => $item->unit?->id,
+                        'name' => $item->unit?->name,
+                    ])->values()->all(),
+                ];
+            })
+            ->values()
+            ->all();
+    }
+
     private function generateCodes($packageId, $count): void
     {
         for ($i = 0; $i < $count; $i++) {
@@ -82,110 +105,59 @@ class CodeService
         }
     }
 
-    /**
-     * Delete a code package
-     *
-     * @param int $packageId
-     * @return bool
-     */
     public function deletePackage(int $packageId): bool
     {
         $package = CodePackage::findOrFail($packageId);
-        if ($package) {
-            return $package->delete();
-        }
-        return false;
+
+        return (bool) $package->delete();
     }
 
-    /**
-     * Update a code package
-     *
-     * @param int $packageId
-     * @param array $packageData
-     * @param array $subjectIds
-     * @return CodePackage
-     */
-    public function updatePackage(int $packageId, array $packageData, array $subjectIds): CodePackage
-    {
-        return DB::transaction(function () use ($packageId, $packageData, $subjectIds) {
-            // Find and update the package
-            $package = CodePackage::findOrFail($packageId);
-            $package->update($packageData);
-
-            // Sync subjects
-            $package->subjects()->sync($subjectIds);
-
-            return $package;
-        });
-    }
-
-    /**
-     * Delete a specific code
-     *
-     * @param int $codeId
-     * @return bool
-     */
     public function deleteCode(int $codeId): bool
     {
         $code = Code::findOrFail($codeId);
-        if ($code) {
-            return $code->delete();
-        }
-        return false;
+
+        return (bool) $code->delete();
     }
 
-    /**
-     * Check if a code exists and is valid
-     *
-     * @param string $code
-     * @return Code|null
-     */
     public function checkCode($code): ?Code
     {
         return Code::where('code', $code)->first();
     }
 
-    /**
-     * Assign a code to a student
-     *
-     * @param Code $code
-     * @param int $studentId
-     * @return bool
-     */
     public function assignCodeToStudent(Code $code, int $studentId): bool
     {
         if ($code->student_id && $code->student_id != $studentId) {
-            return false; // Code already used by another student
+            return false;
         }
 
         $code->student_id = $studentId;
+
         return $code->save();
     }
 
-    /**
-     * Get codes used by a student
-     *
-     * @param int $studentId
-     * @return Collection
-     */
     public function getStudentCodes(int $studentId): Collection
     {
         return Code::where('student_id', $studentId)
             ->whereHas('package', function ($query) {
                 $query->where('expires_at', '>', now());
             })
+            ->with(['package.codePackageSubjects.subject', 'package.codePackageSubjects.unit'])
             ->get();
     }
 
-    /**
-     * Check if code is already used by another student
-     *
-     * @param Code $code
-     * @param int $studentId
-     * @return bool
-     */
     public function isCodeUsedByAnotherStudent(Code $code, int $studentId): bool
     {
         return $code->student_id && $code->student_id != $studentId;
+    }
+
+    public function studentHasSubjectUnitAccess(int $studentId, int $subjectId, int $unitId): bool
+    {
+        $subject = Subject::find($subjectId);
+
+        if (!$subject) {
+            return false;
+        }
+
+        return $subject->checkStudentAccess($studentId, $unitId);
     }
 }

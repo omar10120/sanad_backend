@@ -48,10 +48,10 @@ class Subject extends Model
         return $this->belongsToMany(Type::class, 'type_has_subject', 'subject_id', 'type_id');
     }
 
-    public function codePackages(): BelongsToMany
-    {
-        return $this->belongsToMany(CodePackage::class, 'code_package_subject', 'subject_id', 'code_package_id');
-    }
+    // public function codePackages(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(CodePackage::class, 'code_package_subject', 'subject_id', 'code_package_id');
+    // }
 
     /**
      * Check if the subject can be deleted
@@ -68,20 +68,37 @@ class Subject extends Model
         return $this->lessons()->where('is_active',1)->withCount('questions')->get()->sum('questions_count');
     }
 
+    public function codePackages(): BelongsToMany
+    {
+        return $this->belongsToMany(CodePackage::class, 'code_package_subject', 'subject_id', 'code_package_id')
+            ->withPivot('unit_id');
+    }
+
+    public function codePackageSubjects(): HasMany
+    {
+        return $this->hasMany(CodePackageSubject::class, 'subject_id');
+    }
+
     // دالة للتحقق من صلاحية الطالب
-    public function checkStudentAccess($studentId): bool
+    public function checkStudentAccess($studentId, ?int $unitId = null): bool
     {
         $student = Student::find($studentId);
 
-        if($student->type_id == 7 || $student->type_id == 11)
+        if ($student && in_array($student->type_id, [7, 11], true)) {
             return true;
-            
-        return $this->codePackages()
-            ->whereHas('codes', function($query) use ($studentId) {
+        }
+
+        $query = $this->codePackages()
+            ->whereHas('codes', function ($query) use ($studentId) {
                 $query->where('student_id', $studentId);
             })
-            ->where('expires_at', '>', now())
-            ->exists();
+            ->where('expires_at', '>', now());
+
+        if ($unitId !== null) {
+            $query->wherePivot('unit_id', $unitId);
+        }
+
+        return $query->exists();
     }
 
     /**

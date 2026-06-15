@@ -25,6 +25,7 @@ class AdminSeeder extends Seeder
             'type_id' => 1,
             'phone' => '0952732752',
             'email' => 'magholm302@gmail.com',
+            'phone_verified_at' => now(),
             'password' => bcrypt('Sanad2025.'),
         ]);
 
@@ -36,6 +37,7 @@ class AdminSeeder extends Seeder
             'type_id' => 1,
             'phone' => '0964630090',
             'email' => 'alaaalshahror@gmail.com',
+            'phone_verified_at' => now(),
             'password' => bcrypt('12345678.'),
             'photo' => 'alaa.jpg',
         ]);

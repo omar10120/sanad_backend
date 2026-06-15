@@ -48,9 +48,13 @@ class CodesExport
             }
 
             // الحصول على الحزمة والأكواد من قاعدة البيانات
-            $package = CodePackage::with(['codes', 'subjects'])->findOrFail($packageId);
+            $package = CodePackage::with(['codes', 'codePackageSubjects.subject', 'codePackageSubjects.unit'])->findOrFail($packageId);
             $codes = $package->codes;
-            $subjects = $package->subjects->pluck('name')->implode(', ');
+            $subjects = collect(app(\App\Services\CodeService::class)->formatPackageSubjectsForDisplay($package))
+                ->map(function ($group) {
+                    return $group['subject_name'] . ': ' . collect($group['units'])->pluck('name')->implode(', ');
+                })
+                ->implode(' | ');
 
             $row = 2;
             foreach ($codes as $code) {

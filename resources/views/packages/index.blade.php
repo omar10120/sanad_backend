@@ -1,19 +1,36 @@
+@php
+    $formatPackageSubjects = function ($package) {
+        return $package->codePackageSubjects
+            ->groupBy('subject_id')
+            ->map(function ($items) {
+                return [
+                    'subject_name' => $items->first()->subject?->name,
+                    'units' => $items->map(fn ($item) => $item->unit?->name)->filter()->values()->all(),
+                ];
+            })
+            ->values();
+    };
+@endphp
+
 @extends('layouts.master')
 @section('title')
     {{ trans('main_trans.Code_packages') }}
 @endsection
 @section('css')
-    <!-- Internal Data table css -->
     <link href="{{ URL::asset('assets/plugins/datatable/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet" />
     <link href="{{ URL::asset('assets/plugins/datatable/css/buttons.bootstrap4.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('assets/plugins/datatable/css/responsive.bootstrap4.min.css') }}" rel="stylesheet" />
     <link href="{{ URL::asset('assets/plugins/datatable/css/jquery.dataTables.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('assets/plugins/datatable/css/responsive.dataTables.min.css') }}" rel="stylesheet">
-    <!--Internal   Notify -->
     <link href="{{ URL::asset('assets/plugins/notify/css/notifIt.css') }}" rel="stylesheet" />
+    <style>
+        .package-item-row { border: 1px solid #e8ebf1; border-radius: 6px; padding: 12px; margin-bottom: 10px; background: #fafbfc; }
+        .package-subjects-tree { text-align: left; display: inline-block; }
+        .package-subjects-tree ul { list-style: none; padding-left: 18px; margin-bottom: 0; }
+        .package-subjects-tree > strong { display: block; margin-bottom: 6px; }
+    </style>
 @endsection
 @section('page-header')
-    <!-- breadcrumb -->
     <div class="breadcrumb-header justify-content-between">
         <div class="my-auto">
             <div class="d-flex">
@@ -21,14 +38,12 @@
             </div>
         </div>
     </div>
-    <!-- breadcrumb -->
 @endsection
 
 @section('content')
 
     @include('components.flash-messages')
 
-    <!-- row opened -->
     <div class="row row-sm">
         <div class="col-xl-12">
             <div class="card">
@@ -41,11 +56,12 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive hoverable-table">
-                        <table class="table table-hover" id="example1" data-page-length='50' style=" text-align: center;">
+                        <table class="table table-hover" id="example1" data-page-length='50' style="text-align: center;">
                             <thead>
                             <tr>
                                 <th class="wd-5p-f border-bottom-0">#</th>
                                 <th class="wd-5p border-bottom-0">{{ trans('main_trans.Name') }}</th>
+                                <th class="wd-15p border-bottom-0">{{ trans('main_trans.Subjects') }}</th>
                                 <th class="wd-5p border-bottom-0">{{ trans('main_trans.Number_of_codes') }}</th>
                                 <th class="wd-5p border-bottom-0">{{ trans('main_trans.Expires_at') }}</th>
                                 <th class="wd-20p border-bottom-0">{{ trans('main_trans.Actions') }}</th>
@@ -53,137 +69,116 @@
                             </thead>
                             <tbody>
                             @foreach ($packages as $package)
+                                @php $groupedSubjects = $formatPackageSubjects($package); @endphp
                                 <tr>
                                     <td>{{ $package->id }}</td>
                                     <td>{{ $package->name }}</td>
-                                    <td>{{ $package->codes->count() }}</td>
+                                    <td>
+                                        @forelse($groupedSubjects as $group)
+                                            <div class="package-subjects-tree mb-2">
+                                                <strong>{{ $group['subject_name'] }}</strong>
+                                                <ul>
+                                                    @foreach($group['units'] as $unitName)
+                                                        <li>├─ {{ $unitName }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        @empty
+                                            <span class="text-muted">-</span>
+                                        @endforelse
+                                    </td>
+                                    <td>{{ $package->codes_count }}</td>
                                     <td>{{ $package->expires_at }}</td>
                                     <td>
                                         @can('Code-show')
-                                            <a class="btn btn-success"
-                                               href="{{ route('code-package.show', $package->id) }}" title="{{trans('main_trans.Codes')}}"><i class="fas fa-file"></i>{{' ' . trans('main_trans.Codes')}}</a>
+                                            <a class="btn btn-success" href="{{ route('code-package.show', $package->id) }}" title="{{ trans('main_trans.Codes') }}">
+                                                <i class="fas fa-file"></i> {{ trans('main_trans.Codes') }}
+                                            </a>
                                         @endcan
                                         @can('Code-show')
                                             @if(config('features.code_export_pdf'))
-                                            <a class="btn btn-info"
-                                               href="{{ route('code-package.export-pdf', $package->id) }}"
-                                               title="{{ trans('main_trans.Export_PDF') }}"><i class="fas fa-file-pdf"></i> {{ trans('main_trans.Export_PDF') }}</a>
+                                                <a class="btn btn-info" href="{{ route('code-package.export-pdf', $package->id) }}" title="{{ trans('main_trans.Export_PDF') }}">
+                                                    <i class="fas fa-file-pdf"></i> {{ trans('main_trans.Export_PDF') }}
+                                                </a>
                                             @else
-                                            <a class="btn btn-outline-warning" style="border: 2px solid #f0ad4e;"
-                                               href="#" onclick="showProModal(event)"
-                                               title="{{ trans('main_trans.Export_PDF') }}"><i class="fas fa-crown text-warning mr-1"></i><i class="fas fa-file-pdf"></i> {{ trans('main_trans.Export_PDF') }}</a>
+                                                <a class="btn btn-outline-warning" style="border: 2px solid #f0ad4e;" href="#" onclick="showProModal(event)" title="{{ trans('main_trans.Export_PDF') }}">
+                                                    <i class="fas fa-crown text-warning mr-1"></i><i class="fas fa-file-pdf"></i> {{ trans('main_trans.Export_PDF') }}
+                                                </a>
                                             @endif
                                         @endcan
                                         @can('Code-show')
                                             @if(config('features.code_export_excel'))
-                                            <a class="btn btn-success"
-                                               href="{{ route('code-package.export-excel', $package->id) }}"
-                                               title="{{ trans('main_trans.Export_Excel') }}"><i class="fas fa-file-excel"></i> {{ trans('main_trans.Export_Excel') }}</a>
+                                                <a class="btn btn-success" href="{{ route('code-package.export-excel', $package->id) }}" title="{{ trans('main_trans.Export_Excel') }}">
+                                                    <i class="fas fa-file-excel"></i> {{ trans('main_trans.Export_Excel') }}
+                                                </a>
                                             @else
-                                            <a class="btn btn-outline-warning" style="border: 2px solid #f0ad4e;"
-                                               href="#" onclick="showProModal(event)"
-                                               title="{{ trans('main_trans.Export_Excel') }}"><i class="fas fa-crown text-warning mr-1"></i><i class="fas fa-file-excel"></i> {{ trans('main_trans.Export_Excel') }}</a>
+                                                <a class="btn btn-outline-warning" style="border: 2px solid #f0ad4e;" href="#" onclick="showProModal(event)" title="{{ trans('main_trans.Export_Excel') }}">
+                                                    <i class="fas fa-crown text-warning mr-1"></i><i class="fas fa-file-excel"></i> {{ trans('main_trans.Export_Excel') }}
+                                                </a>
                                             @endif
                                         @endcan
                                         @can('Code-edit')
-                                            <a class="btn btn-warning edit-package-btn" 
-                                               data-toggle="modal" 
+                                            <a class="btn btn-warning edit-package-btn"
+                                               data-toggle="modal"
                                                data-target="#editPackageModal"
                                                data-package-id="{{ $package->id }}"
                                                data-package-name="{{ $package->name }}"
                                                data-package-expires="{{ $package->expires_at }}"
-                                               data-package-subjects="{{ $package->subjects->pluck('id')->toJson() }}"
+                                               data-package-items="{{ $package->codePackageSubjects->map(fn($item) => ['subject_id' => $item->subject_id, 'unit_id' => $item->unit_id])->values()->toJson() }}"
                                                title="{{ trans('main_trans.Edit_package') }}">
                                                 <i class="fas fa-edit"></i> {{ trans('main_trans.Edit_package') }}
                                             </a>
                                         @endcan
-{{--                                        @can('Code-edit')--}}
-{{--                                            <a class="modal-effect btn btn-info" data-effect="effect-flip-vertical"--}}
-{{--                                               data-id="{{ $package->id }}" data-name="{{ $package->name }}" data-toggle="modal"--}}
-{{--                                               href="#modal2" title="{{trans('main_trans.Subject')}}"><i class="fas fa-pen"></i></a>--}}
-{{--                                        @endcan--}}
                                         @can('Code-delete')
                                             <a class="modal-effect btn btn-danger" data-effect="effect-flip-vertical"
                                                data-id="{{ $package->id }}" data-name="{{ $package->name }}" data-toggle="modal"
-                                               href="#modal3" title="{{trans('main_trans.Delete')}}"><i class="fas fa-trash"></i></a>
+                                               href="#modal3" title="{{ trans('main_trans.Delete') }}"><i class="fas fa-trash"></i></a>
                                         @endcan
-{{--                                            <a id="link-qr-code-{{$package->id}}" class="btn btn-success" href="#" download="QR-Code-{{$package->id}}.jpg"--}}
-{{--                                               title="QR-Code"><i class="fas fa-qrcode m-1"></i> {{" QR-Code"}}</a>--}}
-{{--                                            <script>--}}
-{{--                                                const apiUrl{{$package->id}} = 'https://api.qrserver.com/v1/create-qr-code/' +--}}
-{{--                                                    '?size=1500x1500' +--}}
-{{--                                                    '&data={{$package->codes->first()->code}}';--}}
-{{--                                                    '&margin=20';--}}
-
-{{--                                                fetch(apiUrl{{$package->id}})--}}
-{{--                                                    .then(response => {--}}
-{{--                                                        if (!response.ok) {--}}
-{{--                                                            throw new Error('Network response was not ok');--}}
-{{--                                                        }--}}
-{{--                                                        return response.blob();--}}
-{{--                                                    })--}}
-{{--                                                    .then(blob => {--}}
-{{--                                                        const imageUrl = URL.createObjectURL(blob);--}}
-{{--                                                        --}}{{--// document.getElementById('qr-code-{{$package->id}}').src = imageUrl;--}}
-{{--                                                        document.getElementById('link-qr-code-{{$package->id}}').href = imageUrl;--}}
-{{--                                                    })--}}
-{{--                                                    .catch(error => {--}}
-{{--                                                        console.error('There was a problem with the fetch operation:', error);--}}
-{{--                                                    });--}}
-{{--                                            </script>--}}
-
-
                                     </td>
                                 </tr>
                             @endforeach
                             </tbody>
                         </table>
                     </div>
-
                 </div>
             </div>
         </div>
-        <!--/div-->
 
-        <!-- Add modal -->
         <div class="modal" id="modal1">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content modal-content-demo">
                     <div class="modal-header">
-                        <h6 class="modal-title">{{ trans('main_trans.Add_code_package') }}</h6><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                        <h6 class="modal-title">{{ trans('main_trans.Add_code_package') }}</h6>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                     </div>
-                    <form method="POST" action="{{ route('code-package.store') }}" autocomplete="off">
+                    <form method="POST" action="{{ route('code-package.store') }}" autocomplete="off" id="createPackageForm">
                         @csrf
                         <div class="modal-body">
                             <div class="row mb-3">
-                                <label for="name" class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Name') }}</label>
-                                <div class="col-md-8">
-                                    <input id="name" class="form-control" name="name">
+                                <label for="name" class="col-md-3 col-form-label text-md-end">{{ trans('main_trans.Name') }}</label>
+                                <div class="col-md-9">
+                                    <input id="name" class="form-control" name="name" required>
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <label for="subject_ids" class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Subjects') }}</label>
-                                <div class="col-md-8">
-                                    <select name="subject_ids[]" id="subject_ids" class="form-control" required multiple>
-{{--                                        <option value="" disabled>{{ trans('main_trans.Select_subject') }}</option>--}}
-                                        @foreach ($subjects as $subject)
-                                            <option value="{{$subject->id}}">{{$subject->name}}</option>
-                                        @endforeach
-                                    </select>
+                                <label for="codes_count" class="col-md-3 col-form-label text-md-end">{{ trans('main_trans.Codes_count') }}</label>
+                                <div class="col-md-9">
+                                    <input id="codes_count" class="form-control" name="codes_count" type="number" min="1" required>
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <label for="codes_count" class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Codes_count') }}</label>
-                                <div class="col-md-8">
-                                    <input id="codes_count" class="form-control" name="codes_count">
+                                <label for="expires_at" class="col-md-3 col-form-label text-md-end">{{ trans('main_trans.Expires_at') }}</label>
+                                <div class="col-md-9">
+                                    <input id="expires_at" class="form-control" name="expires_at" type="date" required>
                                 </div>
                             </div>
-                            <div class="row mb-3">
-                                <label for="expires_at" class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Expires_at') }}</label>
-                                <div class="col-md-8">
-                                    <input id="expires_at" class="form-control" name="expires_at" type="date">
-                                </div>
+                            <div class="mb-2 d-flex justify-content-between align-items-center">
+                                <label class="mb-0 font-weight-bold">{{ trans('main_trans.Subject_unit_pairs') }}</label>
+                                <button type="button" class="btn btn-sm btn-outline-primary" id="add-package-item">
+                                    <i class="fas fa-plus"></i> {{ trans('main_trans.Add_row') }}
+                                </button>
                             </div>
+                            <div id="package-items-container"></div>
                         </div>
                         <div class="modal-footer">
                             <button class="btn ripple btn-primary" type="submit">{{ trans('main_trans.Add_code_package') }}</button>
@@ -193,17 +188,13 @@
                 </div>
             </div>
         </div>
-        <!-- End Add modal -->
 
-        <!-- Edit Package Modal -->
         <div class="modal" id="editPackageModal">
             <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                 <div class="modal-content modal-content-demo">
                     <div class="modal-header">
                         <h6 class="modal-title">{{ trans('main_trans.Edit_package') }}</h6>
-                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                     </div>
                     <form id="editPackageForm" method="post">
                         {{ method_field('PUT') }}
@@ -223,15 +214,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label for="edit_subject_ids">{{ trans('main_trans.Subjects') }}</label>
-                                <select class="form-control" id="edit_subject_ids" name="subject_ids[]" multiple required style="height: 120px;">
-                                    @foreach($subjects as $subject)
-                                        <option value="{{ $subject->id }}">{{ $subject->name }}</option>
-                                    @endforeach
-                                </select>
-                                <small class="form-text text-muted">{{ trans('main_trans.Hold_Ctrl_to_select_multiple') }}</small>
+                            <div class="mb-2 d-flex justify-content-between align-items-center">
+                                <label class="mb-0 font-weight-bold">{{ trans('main_trans.Subject_unit_pairs') }}</label>
+                                <button type="button" class="btn btn-sm btn-outline-primary" id="add-edit-package-item">
+                                    <i class="fas fa-plus"></i> {{ trans('main_trans.Add_row') }}
+                                </button>
                             </div>
+                            <div id="edit-package-items-container"></div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ trans('main_trans.Close') }}</button>
@@ -242,13 +231,12 @@
             </div>
         </div>
 
-        <!-- Modal effects -->
         <div class="modal" id="modal3">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content modal-content-demo">
                     <div class="modal-header">
-                        <h6 class="modal-title">{{ trans('main_trans.Code_package_delete') }}</h6><button aria-label="Close" class="close"
-                            data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                        <h6 class="modal-title">{{ trans('main_trans.Code_package_delete') }}</h6>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                     </div>
                     <form action="{{ route('code-package.destroy', 'test') }}" method="post">
                         {{ method_field('delete') }}
@@ -267,90 +255,139 @@
             </div>
         </div>
     </div>
-
-    </div>
-    <!-- /row -->
-    </div>
-    <!-- Container closed -->
-    </div>
-    <!-- main-content closed -->
 @endsection
 
 @section('js')
-    <!-- Internal Data tables -->
     <script src="{{ URL::asset('assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.dataTables.min.js') }}"></script>
     <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.responsive.min.js') }}"></script>
     <script src="{{ URL::asset('assets/plugins/datatable/js/responsive.dataTables.min.js') }}"></script>
     <script src="{{ URL::asset('assets/plugins/datatable/js/jquery.dataTables.js') }}"></script>
     <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.bootstrap4.js') }}"></script>
-    <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ URL::asset('assets/plugins/datatable/js/responsive.bootstrap4.min.js') }}"></script>
-    <!--Internal  Datatable js -->
     <script src="{{ URL::asset('assets/js/table-data.js') }}"></script>
-    <!--Internal  Notify js -->
     <script src="{{ URL::asset('assets/plugins/notify/js/notifIt.js') }}"></script>
-    <script src="{{ URL::asset('assets/plugins/notify/js/notifit-custom.js') }}"></script>
-    <!-- Internal Modal js-->
     <script src="{{ URL::asset('assets/js/modal.js') }}"></script>
 
     <script>
-        $('#modal2').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget)
-            var id = button.data('id')
-            var name = button.data('name')
-            var modal = $(this)
-            modal.find('.modal-body #id').val(id);
-            modal.find('.modal-body #name').val(name);
-        })
+        const subjects = [
+            @foreach($subjects as $subject)
+                { id: {{ $subject->id }}, name: @json($subject->name) },
+            @endforeach
+        ];
+        const units = [
+            @foreach($units as $unit)
+                { id: {{ $unit->id }}, name: @json($unit->name) },
+            @endforeach
+        ];
 
-        $('#modal3').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget)
-            var id = button.data('id')
-            var name = button.data('name')
-            var modal = $(this)
-            modal.find('.modal-body #id').val(id);
-            modal.find('.modal-body #name').val(name);
-        })
+        function populateUnitSelect(unitSelect, selectedUnitId = '') {
+            unitSelect.html(`<option value="">{{ trans('main_trans.Select_unit') }}</option>`);
+            units.forEach(function(unit) {
+                unitSelect.append(`<option value="${unit.id}">${unit.name}</option>`);
+            });
+            if (selectedUnitId) {
+                unitSelect.val(selectedUnitId);
+            }
+        }
 
-        // Edit Package Modal functionality
+        function buildPackageItemRow(container, index, selectedSubjectId = '', selectedUnitId = '') {
+            const row = $(`
+                <div class="package-item-row" data-index="${index}">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <label class="mb-1">{{ trans('main_trans.Subject') }}</label>
+                            <select class="form-control package-subject-select" name="package_items[${index}][subject_id]" required>
+                                <option value="">{{ trans('main_trans.Select_subject') }}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="mb-1">{{ trans('main_trans.Unit') }}</label>
+                            <select class="form-control package-unit-select" name="package_items[${index}][unit_id]" required>
+                                <option value="">{{ trans('main_trans.Select_unit') }}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="button" class="btn btn-outline-danger btn-block remove-package-item">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            subjects.forEach(function(subject) {
+                row.find('.package-subject-select').append(`<option value="${subject.id}">${subject.name}</option>`);
+            });
+
+            container.append(row);
+            populateUnitSelect(row.find('.package-unit-select'), selectedUnitId);
+
+            if (selectedSubjectId) {
+                row.find('.package-subject-select').val(selectedSubjectId);
+            }
+        }
+
+        function reindexPackageItems(container) {
+            container.find('.package-item-row').each(function(index) {
+                $(this).attr('data-index', index);
+                $(this).find('.package-subject-select').attr('name', `package_items[${index}][subject_id]`);
+                $(this).find('.package-unit-select').attr('name', `package_items[${index}][unit_id]`);
+            });
+        }
+
+        $('#add-package-item').on('click', function() {
+            const container = $('#package-items-container');
+            buildPackageItemRow(container, container.find('.package-item-row').length);
+        });
+
+        $('#add-edit-package-item').on('click', function() {
+            const container = $('#edit-package-items-container');
+            buildPackageItemRow(container, container.find('.package-item-row').length);
+        });
+
+        $(document).on('click', '.remove-package-item', function() {
+            const container = $(this).closest('[id$="package-items-container"]');
+            $(this).closest('.package-item-row').remove();
+            reindexPackageItems(container);
+        });
+
+        $('#modal1').on('show.bs.modal', function() {
+            const container = $('#package-items-container');
+            container.empty();
+            buildPackageItemRow(container, 0);
+        });
+
         $('.edit-package-btn').on('click', function() {
-            var packageId = $(this).data('package-id');
-            var packageName = $(this).data('package-name');
-            var packageExpires = $(this).data('package-expires');
-            var packageSubjects = $(this).data('package-subjects');
-            
-            // Set form action
-            $('#editPackageForm').attr('action', '{{ route("code-package.index") }}/' + packageId);
-            
-            // Fill form fields
-            $('#edit_name').val(packageName);
-            $('#edit_expires_at').val(packageExpires);
-            
-            // Clear previous selections
-            $('#edit_subject_ids option').prop('selected', false);
-            
-            // Select the package's subjects
-            if (packageSubjects && packageSubjects.length > 0) {
-                packageSubjects.forEach(function(subjectId) {
-                    $('#edit_subject_ids option[value="' + subjectId + '"]').prop('selected', true);
+            const packageId = $(this).data('package-id');
+            const packageItems = $(this).data('package-items') || [];
+
+            $('#editPackageForm').attr('action', '{{ route('code-package.index') }}/' + packageId);
+            $('#edit_name').val($(this).data('package-name'));
+            $('#edit_expires_at').val($(this).data('package-expires'));
+
+            const container = $('#edit-package-items-container');
+            container.empty();
+
+            if (packageItems.length === 0) {
+                buildPackageItemRow(container, 0);
+            } else {
+                packageItems.forEach(function(item, index) {
+                    buildPackageItemRow(container, index, item.subject_id, item.unit_id);
                 });
             }
-            
-            console.log('Edit modal opened for package:', packageId);
         });
 
-        // Validation for edit form
-        $('#editPackageForm').on('submit', function(e) {
-            var selectedSubjects = $('#edit_subject_ids option:selected').length;
-            if (selectedSubjects === 0) {
+        $('#createPackageForm, #editPackageForm').on('submit', function(e) {
+            if ($(this).find('.package-item-row').length === 0) {
                 e.preventDefault();
-                alert('{{ trans("main_trans.Please_select_at_least_one_subject") }}');
-                return false;
+                alert('{{ trans('main_trans.At_least_one_subject_unit_required') }}');
             }
         });
 
+        $('#modal3').on('show.bs.modal', function(event) {
+            const button = $(event.relatedTarget);
+            $(this).find('.modal-body #id').val(button.data('id'));
+            $(this).find('.modal-body #name').val(button.data('name'));
+        });
     </script>
-
 @endsection

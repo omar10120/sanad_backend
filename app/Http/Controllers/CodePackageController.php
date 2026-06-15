@@ -6,6 +6,7 @@ use App\Exceptions\PermissionException;
 use App\Http\Requests\CodePackage\DeleteCodePackageRequest;
 use App\Http\Requests\CodePackage\DeleteCodeRequest;
 use App\Http\Requests\CodePackage\StoreCodePackageRequest;
+use App\Http\Requests\CodePackage\UpdateCodePackageRequest;
 use App\Services\CodeService;
 use App\Traits\HasPermissionChecks;
 use App\Exports\CodesExport;
@@ -28,36 +29,34 @@ class CodePackageController extends Controller
         $this->codeService = $codeService;
     }
 
-    // عرض كل الحزم
     public function index(): Factory|Application|View
     {
         $packages = $this->codeService->getAllPackages();
         $subjects = $this->codeService->getAllSubjects();
+        $units = $this->codeService->getAllUnits();
 
-        return view('packages.index', compact('packages', 'subjects'));
+        return view('packages.index', compact('packages', 'subjects', 'units'));
     }
 
-    // صفحة إنشاء حزمة جديدة
     public function create(): Factory|Application|View
     {
         $subjects = $this->codeService->getAllSubjects();
-        return view('packages.create', compact('subjects'));
+        $units = $this->codeService->getAllUnits();
+
+        return view('packages.create', compact('subjects', 'units'));
     }
 
-    // حفظ حزمة جديدة مع توليد الأكواد
     public function store(StoreCodePackageRequest $request): RedirectResponse
     {
         try {
             $this->checkPermission(PermissionEnum::CODE_ADD);
 
-            $packageData = [
-                'name' => $request->name,
-                'expires_at' => $request->expires_at,
-            ];
-
             $this->codeService->createPackage(
-                $packageData,
-                $request->subject_ids,
+                [
+                    'name' => $request->name,
+                    'expires_at' => $request->expires_at,
+                ],
+                $request->package_items,
                 $request->codes_count
             );
 
@@ -69,8 +68,6 @@ class CodePackageController extends Controller
         }
     }
 
-    // عرض حزمة
-
     /**
      * @throws PermissionException
      */
@@ -79,17 +76,13 @@ class CodePackageController extends Controller
         $this->checkPermission(PermissionEnum::CODE_SHOW);
 
         $package = $this->codeService->findPackage($id);
-
-        if (!$package) {
-            return view('404');
-        }
-
         $subjects = $this->codeService->getAllSubjects();
+        $units = $this->codeService->getAllUnits();
+        $packageSubjectsGrouped = $this->codeService->formatPackageSubjectsForDisplay($package);
 
-        return view('packages.show', compact('package', 'subjects'));
+        return view('packages.show', compact('package', 'subjects', 'units', 'packageSubjectsGrouped'));
     }
 
-    // حذف حزمة
     public function destroy(DeleteCodePackageRequest $request): RedirectResponse
     {
         try {
@@ -110,7 +103,6 @@ class CodePackageController extends Controller
         }
     }
 
-    // حذف كود
     public function destroyCode(DeleteCodeRequest $request): RedirectResponse
     {
         try {
@@ -131,7 +123,6 @@ class CodePackageController extends Controller
         }
     }
 
-    // تصدير الأكواد الخاصة بحزمة معينة
     public function exportPackage($packageId): StreamedResponse|RedirectResponse
     {
         if (!config('features.code_export_excel')) {
@@ -141,25 +132,15 @@ class CodePackageController extends Controller
         return (new CodesExport)->exportByPackage($packageId);
     }
 
-    // تحديث حزمة الأكواد
-    public function update(Request $request, $id): RedirectResponse
+    public function update(UpdateCodePackageRequest $request, $id): RedirectResponse
     {
         try {
             $this->checkPermission(PermissionEnum::CODE_EDIT);
 
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'expires_at' => 'required|date',
-                'subject_ids' => 'required|array|min:1',
-                'subject_ids.*' => 'exists:subjects,id'
-            ]);
-
-            $packageData = [
+            $this->codeService->updatePackage($id, [
                 'name' => $request->name,
                 'expires_at' => $request->expires_at,
-            ];
-
-            $this->codeService->updatePackage($id, $packageData, $request->subject_ids);
+            ], $request->package_items);
 
             session()->flash('edit', trans('main_trans.Code_package_edit_successfully'));
             return back();
@@ -169,7 +150,6 @@ class CodePackageController extends Controller
         }
     }
 
-    // تصدير الأكواد كملف PDF
     public function exportPackagePdf($packageId)
     {
         try {
