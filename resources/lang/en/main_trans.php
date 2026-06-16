@@ -459,6 +459,7 @@ return [
     'Question_tags'=>'Question tags',
     'Order'=>'Order',
     'Reorder'=>'Reorder',
+    'Deleted_types'=>'Deleted types',
     'Save Order'=>'Save Order',
     'Order updated successfully'=>'Order updated successfully',
     'Error updating order'=>'Error updating order',

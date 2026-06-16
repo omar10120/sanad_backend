@@ -113,6 +113,11 @@ class QuestionService
             } else {
                 $question_group = QuestionGroup::where('id', $data['question_group_id'])->first();
             }
+            if (!$question_group) {
+                throw new \Exception(
+                    "Question group {$data['question_group_id']} not found"
+                );
+            }
 
             // Create question based on type
             $question = $this->createQuestionByType($data, $question_group, $user_id);
@@ -167,6 +172,11 @@ class QuestionService
                 ]);
             } else {
                 $question_group = QuestionGroup::where('id', $data['question_group_id'])->first();
+            }
+            if (!$question_group) {
+                throw new \Exception(
+                    "Question group {$data['question_group_id']} not found"
+                );
             }
 
             // Update question based on type
@@ -293,9 +303,11 @@ class QuestionService
 
         $questionType = QuestionType::find($data['type_id']);
         $type = $questionType ? $questionType->type : null;
+        $lessonId = $data['lesson_id'] ?? $question_group->lesson_id;
 
         if ($type === QuestionType::TYPE_AUTOMATION) {
             return Question::create([
+                'lesson_id' => $lessonId,
                 'type_id' => $data['type_id'],
                 'created_by' => $user_id,
                 'text_question' => json_decode($data['text_question'], true),
@@ -307,6 +319,7 @@ class QuestionService
             ]);
         } elseif ($type === QuestionType::TYPE_TRUE_OR_FALSE) {
             return Question::create([
+                'lesson_id' => $lessonId,
                 'type_id' => $data['type_id'],
                 'created_by' => $user_id,
                 'text_question' => json_decode($data['text_question'], true),
@@ -318,6 +331,7 @@ class QuestionService
             ]);
         } else {
             return Question::create([
+                'lesson_id' => $lessonId,
                 'type_id' => $data['type_id'],
                 'created_by' => $user_id,
                 'text_question' => json_decode($data['text_question'], true),
@@ -406,10 +420,4 @@ class QuestionService
             $newFileName = 'hint-photo-' . $question->id . '-' . Carbon::now()->format('Ymd_His') . '.' . $extension;
 
             $question->update([
-                'hint_photo' => $newFileName,
-            ]);
-
-            $data['hint_photo']->move(public_path('assets/image/Question/'.$question->id.'/hint-photo'), $newFileName);
-        }
-    }
-}
+     

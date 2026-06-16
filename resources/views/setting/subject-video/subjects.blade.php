@@ -3,6 +3,7 @@
     {{ trans('main_trans.Course_subjects') . ' - ' . $type_selected->name }}
 @endsection
 @section('css')
+    <link href="{{URL::asset('assets/plugins/fileuploads/css/fileupload.css')}}" rel="stylesheet" type="text/css"/>
     <link href="{{URL::asset('assets/plugins/datatable/css/dataTables.bootstrap4.min.css')}}" rel="stylesheet"/>
     <link href="{{URL::asset('assets/plugins/datatable/css/buttons.bootstrap4.min.css')}}" rel="stylesheet">
     <link href="{{URL::asset('assets/plugins/datatable/css/responsive.bootstrap4.min.css')}}" rel="stylesheet"/>
@@ -64,7 +65,7 @@
                                 <tr>
                                     <th class="wd-5p-f drag-handle border-bottom-0" style="display: none;">{{ trans('main_trans.Order') }}</th>
                                     <th class="wd-5p-f border-bottom-0">#</th>
-                                    <th class="wd-5p-f border-bottom-0">{{ trans('main_trans.Icon') }}</th>
+                                    <th class="wd-5p-f border-bottom-0">{{ trans('main_trans.Subject_photo') }}</th>
                                     <th class="wd-10p border-bottom-0">{{ trans('main_trans.Name') }}</th>
                                     <th class="wd-10p border-bottom-0">{{ trans('main_trans.Certificate_types') }}</th>
                                     <th class="wd-5p border-bottom-0">{{ trans('main_trans.Number_of_teachers') }}</th>
@@ -79,10 +80,10 @@
                                         </td>
                                         <td>{{ $subjectVideo->id }}</td>
                                         <td>
-                                            @if($subjectVideo->icon)
-                                                <span class="material-icons" style="font-size: 48px">{{ $subjectVideo->icon }}</span>
+                                            @if($subjectVideo->icon_photo == null)
+                                                <img width="100px" src="{{URL::asset('assets/image/sanad.jpg')}}">
                                             @else
-                                                <img width="80px" src="{{URL::asset('assets/image/sanad.jpg')}}">
+                                                <img width="100px" src="{{URL::asset('assets/image/SubjectVideos/' . $subjectVideo->id . '/' . $subjectVideo->icon_photo)}}">
                                             @endif
                                         </td>
                                         <td><b>{{ $subjectVideo->name }}</b></td>
@@ -105,6 +106,10 @@
                                                    data-icon="{{ $subjectVideo->icon }}"
                                                    data-link="{{ $subjectVideo->link }}"
                                                    data-description="{{ $subjectVideo->description }}"
+                                                   data-light-color="{{ $subjectVideo->light_color_code ?? '#ffffff' }}"
+                                                   data-dark-color="{{ $subjectVideo->dark_color_code ?? '#000000' }}"
+                                                   data-icon-photo="{{ $subjectVideo->icon_photo }}"
+                                                   data-photo-url="{{ $subjectVideo->icon_photo ? URL::asset('assets/image/SubjectVideos/' . $subjectVideo->id . '/' . $subjectVideo->icon_photo) : '' }}"
                                                    data-types="{{ $subjectVideo->types->pluck('id')->implode(',') }}"
                                                    data-toggle="modal" href="#modal2">
                                                     <i class="fas fa-pen"></i>
@@ -149,7 +154,7 @@
                     <h6 class="modal-title">{{ trans('main_trans.Add_course_subject') }}</h6>
                     <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form method="POST" action="{{ route('subject-video.store') }}" autocomplete="off">
+                <form method="POST" action="{{ route('subject-video.store') }}" autocomplete="off" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row mb-3">
@@ -186,6 +191,22 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="row mb-3">
+                            <label for="icon_photo" class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Subject_photo') }}</label>
+                            <div class="col-md-8">
+                                <input class="dropify" id="icon_photo" name="icon_photo" type="file" data-height="120" accept=".jpg, .png, image/jpeg, image/png">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="light_color_code" class="col-md-3 col-form-label text-md-end">{{ trans('main_trans.Light_color') }}</label>
+                            <div class="col-md-3">
+                                <input id="light_color_code" class="form-control" name="light_color_code" type="color" value="#ffffff">
+                            </div>
+                            <label for="dark_color_code" class="col-md-3 col-form-label text-md-end">{{ trans('main_trans.Dark_color') }}</label>
+                            <div class="col-md-3">
+                                <input id="dark_color_code" class="form-control" name="dark_color_code" type="color" value="#000000">
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button class="btn ripple btn-primary" type="submit">{{ trans('main_trans.Add_course_subject') }}</button>
@@ -203,7 +224,7 @@
                     <h6 class="modal-title">{{ trans('main_trans.Edit_course_subject') }}</h6>
                     <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form method="POST" action="{{ route('subject-video.update') }}" autocomplete="off">
+                <form method="POST" action="{{ route('subject-video.update') }}" autocomplete="off" enctype="multipart/form-data">
                     @csrf
                     @method('PATCH')
                     <div class="modal-body">
@@ -240,6 +261,22 @@
                                         <option value="{{ $type->id }}">{{ $type->name }}</option>
                                     @endforeach
                                 </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="edit_icon_photo" class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Subject_photo') }}</label>
+                            <div class="col-md-8">
+                                <input class="dropify" id="edit_icon_photo" name="icon_photo" type="file" data-height="120" accept=".jpg, .png, image/jpeg, image/png">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="edit_light_color_code" class="col-md-3 col-form-label text-md-end">{{ trans('main_trans.Light_color') }}</label>
+                            <div class="col-md-3">
+                                <input id="edit_light_color_code" class="form-control" name="light_color_code" type="color" value="#ffffff">
+                            </div>
+                            <label for="edit_dark_color_code" class="col-md-3 col-form-label text-md-end">{{ trans('main_trans.Dark_color') }}</label>
+                            <div class="col-md-3">
+                                <input id="edit_dark_color_code" class="form-control" name="dark_color_code" type="color" value="#000000">
                             </div>
                         </div>
                     </div>
@@ -285,6 +322,13 @@
     <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.bootstrap4.js') }}"></script>
     <script src="{{ URL::asset('assets/js/table-data.js') }}"></script>
     <script src="{{ URL::asset('assets/js/modal.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/fileuploads/js/fileupload.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/fileuploads/js/file-upload.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/fancyuploder/jquery.ui.widget.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/fancyuploder/jquery.fileupload.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/fancyuploder/jquery.iframe-transport.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/fancyuploder/jquery.fancy-fileupload.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/fancyuploder/fancy-uploader.js') }}"></script>
     <script src="{{ URL::asset('assets/plugins/select2/js/select2.min.js') }}"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
@@ -298,8 +342,22 @@
             $('#edit_icon').val(button.data('icon'));
             $('#edit_link').val(button.data('link'));
             $('#edit_description').val(button.data('description'));
+            $('#edit_light_color_code').val(button.data('light-color') || '#ffffff');
+            $('#edit_dark_color_code').val(button.data('dark-color') || '#000000');
             var types = String(button.data('types') || '').split(',').filter(Boolean);
             $('#edit_types').val(types).trigger('change');
+
+            var photoUrl = button.data('photo-url') || '';
+            var $photoInput = $('#edit_icon_photo');
+            var drEvent = $photoInput.data('dropify');
+            if (drEvent) {
+                drEvent.destroy();
+                $photoInput.removeAttr('data-default-file');
+            }
+            if (photoUrl) {
+                $photoInput.attr('data-default-file', photoUrl);
+            }
+            $photoInput.dropify({ height: 120 });
         });
 
         $('#modal3').on('show.bs.modal', function (event) {

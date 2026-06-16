@@ -17,9 +17,12 @@ class SubjectVideo extends Model
     protected $fillable = [
         'name',
         'icon',
+        'icon_photo',
         'link',
         'is_active',
         'description',
+        'light_color_code',
+        'dark_color_code',
         'order',
     ];
 

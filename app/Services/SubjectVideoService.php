@@ -5,10 +5,12 @@ namespace App\Services;
 use App\Http\Resources\TypeHasSubjectVideoResource;
 use App\Models\SubjectVideo;
 use App\Models\Type;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SubjectVideoService
 {
@@ -24,6 +26,7 @@ class SubjectVideoService
 
     public function createSubjectVideo(array $data): SubjectVideo
     {
+        $data['icon_photo'] = null;
         $subjectVideo = SubjectVideo::create($data);
 
         if (isset($data['types'])) {
@@ -38,9 +41,14 @@ class SubjectVideoService
         return SubjectVideo::findOrFail($id);
     }
 
-    public function updateSubjectVideo(int $id, array $data): bool
+    public function updateSubjectVideo(int $id, array $data, ?string $newPhotoFileName = null): bool
     {
         $subjectVideo = SubjectVideo::findOrFail($id);
+
+        if ($newPhotoFileName) {
+            $data['icon_photo'] = $newPhotoFileName;
+        }
+
         $subjectVideo->update($data);
 
         if (isset($data['types'])) {
@@ -83,6 +91,42 @@ class SubjectVideoService
     public function getAllTypes(): Collection
     {
         return Type::orderBy('order')->get();
+    }
+
+    public function handlePhotoUpload(SubjectVideo $subjectVideo, $photoFile): ?string
+    {
+        if (!$photoFile || !$photoFile->isValid()) {
+            return null;
+        }
+
+        $extension = $photoFile->getClientOriginalExtension();
+        $newFileName = 'subject-video-' . $subjectVideo->id . '-' . Carbon::now()->format('Ymd_His') . '.' . $extension;
+
+        $uploadPath = public_path('assets/image/SubjectVideos/' . $subjectVideo->id);
+        if (!file_exists($uploadPath)) {
+            mkdir($uploadPath, 0755, true);
+        }
+
+        try {
+            $photoFile->move($uploadPath, $newFileName);
+
+            return $newFileName;
+        } catch (\Exception $e) {
+            Log::error('Subject video photo upload failed: ' . $e->getMessage());
+
+            return null;
+        }
+    }
+
+    public function deleteSubjectVideoPhoto(int $subjectVideoId, string $photoName): bool
+    {
+        $path = public_path('assets/image/SubjectVideos/' . $subjectVideoId . '/' . $photoName);
+
+        if (file_exists($path)) {
+            return unlink($path);
+        }
+
+        return false;
     }
 
      /**

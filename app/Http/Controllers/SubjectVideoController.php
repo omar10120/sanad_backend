@@ -49,7 +49,15 @@ class SubjectVideoController extends Controller
     {
         $this->checkPermission(PermissionEnum::SUBJECT_VIDEO_ADD);
 
-        $this->subjectVideoService->createSubjectVideo($request->validated());
+        $data = $request->validated();
+        $subjectVideo = $this->subjectVideoService->createSubjectVideo($data);
+
+        if ($request->hasFile('icon_photo')) {
+            $newPhotoFileName = $this->subjectVideoService->handlePhotoUpload($subjectVideo, $request->file('icon_photo'));
+            if ($newPhotoFileName) {
+                $this->subjectVideoService->updateSubjectVideo($subjectVideo->id, [], $newPhotoFileName);
+            }
+        }
 
         session()->flash('add', trans('main_trans.Subject_video_add_successfully'));
         return back();
@@ -60,7 +68,18 @@ class SubjectVideoController extends Controller
         $this->checkPermission(PermissionEnum::SUBJECT_VIDEO_EDIT);
 
         $data = $request->validated();
-        $this->subjectVideoService->updateSubjectVideo($data['id'], $data);
+        $id = $data['id'];
+        $newPhotoFileName = null;
+
+        if ($request->hasFile('icon_photo')) {
+            $subjectVideo = $this->subjectVideoService->findSubjectVideo($id);
+            if ($subjectVideo->icon_photo) {
+                $this->subjectVideoService->deleteSubjectVideoPhoto($subjectVideo->id, $subjectVideo->icon_photo);
+            }
+            $newPhotoFileName = $this->subjectVideoService->handlePhotoUpload($subjectVideo, $request->file('icon_photo'));
+        }
+
+        $this->subjectVideoService->updateSubjectVideo($id, $data, $newPhotoFileName);
 
         session()->flash('edit', trans('main_trans.Subject_video_edit_successfully'));
         return back();
