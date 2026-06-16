@@ -278,38 +278,77 @@
                 { id: {{ $subject->id }}, name: @json($subject->name) },
             @endforeach
         ];
+        const teachers = [
+            @foreach($teachers as $teacher)
+                { id: {{ $teacher->id }}, name: @json($teacher->name) },
+            @endforeach
+        ];
         const units = [
             @foreach($units as $unit)
-                { id: {{ $unit->id }}, name: @json($unit->name) },
+                { id: {{ $unit->id }}, name: @json($unit->name), teacher_id: {{ $unit->teacher_id }} },
             @endforeach
         ];
         const packageItems = @json($package->codePackageSubjects->map(function ($item) {
             return ['subject_id' => $item->subject_id, 'unit_id' => $item->unit_id];
         })->values());
 
-        function populateUnitSelect(unitSelect, selectedUnitId = '') {
-            unitSelect.html(`<option value="">{{ trans('main_trans.Select_unit') }}</option>`);
-            units.forEach(function(unit) {
-                unitSelect.append(`<option value="${unit.id}">${unit.name}</option>`);
+        function getTeacherIdByUnitId(unitId) {
+            const unit = units.find(function(u) { return String(u.id) === String(unitId); });
+            return unit ? unit.teacher_id : '';
+        }
+
+        function populateTeacherSelect(teacherSelect, selectedTeacherId = '') {
+            teacherSelect.html(`<option value="">{{ trans('main_trans.Select_teacher') }}</option>`);
+            teachers.forEach(function(teacher) {
+                teacherSelect.append(`<option value="${teacher.id}">${teacher.name}</option>`);
             });
+            if (selectedTeacherId) {
+                teacherSelect.val(selectedTeacherId);
+            }
+        }
+
+        function populateUnitSelect(unitSelect, teacherId, selectedUnitId = '') {
+            unitSelect.html(`<option value="">{{ trans('main_trans.Select_unit') }}</option>`);
+            if (!teacherId) {
+                unitSelect.prop('disabled', true);
+                return;
+            }
+
+            unitSelect.prop('disabled', false);
+            units
+                .filter(function(unit) { return String(unit.teacher_id) === String(teacherId); })
+                .forEach(function(unit) {
+                    unitSelect.append(`<option value="${unit.id}">${unit.name}</option>`);
+                });
+
             if (selectedUnitId) {
                 unitSelect.val(selectedUnitId);
             }
         }
 
-        function buildPackageItemRow(container, index, selectedSubjectId = '', selectedUnitId = '') {
+        function buildPackageItemRow(container, index, selectedSubjectId = '', selectedUnitId = '', selectedTeacherId = '') {
+            if (!selectedTeacherId && selectedUnitId) {
+                selectedTeacherId = getTeacherIdByUnitId(selectedUnitId);
+            }
+
             const row = $(`
                 <div class="package-item-row" data-index="${index}" style="border:1px solid #e8ebf1;border-radius:6px;padding:12px;margin-bottom:10px;">
                     <div class="row">
-                        <div class="col-md-5">
+                        <div class="col-md-4">
                             <label class="mb-1">{{ trans('main_trans.Subject') }}</label>
                             <select class="form-control package-subject-select" name="package_items[${index}][subject_id]" required>
                                 <option value="">{{ trans('main_trans.Select_subject') }}</option>
                             </select>
                         </div>
-                        <div class="col-md-5">
+                        <div class="col-md-3">
+                            <label class="mb-1">{{ trans('main_trans.Teacher') }}</label>
+                            <select class="form-control package-teacher-select">
+                                <option value="">{{ trans('main_trans.Select_teacher') }}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
                             <label class="mb-1">{{ trans('main_trans.Unit') }}</label>
-                            <select class="form-control package-unit-select" name="package_items[${index}][unit_id]" required>
+                            <select class="form-control package-unit-select" name="package_items[${index}][unit_id]" required disabled>
                                 <option value="">{{ trans('main_trans.Select_unit') }}</option>
                             </select>
                         </div>
@@ -327,7 +366,8 @@
             });
 
             container.append(row);
-            populateUnitSelect(row.find('.package-unit-select'), selectedUnitId);
+            populateTeacherSelect(row.find('.package-teacher-select'), selectedTeacherId);
+            populateUnitSelect(row.find('.package-unit-select'), selectedTeacherId, selectedUnitId);
 
             if (selectedSubjectId) {
                 row.find('.package-subject-select').val(selectedSubjectId);
@@ -341,6 +381,11 @@
                 $(this).find('.package-unit-select').attr('name', `package_items[${index}][unit_id]`);
             });
         }
+
+        $(document).on('change', '.package-teacher-select', function() {
+            const row = $(this).closest('.package-item-row');
+            populateUnitSelect(row.find('.package-unit-select'), $(this).val());
+        });
 
         $('#add-edit-package-item').on('click', function() {
             const container = $('#edit-package-items-container');

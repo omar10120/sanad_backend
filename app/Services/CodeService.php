@@ -6,6 +6,7 @@ use App\Models\Code;
 use App\Models\CodePackage;
 use App\Models\CodePackageSubject;
 use App\Models\Subject;
+use App\Models\Teacher;
 use App\Models\Unit;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -28,6 +29,11 @@ class CodeService
     public function getAllUnits(): Collection
     {
         return Unit::orderBy('order')->get();
+    }
+
+    public function getAllTeachers(): Collection
+    {
+        return Teacher::orderBy('name')->get();
     }
 
     public function findPackage($id): ?CodePackage

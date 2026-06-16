@@ -34,8 +34,9 @@ class CodePackageController extends Controller
         $packages = $this->codeService->getAllPackages();
         $subjects = $this->codeService->getAllSubjects();
         $units = $this->codeService->getAllUnits();
+        $teachers = $this->codeService->getAllTeachers();
 
-        return view('packages.index', compact('packages', 'subjects', 'units'));
+        return view('packages.index', compact('packages', 'subjects', 'units', 'teachers'));
     }
 
     public function create(): Factory|Application|View
@@ -78,9 +79,10 @@ class CodePackageController extends Controller
         $package = $this->codeService->findPackage($id);
         $subjects = $this->codeService->getAllSubjects();
         $units = $this->codeService->getAllUnits();
+        $teachers = $this->codeService->getAllTeachers();
         $packageSubjectsGrouped = $this->codeService->formatPackageSubjectsForDisplay($package);
 
-        return view('packages.show', compact('package', 'subjects', 'units', 'packageSubjectsGrouped'));
+        return view('packages.show', compact('package', 'subjects', 'units', 'teachers', 'packageSubjectsGrouped'));
     }
 
     public function destroy(DeleteCodePackageRequest $request): RedirectResponse
