@@ -126,8 +126,9 @@
                                                    data-name="{{ $teacher->name }}"
                                                    data-estimation_time="{{ $teacher->estimation_time }}"
                                                    data-whatsapp_link="{{ $teacher->whatsapp_link }}"
+                                                   data-telegram_link="{{ $teacher->telegram_link }}"
                                                    data-instagram_link="{{ $teacher->instagram_link }}"
-                                                   data-phone="{{ $teacher->phone }}"
+                                                    data-phone="{{ $teacher->phone }}"
                                                    data-price="{{ $teacher->price }}"
                                                    data-description="{{ $teacher->description }}"
                                                    data-subject_videos="{{ $teacher->subjectVideos->pluck('id')->implode(',') }}"
@@ -171,13 +172,13 @@
                     <input type="hidden" name="subject_video_id" value="{{ $subject_video_selected->id }}">
                     <div class="modal-body">
                         <div class="row mb-3">
-                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Name') }}</label>
+                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Name') }} <span class="tx-danger">*</span></label>
                             <div class="col-md-8">
                                 <input class="form-control" name="name" required>
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Estimation_time') }}</label>
+                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Estimation_time') }} <span class="tx-danger">*</span></label>
                             <div class="col-md-8">
                                 <input class="form-control" name="estimation_time" type="number" min="0" required>
                             </div>
@@ -195,7 +196,7 @@
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Whatsapp_link') }}</label>
+                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Whatsapp_link') }} </label>
                             <div class="col-md-8">
                                 <input class="form-control" name="whatsapp_link">
                             </div>
@@ -207,13 +208,19 @@
                             </div>
                         </div>
                         <div class="row mb-3">
+                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Telegram') }}</label>
+                            <div class="col-md-8">
+                                <input class="form-control" name="telegram_link">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
                             <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Description') }}</label>
                             <div class="col-md-8">
                                 <textarea class="form-control" name="description" rows="4"></textarea>
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Course_subjects') }}</label>
+                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Course_subjects') }} <span class="tx-danger">*</span></label>
                             <div class="col-md-8">
                                 <select name="subject_videos[]" class="form-control subject-videos-select" required multiple>
                                     @foreach ($subjectVideos as $subjectVideo)
@@ -253,13 +260,13 @@
                     <input type="hidden" name="id" id="edit_id">
                     <div class="modal-body">
                         <div class="row mb-3">
-                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Name') }}</label>
+                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Name') }} <span class="tx-danger">*</span></label>
                             <div class="col-md-8">
                                 <input class="form-control" name="name" id="edit_name" required>
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Estimation_time') }}</label>
+                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Estimation_time') }} <span class="tx-danger">*</span></label>
                             <div class="col-md-8">
                                 <input class="form-control" name="estimation_time" id="edit_estimation_time" type="number" min="0" required>
                             </div>
@@ -289,6 +296,12 @@
                             </div>
                         </div>
                         <div class="row mb-3">
+                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Telegram') }}</label>
+                            <div class="col-md-8">
+                                <input class="form-control" name="telegram_link" id="edit_telegram_link">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
                             <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Description') }}</label>
                             <div class="col-md-8">
                                 <textarea class="form-control" name="description" id="edit_description" rows="4"></textarea>
@@ -297,7 +310,7 @@
                         <div class="row mb-3">
                             <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Course_subjects') }}</label>
                             <div class="col-md-8">
-                                <select name="subject_videos[]" id="edit_subject_videos" class="form-control subject-videos-select" required multiple>
+                                <select name="subject_videos[]" id="edit_subject_videos" class="form-control subject-videos-select" required multiple> <span class="tx-danger">*</span></label>
                                     @foreach ($subjectVideos as $subjectVideo)
                                         <option value="{{ $subjectVideo->id }}">{{ $subjectVideo->name }}</option>
                                     @endforeach
@@ -368,6 +381,7 @@
             $('#edit_estimation_time').val(button.data('estimation_time'));
             $('#edit_whatsapp_link').val(button.data('whatsapp_link'));
             $('#edit_instagram_link').val(button.data('instagram_link'));
+            $('#edit_telegram_link').val(button.data('telegram_link'));
             $('#edit_phone').val(button.data('phone'));
             $('#edit_price').val(button.data('price'));
             $('#edit_description').val(button.data('description'));

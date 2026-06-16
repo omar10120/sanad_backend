@@ -17,6 +17,7 @@ class Teacher extends Model
         'estimation_time',
         'whatsapp_link',
         'instagram_link',
+        'telegram_link',
         'phone',
         'photo',
         'price',

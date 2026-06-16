@@ -18,6 +18,7 @@ class StoreTeacherRequest extends FormRequest
             'estimation_time' => 'required|integer|min:0',
             'whatsapp_link' => 'nullable|string|max:500',
             'instagram_link' => 'nullable|string|max:500',
+            'telegram_link' => 'nullable|string|max:500',
             'phone' => 'nullable|string|max:50',
             'price' => 'nullable|numeric|min:0',
             'description' => 'nullable|string',

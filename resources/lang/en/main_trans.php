@@ -683,6 +683,7 @@ return [
     'Facebook' => 'Facebook',
     'Linkedin' => 'LinkedIn',
     'Whatsapp' => 'WhatsApp',
+    'Telegram' => 'Telegram',
     'Laravel' => 'Laravel',
     'Flutter' => 'Flutter',
     'Java' => 'Java',
@@ -1084,4 +1085,5 @@ return [
     'Package_items_required' => 'At least one subject and unit pair is required',
     'At_least_one_subject_unit_required' => 'Please add at least one subject and unit pair',
     'Course_subject' => 'Course Subject',
+    'Price' => 'Price',
 ];

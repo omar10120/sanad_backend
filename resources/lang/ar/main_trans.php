@@ -683,6 +683,7 @@ return [
     'Facebook' => 'فيسبوك',
     'Linkedin' => 'لينكد إن',
     'Whatsapp' => 'واتساب',
+    'Telegram' => 'تليجرام',
     'Laravel' => 'لارافيل',
     'Flutter' => 'فلتر',
     'Java' => 'جافا',
@@ -1072,6 +1073,7 @@ return [
     'No_youtube_link_videos_available_description' => 'أضف فيديو للبدء.',
     'No_teachers_available_description' => 'أضف معلم للبدء.',
     'Are_you_sure_to_delete_permanently' => 'هل أنت متأكد من الحذف النهائي لهذا المعلم؟',
+    'Price' => 'السعر',
 
      // LessonVideo (video)
      'LessonVideo-restore-deleted' => 'فيديوهات الدروس',

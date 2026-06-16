@@ -51,17 +51,42 @@
             <div class="card">
                 <div class="card-header pb-0">
                     <div class="row">
-                        <div class="col-12 col-sm-12 col-lg-6 col-xl-6">
+                        <div class="col-12 col-sm-12 col-lg-4
+                                @can('Type-show-deleted')
+                                    @if(\App\Models\Type::onlyTrashed()->count())
+                                        col-xl-4
+                                    @else
+                                        col-xl-6
+                                    @endif
+                                @endcan
+                                @cannot('Type-show-deleted') col-xl-6 @endcannot
+                                ">
                             @can('Type-add')
                                 <a class="modal-effect btn btn-outline-primary btn-block" data-effect="effect-flip-vertical" data-toggle="modal" href="#modal1">{{ trans('main_trans.Add_type') }}</a>
                             @endcan
                         </div>
                         @can('Type-edit')
-                            <div class="col-12 col-sm-12 col-lg-6 col-xl-6">
+                            <div class="col-12 col-sm-12 col-lg-4
+                                @can('Type-show-deleted')
+                                    @if(\App\Models\Type::onlyTrashed()->count())
+                                        col-xl-4
+                                    @else
+                                        col-xl-6
+                                    @endif
+                                @endcan
+                                @cannot('Type-show-deleted') col-xl-6 @endcannot
+                            ">
                                 <button id="reorder-btn" class="btn btn-info btn-block">
                                     <i class="fas fa-sort"></i> {{ __('main_trans.Reorder') }}
                                 </button>
                             </div>
+                        @endcan
+                        @can('Type-show-deleted')
+                            @if(\App\Models\Type::onlyTrashed()->count())
+                                <div class="col-12 col-sm-12 col-lg-4 col-xl-4">
+                                    <a class="btn btn-outline-primary btn-block" href="{{ route('archived-type.index') }}">{{ trans('main_trans.Deleted_types') }}</a>
+                                </div>
+                            @endif
                         @endcan
                     </div>
                 </div>
@@ -93,6 +118,24 @@
                                                    title="{{ trans('main_trans.Course_subjects') }}">
                                                     <i class="fas fa-book"></i> {{ trans('main_trans.Course_subjects') }}
                                                 </a>
+                                            @endcan
+                                            @can('Type-edit')
+                                                <a class="modal-effect btn btn-info" data-effect="effect-flip-vertical"
+                                                   data-id="{{ $type->id }}" data-name="{{ $type->name }}" data-toggle="modal"
+                                                   href="#modal2" title="{{ trans('main_trans.Edit_type') }}"><i class="fas fa-pen"></i></a>
+                                            @endcan
+                                            @can('Type-edit')
+                                                <form action="{{ route('types.toggle', $type->id) }}" method="POST"
+                                                      style="display: initial">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    
+                                                </form>
+                                            @endcan
+                                            @can('Type-delete')
+                                                <a class="modal-effect btn btn-danger" data-effect="effect-flip-vertical"
+                                                   data-id="{{ $type->id }}" data-name="{{ $type->name }}" data-toggle="modal"
+                                                   href="#modal3" title="{{ trans('main_trans.Delete') }}"><i class="fas fa-trash"></i></a>
                                             @endcan
                                         </td>
                                     </tr>
@@ -138,6 +181,65 @@
             </div>
         </div>
         <!-- End Add modal -->
+
+        <!-- Edit modal -->
+        <div class="modal" id="modal2">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content modal-content-demo">
+                    <div class="modal-header">
+                        <h6 class="modal-title">{{ trans('main_trans.Edit_type') }}</h6>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <form method="POST" action="{{ url('type/update') }}" autocomplete="off">
+                        @method('patch')
+                        @csrf
+                        <input type="hidden" name="return_to" value="course-type">
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <label for="edit-name" class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Name') }}</label>
+                                <input type="hidden" name="id" id="edit-id" value="">
+                                <div class="col-md-8">
+                                    <input id="edit-name" class="form-control" name="name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn ripple btn-primary" type="submit">{{ trans('main_trans.Edit_type') }}</button>
+                            <button class="btn ripple btn-secondary" data-dismiss="modal" type="button">{{ trans('main_trans.Close') }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- End Edit modal -->
+
+        <!-- Delete modal -->
+        <div class="modal" id="modal3">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content modal-content-demo">
+                    <div class="modal-header">
+                        <h6 class="modal-title">{{ trans('main_trans.Delete_type') }}</h6>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <form action="{{ url('type/destroy') }}" method="post">
+                        @method('delete')
+                        @csrf
+                        <div class="modal-body">
+                            <p>{{ trans('main_trans.Are_you_sure_to_delete') }}</p><br>
+                            <input type="hidden" name="id" id="delete-id" value="">
+                            <div class="row mb-3 mx-1">
+                                <input class="form-control" name="name" id="delete-name" type="text" readonly>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ trans('main_trans.Close') }}</button>
+                            <button type="submit" class="btn btn-danger">{{ trans('main_trans.Delete') }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- End Delete modal -->
     </div>
 @endsection
 @section('js')
@@ -156,6 +258,24 @@
                 sSearch: '',
                 lengthMenu: '_MENU_',
             }
+        });
+
+        $('#modal2').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var id = button.data('id');
+            var name = button.data('name');
+            var modal = $(this);
+            modal.find('#edit-id').val(id);
+            modal.find('#edit-name').val(name);
+        });
+
+        $('#modal3').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var id = button.data('id');
+            var name = button.data('name');
+            var modal = $(this);
+            modal.find('#delete-id').val(id);
+            modal.find('#delete-name').val(name);
         });
 
         $(document).ready(function() {

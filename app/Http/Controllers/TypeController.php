@@ -126,6 +126,11 @@ class TypeController extends Controller
         ]);
 
         session()->flash('edit', trans('main_trans.Type_edit_successfully'));
+
+        if ($request->input('return_to') === 'course-type') {
+            return redirect()->route('course-type.index');
+        }
+
         return redirect('type');
     }
 
