@@ -73,9 +73,18 @@ class Question extends Model
         return $this->belongsTo(QuestionGroup::class);
     }
 
+    public function lesson(): BelongsTo
+    {
+        return $this->belongsTo(Lesson::class);
+    }
+
     protected static function booted(): void
     {
         static::creating(function ($question) {
+            if (empty($question->lesson_id) && !empty($question->question_group_id)) {
+                $question->lesson_id = QuestionGroup::whereKey($question->question_group_id)->value('lesson_id');
+            }
+
             if (empty($question->order)) {
                 $lastOrder = self::where('question_group_id', $question->question_group_id)
                     ->max('order') ?? 0;

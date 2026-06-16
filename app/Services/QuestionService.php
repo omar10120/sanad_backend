@@ -353,9 +353,11 @@ class QuestionService
 
         $questionType = QuestionType::find($data['type_id']);
         $type = $questionType ? $questionType->type : null;
+        $lessonId = $data['lesson_id'] ?? $question_group->lesson_id;
 
         if ($type === QuestionType::TYPE_AUTOMATION) {
             $question->update([
+                'lesson_id' => $lessonId,
                 'type_id' => $data['type_id'],
                 'created_by' => $user_id,
                 'text_question' => json_decode($data['text_question'], true),
@@ -368,6 +370,7 @@ class QuestionService
             ]);
         } elseif ($type === QuestionType::TYPE_TRUE_OR_FALSE) {
             $question->update([
+                'lesson_id' => $lessonId,
                 'type_id' => $data['type_id'],
                 'created_by' => $user_id,
                 'text_question' => json_decode($data['text_question'], true),
@@ -380,6 +383,7 @@ class QuestionService
             ]);
         } else {
             $question->update([
+                'lesson_id' => $lessonId,
                 'type_id' => $data['type_id'],
                 'created_by' => $user_id,
                 'text_question' => json_decode($data['text_question'], true),
@@ -420,4 +424,10 @@ class QuestionService
             $newFileName = 'hint-photo-' . $question->id . '-' . Carbon::now()->format('Ymd_His') . '.' . $extension;
 
             $question->update([
-     
+                'hint_photo' => $newFileName,
+            ]);
+
+            $data['hint_photo']->move(public_path('assets/image/Question/'.$question->id.'/hint-photo'), $newFileName);
+        }
+    }
+}
