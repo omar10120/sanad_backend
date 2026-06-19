@@ -7,14 +7,34 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class LessonVideoResource extends JsonResource
 {
+    protected ?bool $isLocked = null;
+
+    public function __construct($resource, ?bool $isLocked = null)
+    {
+        parent::__construct($resource);
+        $this->isLocked = $isLocked;
+    }
+
     public function toArray(Request $request): array
     {
-        return [
+        $data = [
             'id' => $this->id,
             'title' => $this->title,
             'display_order' => $this->order,
             'unit_id' => $this->unit_id,
             'number_of_videos' => $this->youtube_links_count ?? $this->youtubeLinks()->count(),
         ];
+
+        if ($this->relationLoaded('youtubeLinks')) {
+            $youtubeLinks = $this->youtubeLinks;
+
+            if ($this->isLocked) {
+                $youtubeLinks = $youtubeLinks->take(1);
+            }
+
+            $data['youtube_links'] = YoutubeLinkVideoResource::collection($youtubeLinks);
+        }
+
+        return $data;
     }
 }

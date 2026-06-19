@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TeacherResource;
-use App\Http\Resources\UnitResource;
+use App\Http\Resources\UnitWithContentResource;
 use App\Services\ApiSubjectVideoService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -44,16 +44,16 @@ class ApiTeacherController extends Controller
         }
 
         $student = Auth::user();
-        $units = $this->apiSubjectVideoService->getUnitsByTeacher($id);
+        $units = $this->apiSubjectVideoService->getUnitsByTeacherWithContent($id);
+
+        $transformedUnits = $units->map(function ($unit) use ($student) {
+            $isLocked = $this->apiSubjectVideoService->isUnitLocked($student->id, $unit->id);
+
+            return (new UnitWithContentResource($unit, $isLocked))->resolve();
+        });
 
         return $this->apiResponse(
-            UnitResource::collection(
-                $units->map(function ($unit) use ($student) {
-                    $isLocked = $this->apiSubjectVideoService->isUnitLocked($student->id, $unit->id);
-
-                    return new UnitResource($unit, $isLocked);
-                })
-            ),
+            $transformedUnits,
             'الوحدات للمعلم ' . $teacher->id,
             200
         );

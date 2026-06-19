@@ -130,6 +130,18 @@ class ApiSubjectVideoService
             ->get();
     }
 
+    public function getUnitsByTeacherWithContent(int $teacherId): Collection
+    {
+        return Unit::where('teacher_id', $teacherId)
+            ->withCount('lessonVideos')
+            ->with([
+                'lessonVideos' => fn ($query) => $query->orderBy('order'),
+                'lessonVideos.youtubeLinks' => fn ($query) => $query->orderBy('order'),
+            ])
+            ->orderBy('order')
+            ->get();
+    }
+
     public function findUnit(int $id): ?Unit
     {
         return Unit::withCount('lessonVideos')->find($id);
