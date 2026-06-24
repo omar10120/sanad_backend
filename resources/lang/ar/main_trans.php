@@ -466,6 +466,7 @@ return [
     'Question_edited'=>'سؤال معدل',
     'Edited'=>'معدل',
     'Unedited'=>'غير معدل',
+    'subject_videos'=> 'مقاطع الفيديو الموضوعية',
 
     //-----------Questions--end------------------
 

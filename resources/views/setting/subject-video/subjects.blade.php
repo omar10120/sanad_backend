@@ -157,8 +157,9 @@
                 <form method="POST" action="{{ route('subject-video.store') }}" autocomplete="off" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
-                        <div class="row mb-3">
-                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Name') }}</label>
+                        <div class="row mb-3"> 
+                            
+                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Name') }} <span class="tx-danger">*</span></label>
                             <div class="col-md-8">
                                 <input class="form-control" name="name" required>
                             </div>
@@ -170,7 +171,7 @@
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Link') }}</label>
+                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Link') }} <span class="tx-danger">*</span></label>
                             <div class="col-md-8">
                                 <input class="form-control" name="link">
                             </div>
@@ -182,7 +183,7 @@
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Certificate_types') }}</label>
+                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Certificate_types') }} <span class="tx-danger">*</span></label>
                             <div class="col-md-8">
                                 <select name="types[]" class="form-control types-select" required multiple>
                                     @foreach ($types as $type)

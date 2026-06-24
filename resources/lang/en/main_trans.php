@@ -466,6 +466,7 @@ return [
     'Question_edited'=>'Question edited',
     'Edited'=>'Edited',
     'Unedited'=>'Unedited',
+    'subject_videos'=>'Subject Videos',
 
     //-----------Questions--end------------------
 
