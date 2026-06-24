@@ -21,10 +21,10 @@ class UnitWithContentResource extends JsonResource
             ? $this->lessonVideos
             : collect();
 
-        if ($this->isLocked) {
-            $firstLesson = $lessonVideos->first();
-            $lessonVideos = $firstLesson ? collect([$firstLesson]) : collect();
-        }
+        // if ($this->isLocked) {
+        //     $firstLesson = $lessonVideos->first();
+        //     $lessonVideos = $firstLesson ? collect([$firstLesson]) : collect();
+        // }
 
         return [
             'id' => $this->id,
