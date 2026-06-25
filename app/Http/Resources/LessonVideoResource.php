@@ -28,9 +28,9 @@ class LessonVideoResource extends JsonResource
         if ($this->relationLoaded('youtubeLinks')) {
             $youtubeLinks = $this->youtubeLinks;
 
-            if ($this->isLocked) {
-                $youtubeLinks = $youtubeLinks->take(1);
-            }
+            // if ($this->isLocked) {
+            //     $youtubeLinks = $youtubeLinks->take(1);
+            // }
 
             $data['youtube_links'] = YoutubeLinkVideoResource::collection($youtubeLinks);
         }
