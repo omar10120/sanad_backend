@@ -165,6 +165,7 @@ class StudentService
             'last_name' => $studentData['last_name'],
             'email' => $studentData['email'],
             'phone' => $studentData['phone'],
+            'country_code' => $studentData['country_code'],
             'city' => $studentData['city'],
             'school' => $studentData['school'],
             'type_id' => $studentData['type_id'],

@@ -597,6 +597,12 @@ return [
     'Max_devices_must_be_integer'=>'الحد الأقصى للأجهزة يجب أن يكون رقماً صحيحاً',
     'Max_devices_min'=>'الحد الأقصى للأجهزة يجب أن يكون 1 على الأقل',
     'Max_devices_max'=>'الحد الأقصى للأجهزة يجب ألا يتجاوز 10',
+    'Country_code'=>'رمز الدولة',
+    'Select_country_code'=>'اختر رمز الدولة',
+    'Syria'=>'سوريا',
+    'Iraq'=>'العراق',
+    'Kuwait'=>'الكويت',
+    'Saudi_Arabia'=>'المملكة العربية السعودية',
 
     // Device Management
     'Devices' => 'الأجهزة',

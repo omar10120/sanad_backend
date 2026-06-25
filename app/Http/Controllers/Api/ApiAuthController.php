@@ -99,6 +99,7 @@ class ApiAuthController extends Controller
     public function sendVerificationCode(SendVerificationCodeRequest $request): JsonResponse
     {
         $student = Student::where('phone', $request->validated()['phone'])->first();
+        
 
         if($request->validated()['type'] == PhoneVerificationCode::TYPE_PASSWORD_RESET) {
             if(!$student) {

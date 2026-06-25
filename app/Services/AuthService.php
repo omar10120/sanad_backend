@@ -38,6 +38,7 @@ class AuthService
             'father_name' => $data['father_name'],
             'last_name' => $data['last_name'],
             'phone' => $data['phone'],
+            'country_code' => $data['country_code'],
             'city' => $data['city'],
             'email' => $data['email'] ?? null,
             'school' => $data['school'] ?? null,
@@ -70,7 +71,8 @@ class AuthService
      */
     public function loginStudent(array $data): array
     {
-        $student = Student::where('phone', $data['phone'])->first();
+        
+        $student = Student::where('phone' , $data['phone'])->where('country_code',$data['country_code'])->first();
 
         if (!$student || !Hash::check($data['password'], $student->password)) {
             return [

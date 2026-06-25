@@ -597,6 +597,12 @@ return [
     'Max_devices_must_be_integer'=>'Maximum devices must be an integer',
     'Max_devices_min'=>'Maximum devices must be at least 1',
     'Max_devices_max'=>'Maximum devices must not exceed 10',
+    'Country_code'=>'Country code',
+    'Select_country_code'=>'Select country code',
+    'Syria'=>'Syria',
+    'Iraq'=>'Iraq',
+    'Kuwait'=>'Kuwait',
+    'Saudi_Arabia'=>'Saudi Arabia',
 
     // Device Management
     'Devices' => 'Devices',

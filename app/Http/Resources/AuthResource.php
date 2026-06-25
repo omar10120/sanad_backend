@@ -26,6 +26,7 @@ class AuthResource extends JsonResource
             'last_name' => $this->last_name,
             'email' => $this->email,
             'phone' => $this->phone,
+            'country_code' => $this->country_code,
             'city' => $this->city,
             'school' => $this->school,
             'certificate' => TypeResource::make($this->type),

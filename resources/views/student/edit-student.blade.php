@@ -84,6 +84,17 @@
                                 <input class="form-control mg-b-20" id="phone" value="{{$student->phone}}"
                                        data-parsley-class-handler="#lnWrapper" name="phone" required="" type="text" placeholder="{{ trans('main_trans.Phone') }}">
                             </div>
+                            <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
+                                <label for="country_code" class="card-title mb-1">{{ trans('main_trans.Country_code') }} <span class="tx-danger">*</span></label>
+                                <select id="country_code" name="country_code" class="form-control  nice-select  custom-select">
+                                    <option value="" selected disabled>{{ trans('main_trans.Select_country_code') }}</option>
+                                    <option value="+963"> +963 {{ trans('main_trans.Syria') }}</option>
+                                    <option value="+964"> +964 {{ trans('main_trans.Iraq') }}</option>
+                                    <option value="+965"> +965 {{ trans('main_trans.Kuwait') }}</option>
+                                    <option value="+966"> +966 {{ trans('main_trans.Saudi_Arabia') }}</option>
+                                </select>
+                               
+                            </div>
 
                             <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
                                 <div class="form-group">

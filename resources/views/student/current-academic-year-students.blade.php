@@ -70,6 +70,7 @@
 {{--                                <th class="wd-5p border-bottom-0">{{ trans('main_trans.Last_name') }}</th>--}}
                                 <th class="wd-10p border-bottom-0">{{ trans('main_trans.Email') }}</th>
                                 <th class="wd-10p border-bottom-0">{{ trans('main_trans.Phone') }}</th>
+                                <th class="wd-10p border-bottom-0">{{ trans('main_trans.Country_code') }}</th>
                                 <th class="wd-10p border-bottom-0">{{ trans('main_trans.Certificate_type') }}</th>
                                 <th class="wd-10p border-bottom-0">{{ trans('main_trans.School') }}</th>
                                 <th class="wd-10p border-bottom-0">{{ trans('main_trans.City') }}</th>
@@ -102,6 +103,7 @@
 {{--                                    <td>{{ $student->last_name }}</td>--}}
                                     <td>{{ $student->email }}</td>
                                     <td>{{ $student->phone }}</td>
+                                    <td>{{ $student->country_code }}</td>
                                     <td>{{ $student->type->name }}</td>
                                     <td>{{ $student->school }}</td>
                                     <td>{{ trans('main_trans.' . $student->city ) }}</td>
