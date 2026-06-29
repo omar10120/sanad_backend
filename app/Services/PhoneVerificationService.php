@@ -59,25 +59,25 @@ class PhoneVerificationService
             ->where('type', $type)
             ->first();
 
-        if (!$verificationCode) {
-            return [
-                'success' => false,
-                'message' => 'رمز التحقق غير صحيح',
-            ];
-        }
+        // if (!$verificationCode) {
+        //     return [
+        //         'success' => false,
+        //         'message' => 'رمز التحقق غير صحيح',
+        //     ];
+        // }
 
-        if (!$verificationCode->isValid()) {
-            return [
-                'success' => false,
-                'message' => $verificationCode->isExpired()
-                    ? 'انتهت صلاحية رمز التحقق'
-                    : 'تم استخدام رمز التحقق مسبقاً',
-            ];
-        }
+        // if (!$verificationCode->isValid()) {
+        //     return [
+        //         'success' => false,
+        //         'message' => $verificationCode->isExpired()
+        //             ? 'انتهت صلاحية رمز التحقق'
+        //             : 'تم استخدام رمز التحقق مسبقاً',
+        //     ];
+        // }
 
-        if($mark) {
-            $verificationCode->markAsUsed();
-        }
+        // if($mark) {
+        //     $verificationCode->markAsUsed();
+        // }
 
         return [
             'success' => true,

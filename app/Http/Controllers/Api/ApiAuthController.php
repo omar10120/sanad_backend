@@ -98,7 +98,7 @@ class ApiAuthController extends Controller
 
     public function sendVerificationCode(SendVerificationCodeRequest $request): JsonResponse
     {
-        $student = Student::where('phone', $request->validated()['phone'])->first();
+        $student = Student::where('phone', $request->validated()['phone'])->where('country_code', $request->validated()['country_code'])->first();
         
 
         if($request->validated()['type'] == PhoneVerificationCode::TYPE_PASSWORD_RESET) {
@@ -173,7 +173,7 @@ class ApiAuthController extends Controller
         try {
             /** @var Student $student */
             $student = auth('student')->user();
-            $result = $this->authService->sendPhoneChangeVerificationCode($student, $request->validated()['new_phone']);
+            $result = $this->authService->sendPhoneChangeVerificationCode($student, $request->validated()['new_phone'], $request->validated()['country_code']);
 
             return $this->apiResponse(
                 $result['success'] ? [] : null,
@@ -190,7 +190,7 @@ class ApiAuthController extends Controller
         try {
             /** @var Student $student */
             $student = auth('student')->user();
-            $result = $this->authService->changePhoneNumber($student, $request->validated());
+            $result = $this->authService->changePhoneNumber($student, $request->validated()['new_phone'], $request->validated()['country_code'], $request->validated()['verification_code']);
 
             if ($result['success']) {
                 return $this->apiResponse(

@@ -66,7 +66,7 @@ class RegisterRequest extends FormRequest
             'phone.regex' => 'Phone number must begin with 09.',
             'phone.unique' => 'This phone number is already registered.',
             'country_code.required' => 'Country code is required.',
-            'country_code.size' => 'Country code must be exactly 4 characters long.',
+            'country_code.size' => 'Country code must be at lest 4 characters long.',
             'country_code.regex' => 'Country code must begin with +.',
             'city.required' => 'City is required.',
             'email.email' => 'Please enter a valid email address.',

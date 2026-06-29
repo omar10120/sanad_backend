@@ -50,6 +50,7 @@ return [
     'Name'=>'الاسم',
     'Title'=>'العنوان',
     'Phone'=>'الهاتف',
+    'Country_code'=>'رمز الدولة',
     'Actions'=>'الإجراءات',
     'Time_of_code'=>'تايم أوف كود',
     'Sanad_al_taleb'=>'سند الطالب',
@@ -603,6 +604,15 @@ return [
     'Iraq'=>'العراق',
     'Kuwait'=>'الكويت',
     'Saudi_Arabia'=>'المملكة العربية السعودية',
+    'Yemen'=>'اليمن',
+    'Oman'=>'العمان',
+    'Palestine'=>'فلسطين',
+    'United_Arab_Emirates'=>'الإمارة العربية المتحدة',
+    'Bahrain'=>'البحرين',
+    'Qatar'=>'قطر',
+    'Bhutan'=>'بوتان',
+    'Mongolia'=>'مونغوليا',
+    'Nepal'=>'نيبال',
 
     // Device Management
     'Devices' => 'الأجهزة',
@@ -1096,4 +1106,5 @@ return [
      'Package_items_required' => 'مطلوب زوج واحد على الأقل من المادة والوحدة',
      'At_least_one_subject_unit_required' => 'يرجى إضافة زوج واحد على الأقل من المادة والوحدة',
      'Course_subject' => 'مادة الكورس',
+     'Select_course_subject' => 'اختر مادة الكورس',
 ];

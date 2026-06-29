@@ -92,6 +92,15 @@
                                     <option value="+964"> +964 {{ trans('main_trans.Iraq') }}</option>
                                     <option value="+965"> +965 {{ trans('main_trans.Kuwait') }}</option>
                                     <option value="+966"> +966 {{ trans('main_trans.Saudi_Arabia') }}</option>
+                                    <option value="+967"> +967 {{ trans('main_trans.Yemen') }}</option>
+                                    <option value="+968"> +968 {{ trans('main_trans.Oman') }}</option>
+                                    <option value="+970"> +970 {{ trans('main_trans.Palestine') }}</option>
+                                    <option value="+971"> +971 {{ trans('main_trans.United_Arab_Emirates') }}</option>
+                                    <option value="+973"> +973 {{ trans('main_trans.Bahrain') }}</option>
+                                    <option value="+974"> +974 {{ trans('main_trans.Qatar') }}</option>
+                                    <option value="+975"> +975 {{ trans('main_trans.Bhutan') }}</option>
+                                    <option value="+976"> +976 {{ trans('main_trans.Mongolia') }}</option>
+                                    <option value="+977"> +977 {{ trans('main_trans.Nepal') }}</option>
                                 </select>
                                
                             </div>

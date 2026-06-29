@@ -34,9 +34,10 @@ class CodePackageController extends Controller
         $packages = $this->codeService->getAllPackages();
         $subjects = $this->codeService->getAllSubjects();
         $units = $this->codeService->getAllUnits();
-        $teachers = $this->codeService->getAllTeachers();
+        $subjectVideos = $this->codeService->getAllSubjectVideos();
+        $teachers = $this->codeService->getTeachersForPackageUi();
 
-        return view('packages.index', compact('packages', 'subjects', 'units', 'teachers'));
+        return view('packages.index', compact('packages', 'subjects', 'units', 'subjectVideos', 'teachers'));
     }
 
     public function create(): Factory|Application|View

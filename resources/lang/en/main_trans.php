@@ -50,6 +50,7 @@ return [
     'Name'=>'Name',
     'Title'=>'Title',
     'Phone'=>'Phone',
+    'Country_code'=>'Country code',
     'Actions'=>'Actions',
     'Time_of_code'=>'Time Of Code',
     'Sanad_al_taleb'=>'Sanad Al Taleb',
@@ -603,7 +604,15 @@ return [
     'Iraq'=>'Iraq',
     'Kuwait'=>'Kuwait',
     'Saudi_Arabia'=>'Saudi Arabia',
-
+    'Yemen'=>'Yemen',
+    'Oman'=>'Oman',
+    'Palestine'=>'Palestine',
+    'United_Arab_Emirates'=>'United Arab Emirates',
+    'Bahrain'=>'Bahrain',
+    'Qatar'=>'Qatar',
+    'Bhutan'=>'Bhutan',
+    'Mongolia'=>'Mongolia',
+    'Nepal'=>'Nepal',
     // Device Management
     'Devices' => 'Devices',
     'Max_devices' => 'Max Devices',
@@ -1093,5 +1102,6 @@ return [
     'Package_items_required' => 'At least one subject and unit pair is required',
     'At_least_one_subject_unit_required' => 'Please add at least one subject and unit pair',
     'Course_subject' => 'Course Subject',
+    'Select_course_subject' => 'Select Course Subject',
     'Price' => 'Price',
 ];

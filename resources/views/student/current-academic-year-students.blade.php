@@ -104,7 +104,7 @@
                                     <td>{{ $student->email }}</td>
                                     <td>{{ $student->phone }}</td>
                                     <td>{{ $student->country_code }}</td>
-                                    <td>{{ $student->type->name }}</td>
+                                    <td>{{ $student->type->name ?? 'N/A'}}</td>
                                     <td>{{ $student->school }}</td>
                                     <td>{{ trans('main_trans.' . $student->city ) }}</td>
 

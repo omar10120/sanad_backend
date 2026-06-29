@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class CodePackageSubject extends Model
 {
     protected $table = 'code_package_subject';
-
+ 
     protected $fillable = [
         'code_package_id',
         'subject_id',

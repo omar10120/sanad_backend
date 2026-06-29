@@ -16,7 +16,7 @@ class ApiLoginRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * Get the validation rules that apply to the request. 
      *
      * @return array<string, ValidationRule|array|string>
      */
@@ -24,7 +24,7 @@ class ApiLoginRequest extends FormRequest
     {
         return [
             'phone' => 'required|string|size:10|regex:/^09/',
-            'country_code' => 'required|string|size:4|regex:/^\+/',
+            'country_code' => 'required|string|min:2|max:4',
             'password' => 'required|string|min:8',
             'device_id' => 'nullable|string',
             'brand' => 'nullable|string',
@@ -51,7 +51,7 @@ class ApiLoginRequest extends FormRequest
             'phone.size' => 'Phone number must be exactly 10 digits.',
             'phone.regex' => 'Phone number must start with 09.',
             'country_code.required' => 'Country code is required.',
-            'country_code.size' => 'Country code must be exactly 3 characters long.',
+            'country_code.size' => 'Country code must be at lest 4 characters long.',
             'country_code.regex' => 'Country code must begin with +.',
             'password.required' => 'Password is required.',
             'password.min' => 'Password must be at least 8 characters.',

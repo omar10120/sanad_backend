@@ -6,6 +6,7 @@ use App\Models\Code;
 use App\Models\CodePackage;
 use App\Models\CodePackageSubject;
 use App\Models\Subject;
+use App\Models\SubjectVideo;
 use App\Models\Teacher;
 use App\Models\Unit;
 use Illuminate\Database\Eloquent\Collection;
@@ -34,6 +35,16 @@ class CodeService
     public function getAllTeachers(): Collection
     {
         return Teacher::orderBy('name')->get();
+    }
+
+    public function getAllSubjectVideos(): Collection
+    {
+        return SubjectVideo::where('is_active', true)->orderBy('order')->get();
+    }
+
+    public function getTeachersForPackageUi(): Collection
+    {
+        return Teacher::with('subjectVideos:id')->orderBy('name')->get();
     }
 
     public function findPackage($id): ?CodePackage
@@ -71,8 +82,8 @@ class CodeService
         foreach ($packageItems as $item) {
             CodePackageSubject::create([
                 'code_package_id' => $package->id,
-                'subject_id' => $item['subject_id'],
-                'unit_id' => $item['unit_id'],
+                'subject_id' => $item['subject_id'] ?? null,
+                'unit_id' => $item['unit_id'] ?? null,
             ]);
         }
     }
