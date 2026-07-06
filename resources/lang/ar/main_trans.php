@@ -50,6 +50,9 @@ return [
     'Name'=>'الاسم',
     'Title'=>'العنوان',
     'Phone'=>'الهاتف',
+    'Phone_max_length'=>'يجب أن يكون طول الهاتف أقل من 15 رقم',
+    'Phone_min_length'=>'يجب أن يكون طول الهاتف أكثر من 10 رقم',
+    'Country_code_required'=>'يجب أن يكون رمز الدولة موجود',
     'Country_code'=>'رمز الدولة',
     'Actions'=>'الإجراءات',
     'Time_of_code'=>'تايم أوف كود',
@@ -645,6 +648,7 @@ return [
 
     //-----------City--start---------------------
 
+    'other' => 'غير محدد',
     'damascus' => 'دمشق',
     'damascus_suburb' => 'ريف دمشق',
     'homs' => 'حمص',
@@ -1107,4 +1111,14 @@ return [
      'At_least_one_subject_unit_required' => 'يرجى إضافة زوج واحد على الأقل من المادة والوحدة',
      'Course_subject' => 'مادة الكورس',
      'Select_course_subject' => 'اختر مادة الكورس',
+
+     // Student translations
+     'Country_code' => 'رمز الدولة',
+     'Select_country_code' => 'اختر رمز الدولة',
+     'Syria' => 'سوريا',
+     'Iraq' => 'العراق',
+     'Kuwait' => 'الكويت',
+     'Saudi_Arabia' => 'المملكة العربية السعودية',
+     'Yemen' => 'اليمن',
+     'Oman' => 'عمان',
 ];

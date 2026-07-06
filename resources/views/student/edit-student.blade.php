@@ -88,19 +88,19 @@
                                 <label for="country_code" class="card-title mb-1">{{ trans('main_trans.Country_code') }} <span class="tx-danger">*</span></label>
                                 <select id="country_code" name="country_code" class="form-control  nice-select  custom-select">
                                     <option value="" selected disabled>{{ trans('main_trans.Select_country_code') }}</option>
-                                    <option value="+963"> +963 {{ trans('main_trans.Syria') }}</option>
-                                    <option value="+964"> +964 {{ trans('main_trans.Iraq') }}</option>
-                                    <option value="+965"> +965 {{ trans('main_trans.Kuwait') }}</option>
-                                    <option value="+966"> +966 {{ trans('main_trans.Saudi_Arabia') }}</option>
-                                    <option value="+967"> +967 {{ trans('main_trans.Yemen') }}</option>
-                                    <option value="+968"> +968 {{ trans('main_trans.Oman') }}</option>
-                                    <option value="+970"> +970 {{ trans('main_trans.Palestine') }}</option>
-                                    <option value="+971"> +971 {{ trans('main_trans.United_Arab_Emirates') }}</option>
-                                    <option value="+973"> +973 {{ trans('main_trans.Bahrain') }}</option>
-                                    <option value="+974"> +974 {{ trans('main_trans.Qatar') }}</option>
-                                    <option value="+975"> +975 {{ trans('main_trans.Bhutan') }}</option>
-                                    <option value="+976"> +976 {{ trans('main_trans.Mongolia') }}</option>
-                                    <option value="+977"> +977 {{ trans('main_trans.Nepal') }}</option>
+                                    <option value="+963" @selected($student->country_code == '+963')>+963 {{ trans('main_trans.Syria') }}</option>
+                                    <option value="+964" @selected($student->country_code == '+964')>+964 {{ trans('main_trans.Iraq') }}</option>
+                                    <option value="+965" @selected($student->country_code == '+965')>+965 {{ trans('main_trans.Kuwait') }}</option>
+                                    <option value="+966" @selected($student->country_code == '+966')>+966 {{ trans('main_trans.Saudi_Arabia') }}</option>
+                                    <option value="+967" @selected($student->country_code == '+967')>+967 {{ trans('main_trans.Yemen') }}</option>
+                                    <option value="+968" @selected($student->country_code == '+968')>+968 {{ trans('main_trans.Oman') }}</option>
+                                    <option value="+970" @selected($student->country_code == '+970')>+970 {{ trans('main_trans.Palestine') }}</option>
+                                    <option value="+971" @selected($student->country_code == '+971')>+971 {{ trans('main_trans.United_Arab_Emirates') }}</option>
+                                    <option value="+973" @selected($student->country_code == '+973')>+973 {{ trans('main_trans.Bahrain') }}</option>
+                                    <option value="+974" @selected($student->country_code == '+974')>+974 {{ trans('main_trans.Qatar') }}</option>
+                                    <option value="+975" @selected($student->country_code == '+975')>+975 {{ trans('main_trans.Bhutan') }}</option>
+                                    <option value="+976" @selected($student->country_code == '+976')>+976 {{ trans('main_trans.Mongolia') }}</option>
+                                    <option value="+977" @selected($student->country_code == '+977')>+977 {{ trans('main_trans.Nepal') }}</option>
                                 </select>
                                
                             </div>
@@ -110,6 +110,7 @@
                                     <label for="city" class="form-label card-title mb-1">{{ trans('main_trans.City') }} <span class="tx-danger">*</span></label>
                                     <select id="city" name="city" class="form-control  nice-select  custom-select">
                                         <option value="" disabled>{{ trans('main_trans.Select_city') }}</option>
+                                        <option value="other" @if($student->city=='other') selected @endif>{{ trans('main_trans.other') }}</option>
                                         <option value="damascus" @if($student->city=='damascus') selected @endif>{{ trans('main_trans.damascus') }}</option>
                                         <option value="damascus_suburb" @if($student->city=='damascus_suburb') selected @endif>{{ trans('main_trans.damascus_suburb') }}</option>
                                         <option value="homs" @if($student->city=='homs') selected @endif>{{ trans('main_trans.homs') }}</option>

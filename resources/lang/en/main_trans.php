@@ -50,6 +50,9 @@ return [
     'Name'=>'Name',
     'Title'=>'Title',
     'Phone'=>'Phone',
+    'Phone_max_length'=>'Phone must be less than 15 digits',
+    'Phone_min_length'=>'Phone must be more than 10 digits',
+    'Country_code_required'=>'Country code is required',
     'Country_code'=>'Country code',
     'Actions'=>'Actions',
     'Time_of_code'=>'Time Of Code',
@@ -644,6 +647,7 @@ return [
 
     //-----------City--start---------------------
 
+    'other' => 'Other',
     'damascus' => 'Damascus',
     'damascus_suburb' => 'Damascus Suburb',
     'homs' => 'Homs',
@@ -1104,4 +1108,13 @@ return [
     'Course_subject' => 'Course Subject',
     'Select_course_subject' => 'Select Course Subject',
     'Price' => 'Price',
+    // Student translations
+    'Country_code' => 'Country Code',
+    'Select_country_code' => 'Select Country Code',
+    'Syria' => 'Syria',
+    'Iraq' => 'Iraq',
+    'Kuwait' => 'Kuwait',
+    'Saudi_Arabia' => 'Saudi Arabia',
+    'Yemen' => 'Yemen',
+    'Oman' => 'Oman',
 ];
