@@ -87,7 +87,7 @@
                                     <th class="wd-10p border-bottom-0">{{ trans('main_trans.Course_subjects') }}</th>
                                     <th class="wd-5p border-bottom-0">{{ trans('main_trans.Number_of_units') }}</th>
                                     <th class="wd-5p border-bottom-0">{{ trans('main_trans.Price') }}</th>
-                                    <!-- <th class="wd-5p border-bottom-0">{{ trans('main_trans.Estimation_time') }}</th> -->
+                                    <th class="wd-5p border-bottom-0">{{ trans('main_trans.Estimation_time') }}</th>
                                     <th class="wd-20p-f border-bottom-0">{{ trans('main_trans.Actions') }}</th>
                                 </tr>
                                 </thead>
@@ -113,7 +113,7 @@
                                         </td>
                                         <td>{{ $teacher->units->count() }}</td>
                                         <td>{{ $teacher->price ?? '-' }}</td>
-                                        <!-- <td>{{ $teacher->estimation_time }}</td> -->
+                                        <td>{{ $teacher->estimation_time }}</td>
                                         <td>
                                             @can('Unit-show')
                                                 <a class="btn btn-success" href="{{ route('teacher.unit', ['teacher' => $teacher->id, 'subject_video' => $subject_video_selected->id]) }}" title="{{ trans('main_trans.Units') }}">
@@ -222,7 +222,7 @@
                         <div class="row mb-3">
                             <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Course_subjects') }} <span class="tx-danger">*</span></label>
                             <div class="col-md-8">
-                                <select name="subject_videos[]" class="form-control subject-videos-select" required multiple>
+                                <select name="subject_videos[]" class="form-control subject-videos-select" required >
                                     @foreach ($subjectVideos as $subjectVideo)
                                         <option value="{{ $subjectVideo->id }}" {{ $subjectVideo->id == $subject_video_selected->id ? 'selected' : '' }}>
                                             {{ $subjectVideo->name }}
