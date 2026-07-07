@@ -1000,7 +1000,7 @@ return [
     'No_course_subjects_available_description' => 'Add a course subject to get started.',
     'Number_of_teachers' => 'Number of Teachers',
     'Teachers' => 'Teachers',
-    'Teacher_has_related_data' => 'Cannot delete teacher because it has related units',
+    'Teacher_has_related_data' => 'Cannot delete teacher because it has related units or lesson videos',
     'Unit_has_related_data' => 'Cannot delete unit because it has related lessons',
     'Lesson_video_has_related_data' => 'Cannot delete lesson because it has related videos',
     'Add_teacher' => 'Add Teacher',

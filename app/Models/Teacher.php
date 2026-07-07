@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -37,21 +36,5 @@ class Teacher extends Model
     public function units(): HasMany
     {
         return $this->hasMany(Unit::class);
-    }
-
-    public function canBeDeleted(): bool
-    {
-        return $this->units()->count() === 0;
-    }
-
-    protected static function boot(): void
-    {
-        parent::boot();
-
-        static::deleting(function (Teacher $teacher) {
-            if (!$teacher->canBeDeleted()) {
-                throw new Exception(trans('main_trans.Teacher_has_related_data'));
-            }
-        });
     }
 }

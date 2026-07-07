@@ -1001,7 +1001,7 @@ return [
     'No_course_subjects_available_description' => 'أضف مادة كورس للبدء.',
     'Number_of_teachers' => 'عدد المعلمين',
     'Teachers' => 'المعلمين',
-    'Teacher_has_related_data' => 'لا يمكن حذف المعلم لوجود وحدات مرتبطة به',
+    'Teacher_has_related_data' => 'لا يمكن حذف المعلم لوجود وحدات أو دروس فيديو مرتبطة به',
     'Unit_has_related_data' => 'لا يمكن حذف الوحدة لوجود دروس مرتبطة بها',
     'Lesson_video_has_related_data' => 'لا يمكن حذف الدرس لوجود فيديوهات مرتبطة به',
     'Add_teacher' => 'إضافة معلم',

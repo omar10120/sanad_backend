@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\LessonVideo;
 use App\Models\SubjectVideo;
 use App\Models\Teacher;
+use App\Models\Unit;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
@@ -70,17 +72,23 @@ class TeacherService
 
     public function deleteTeacher(int $id): array
     {
-        $teacher = Teacher::findOrFail($id);
-
-        if (!$teacher->canBeDeleted()) {
-            return [
-                'success' => false,
-                'message' => trans('main_trans.Teacher_has_related_data'),
-            ];
-        }
+        $teacher = Teacher::with(['units.lessonVideos.youtubeLinks'])->findOrFail($id);
 
         try {
-            $teacher->delete();
+            DB::transaction(function () use ($teacher) {
+                foreach ($teacher->units as $unit) {
+                    $this->deleteUnitWithRelations($unit);
+                }
+
+                $teacher->subjectVideos()->detach();
+
+                if ($teacher->photo) {
+                    $this->deleteTeacherPhoto($teacher->id, $teacher->photo);
+                }
+
+                $teacher->delete();
+            });
+
             return [
                 'success' => true,
                 'message' => trans('main_trans.Teacher_delete_successfully'),
@@ -91,6 +99,21 @@ class TeacherService
                 'message' => $e->getMessage(),
             ];
         }
+    }
+
+    private function deleteUnitWithRelations(Unit $unit): void
+    {
+        foreach ($unit->lessonVideos as $lessonVideo) {
+            $this->deleteLessonVideoWithRelations($lessonVideo);
+        }
+
+        $unit->delete();
+    }
+
+    private function deleteLessonVideoWithRelations(LessonVideo $lessonVideo): void
+    {
+        $lessonVideo->youtubeLinks()->delete();
+        $lessonVideo->delete();
     }
 
     public function getArchivedTeachers(int $subjectVideoId): Collection
@@ -109,13 +132,30 @@ class TeacherService
 
     public function forceDeleteTeacher(int $id): void
     {
-        $teacher = Teacher::onlyTrashed()->findOrFail($id);
+        $teacher = Teacher::onlyTrashed()
+            ->with([
+                'units.lessonVideos' => fn ($query) => $query->withTrashed()->with('youtubeLinks'),
+            ])
+            ->findOrFail($id);
 
-        if ($teacher->photo) {
-            $this->deleteTeacherPhoto($teacher->id, $teacher->photo);
-        }
+        DB::transaction(function () use ($teacher) {
+            foreach ($teacher->units as $unit) {
+                foreach ($unit->lessonVideos as $lessonVideo) {
+                    $lessonVideo->youtubeLinks()->delete();
+                    $lessonVideo->forceDelete();
+                }
 
-        $teacher->forceDelete();
+                $unit->delete();
+            }
+
+            $teacher->subjectVideos()->detach();
+
+            if ($teacher->photo) {
+                $this->deleteTeacherPhoto($teacher->id, $teacher->photo);
+            }
+
+            $teacher->forceDelete();
+        });
     }
 
     public function handlePhotoUpload(Teacher $teacher, $photoFile): ?string
