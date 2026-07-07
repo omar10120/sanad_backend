@@ -5,9 +5,10 @@ namespace App\Services;
 use App\Models\SubjectVideo;
 use App\Models\Teacher;
 use App\Models\Unit;
+use App\Models\LessonVideo;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
-
+use Illuminate\Support\Facades\DB;
 class UnitService
 {
     public function getUnitsByTeacher(int $teacherId): Collection
@@ -55,19 +56,15 @@ class UnitService
         return $unit;
     }
 
+    
     public function deleteUnit(int $id): array
     {
-        $unit = Unit::findOrFail($id);
-
-        if (!$unit->canBeDeleted()) {
-            return [
-                'success' => false,
-                'message' => trans('main_trans.Unit_has_related_data'),
-            ];
-        }
+        $unit = Unit::with(['lessonVideos.youtubeLinks'])->findOrFail($id);
 
         try {
-            $unit->delete();
+            DB::transaction(function () use ($unit) {
+                $this->deleteUnitWithRelations($unit);
+            });
 
             return [
                 'success' => true,
@@ -79,5 +76,22 @@ class UnitService
                 'message' => $e->getMessage(),
             ];
         }
+    }
+
+    private function deleteUnitWithRelations(Unit $unit): void
+    {
+        foreach ($unit->lessonVideos as $lessonVideo) {
+            $this->deleteLessonVideoWithRelations($lessonVideo);
+        }
+
+        $unit->delete();
+    }
+
+
+
+    private function deleteLessonVideoWithRelations(LessonVideo $lessonVideo): void
+    {
+        $lessonVideo->youtubeLinks()->delete();
+        $lessonVideo->delete();
     }
 }

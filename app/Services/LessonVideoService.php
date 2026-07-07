@@ -8,7 +8,7 @@ use App\Models\Teacher;
 use App\Models\Unit;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
-
+use Illuminate\Support\Facades\DB;
 class LessonVideoService
 {
     public function getLessonVideosByUnit(int $unitId): Collection
@@ -76,17 +76,13 @@ class LessonVideoService
 
     public function deleteLessonVideo(int $id): array
     {
-        $lessonVideo = LessonVideo::findOrFail($id);
-
-        if (!$lessonVideo->canBeDeleted()) {
-            return [
-                'success' => false,
-                'message' => trans('main_trans.Lesson_video_has_related_data'),
-            ];
-        }
+        $lessonVideo = LessonVideo::with(['youtubeLinks'])->findOrFail($id);
 
         try {
-            $lessonVideo->delete();
+            DB::transaction(function () use ($lessonVideo) {
+                $lessonVideo->youtubeLinks()->delete();
+                $lessonVideo->delete();
+            });
 
             return [
                 'success' => true,
