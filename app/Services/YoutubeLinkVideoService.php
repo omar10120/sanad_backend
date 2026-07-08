@@ -8,7 +8,7 @@ use App\Models\Teacher;
 use App\Models\Unit;
 use App\Models\YoutubeLinkVideo;
 use Illuminate\Database\Eloquent\Collection;
-
+use Illuminate\Support\Facades\Log;
 class YoutubeLinkVideoService
 {
     public function getYoutubeLinksByLessonVideo(int $lessonVideoId): Collection
@@ -59,22 +59,41 @@ class YoutubeLinkVideoService
     }
 
     public function createYoutubeLinkVideo(array $data): YoutubeLinkVideo
-    {
+    {   
+        $lessonVideo = LessonVideo::findOrFail($data['lesson_video_id']);
+        $unit = Unit::findOrFail($lessonVideo->unit_id);
+        $teacher = Teacher::findOrFail($unit->teacher_id);
+        $this->updateTeacherEstimationTime($teacher, $data['video_time']);
+
+
         return YoutubeLinkVideo::create($data);
     }
 
     public function updateYoutubeLinkVideo(int $id, array $data): YoutubeLinkVideo
     {
+        $lessonVideo = LessonVideo::findOrFail($data['lesson_video_id']);
+        $unit = Unit::findOrFail($lessonVideo->unit_id);
+        $teacher = Teacher::findOrFail($unit->teacher_id);
         $youtubeLinkVideo = YoutubeLinkVideo::findOrFail($id);
+            $teacher->estimation_time -= $youtubeLinkVideo->video_time;
+            $this->updateTeacherEstimationTime($teacher, $data['video_time']);
         $youtubeLinkVideo->update($data);
-
         return $youtubeLinkVideo;
     }
 
     public function deleteYoutubeLinkVideo(int $id): bool
     {
         $youtubeLinkVideo = YoutubeLinkVideo::findOrFail($id);
-
+        $lessonVideo = LessonVideo::findOrFail($youtubeLinkVideo->lesson_video_id);
+        $unit = Unit::findOrFail($lessonVideo->unit_id);
+        $teacher = Teacher::findOrFail($unit->teacher_id);
+        $teacher->estimation_time -= $youtubeLinkVideo->video_time;
+        $teacher->save();
         return (bool) $youtubeLinkVideo->delete();
+    }
+    public function updateTeacherEstimationTime(Teacher $teacher, int $videoTime): void
+    {
+        $teacher->estimation_time += $videoTime;
+        $teacher->save();
     }
 }
