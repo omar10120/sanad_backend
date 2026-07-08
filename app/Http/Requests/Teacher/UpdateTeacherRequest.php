@@ -16,7 +16,7 @@ class UpdateTeacherRequest extends FormRequest
         return [
             'id' => 'required|integer|exists:teachers,id',
             'name' => 'required|string|max:255',
-            'estimation_time' => 'required|integer|min:0',
+            'estimation_time' => 'nullable|integer|min:0',
             'whatsapp_link' => 'nullable|string|max:500',
             'instagram_link' => 'nullable|string|max:500',
             'telegram_link' => 'nullable|string|max:500',
