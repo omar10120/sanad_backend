@@ -110,7 +110,7 @@
                                     <label for="city" class="form-label card-title mb-1">{{ trans('main_trans.City') }} <span class="tx-danger">*</span></label>
                                     <select id="city" name="city" class="form-control  nice-select  custom-select">
                                         <option value="" selected disabled>{{ trans('main_trans.Select_city') }}</option>
-                                        <option value="other">{{ trans('main_trans.Other') }}</option>
+                                        <option value="other">{{ trans('main_trans.other') }}</option>
                                         <option value="damascus">{{ trans('main_trans.damascus') }}</option>
                                         <option value="damascus_suburb">{{ trans('main_trans.damascus_suburb') }}</option>
                                         <option value="homs">{{ trans('main_trans.homs') }}</option>
