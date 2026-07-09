@@ -70,6 +70,7 @@
                                             @else
                                                 <input class="dropify" id="icon_photo" name="icon_photo" type="file" data-height="120" accept=".jpg, .png, image/jpeg, image/png">
                                             @endif
+                                            
                                         </div>
                                     </div>
                                 </div>

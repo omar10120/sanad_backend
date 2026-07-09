@@ -267,6 +267,7 @@
                         <div class="row mb-3">
                             <label for="edit_icon_photo" class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Subject_photo') }}</label>
                             <div class="col-md-8">
+                                <!-- <input type=hidden class="dropify" id="edit_icon_photo" name="icon_photo" type="file" data-height="120" accept=".jpg, .png, image/jpeg, image/png"> -->
                                 <input class="dropify" id="edit_icon_photo" name="icon_photo" type="file" data-height="120" accept=".jpg, .png, image/jpeg, image/png">
                             </div>
                         </div>
@@ -352,7 +353,7 @@
             var $photoInput = $('#edit_icon_photo');
             var drEvent = $photoInput.data('dropify');
             if (drEvent) {
-                drEvent.destroy();
+                // drEvent.destroy();
                 $photoInput.removeAttr('data-default-file');
             }
             if (photoUrl) {
