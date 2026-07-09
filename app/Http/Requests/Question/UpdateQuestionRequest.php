@@ -65,7 +65,7 @@ class UpdateQuestionRequest extends FormRequest
             'type_id.exists' => 'نوع السؤال المحدد غير موجود',
             'text_question.required' => 'نص السؤال مطلوب',
             'text_question.string' => 'نص السؤال يجب أن يكون نص',
-            'choices.required_if' => 'الخيارات مطلوبة لهذا النوع من الأسئلة',
+            'choices.required_if' => 'نوع السؤال مطلوب لهذا النوع من الأسئلة',
             'choices.string' => 'الخيارات يجب أن تكون نص',
             'correctAnswer.required' => 'الإجابة الصحيحة مطلوبة',
             'correctAnswer.integer' => 'الإجابة الصحيحة يجب أن تكون رقم',
