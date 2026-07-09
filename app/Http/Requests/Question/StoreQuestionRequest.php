@@ -28,12 +28,12 @@ class StoreQuestionRequest extends FormRequest
             'type_id' => 'required|exists:question_types,id',
             'text_question' => 'required|string',
             'choices' => [
-                'required_if:type_id,1',
-                Rule::when(request()->type_id == 1, 'string'),
+                'required_if:type_id,0',
+                Rule::when(request()->type_id == 0, 'string'),
             ],
             'correctAnswer' => [
-                'required_if:type_id,1',
-                Rule::when(request()->type_id == 1, 'integer|min:1'),
+                'required_if:type_id,0',
+                Rule::when(request()->type_id == 0, 'integer|min:1'),
             ],
             'hint' => 'nullable|string',
             'question_group_id' => 'required|integer',
