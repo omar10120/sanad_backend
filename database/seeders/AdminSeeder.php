@@ -46,8 +46,8 @@ class AdminSeeder extends Seeder
             'name_ar' => 'محمد لويس الشعلان',
             'name_en' => 'Mohammed alshaalan',
             'phone' => '0952732752',
-            'email' => 'magholm302@gmail.com',
-            'password' => bcrypt('Sanad2025'),
+            'email' => 'amr.dawoodi@hotmail.com',
+            'password' => bcrypt('admin123'),
         ]);
 
         $user2 = User::create([
