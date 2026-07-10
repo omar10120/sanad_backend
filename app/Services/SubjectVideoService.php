@@ -59,29 +59,30 @@ class SubjectVideoService
     }
 
     public function deleteSubjectVideo(int $id): array
-    {
-        $subjectVideo = SubjectVideo::findOrFail($id);
-
-        if (!$subjectVideo->canBeDeleted()) {
-            return [
-                'success' => false,
-                'message' => trans('main_trans.Subject_video_has_related_data'),
-            ];
-        }
-
-        try {
-            $subjectVideo->delete();
-            return [
-                'success' => true,
-                'message' => trans('main_trans.Subject_video_delete_successfully'),
-            ];
-        } catch (Exception $e) {
-            return [
-                'success' => false,
-                'message' => $e->getMessage(),
-            ];
-        }
+{
+    $subjectVideo = SubjectVideo::with('teachers')->findOrFail($id);
+    
+    try {
+        // Remove the relationships first
+        $subjectVideo->teachers()->detach(); // For many-to-many
+        
+        // Or for one-to-many:
+        // $subjectVideo->teachers()->delete(); // Delete related teachers
+        
+        // Then delete the subject video
+        $subjectVideo->delete();
+        
+        return [
+            'success' => true,
+            'message' => trans('main_trans.Subject_video_delete_successfully'),
+        ];
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage(),
+        ];
     }
+}
 
     public function toggleSubjectVideoStatus(SubjectVideo $subjectVideo): bool
     {
