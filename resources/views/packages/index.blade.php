@@ -69,7 +69,12 @@
                             </thead>
                             <tbody>
                             @foreach ($packages as $package)
-                                @php $groupedSubjects = $formatPackageSubjects($package); @endphp
+                                @php
+                                    $groupedSubjects = $formatPackageSubjects($package);
+                                    $hasCourseUnits = $package->codePackageSubjects->contains(fn ($item) => !empty($item->unit_id));
+                                    $packageMode = $hasCourseUnits ? 'with_course' : 'without_course';
+                                    $subjectIdsOnly = $package->codePackageSubjects->pluck('subject_id')->unique()->values();
+                                @endphp
                                 <tr>
                                     <td>{{ $package->id }}</td>
                                     <td>{{ $package->name }}</td>
@@ -124,6 +129,8 @@
                                                data-package-id="{{ $package->id }}"
                                                data-package-name="{{ $package->name }}"
                                                data-package-expires="{{ $package->expires_at }}"
+                                               data-package-mode="{{ $packageMode }}"
+                                               data-subject-ids="{{ $subjectIdsOnly->toJson() }}"
                                                data-package-items="{{ $package->codePackageSubjects->map(fn($item) => ['subject_id' => $item->subject_id, 'unit_id' => $item->unit_id])->values()->toJson() }}"
                                                title="{{ trans('main_trans.Edit_package') }}">
                                                 <i class="fas fa-edit"></i> {{ trans('main_trans.Edit_package') }}
@@ -144,6 +151,7 @@
             </div>
         </div>
 
+        <!-- Add Package Modal -->
         <div class="modal" id="modal1">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content modal-content-demo">
@@ -172,13 +180,41 @@
                                     <input id="expires_at" class="form-control" name="expires_at" type="date" required>
                                 </div>
                             </div>
-                            <div class="mb-2 d-flex justify-content-between align-items-center">
-                                <label class="mb-0 font-weight-bold">{{ trans('main_trans.Subject_unit_pairs') }}</label>
-                                <button type="button" class="btn btn-sm btn-outline-primary" id="add-package-item">
-                                    <i class="fas fa-plus"></i> {{ trans('main_trans.Add_row') }}
-                                </button>
+                            <div class="row mb-3">
+                                <label class="col-md-3 col-form-label text-md-end">{{ trans('main_trans.Package_content_type') }}</label>
+                                <div class="col-md-9">
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" id="create_package_mode_with_course" name="package_mode" value="with_course" class="custom-control-input package-mode-radio" checked>
+                                        <label class="custom-control-label" for="create_package_mode_with_course">{{ trans('main_trans.With_course_subject') }}</label>
+                                    </div>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" id="create_package_mode_without_course" name="package_mode" value="without_course" class="custom-control-input package-mode-radio">
+                                        <label class="custom-control-label" for="create_package_mode_without_course">{{ trans('main_trans.Without_course_subject') }}</label>
+                                    </div>
+                                </div>
                             </div>
-                            <div id="package-items-container"></div>
+                            <div class="with-course-section">
+                                <div class="mb-2 d-flex justify-content-between align-items-center">
+                                    <label class="mb-0 font-weight-bold">{{ trans('main_trans.Subject_unit_pairs') }}</label>
+                                    <button type="button" class="btn btn-sm btn-outline-primary add-package-item-btn">
+                                        <i class="fas fa-plus"></i> {{ trans('main_trans.Add_row') }}
+                                    </button>
+                                </div>
+                                <div class="package-items-container"></div>
+                            </div>
+                            <div class="without-course-section" style="display: none;">
+                                <div class="row mb-3">
+                                    <label class="col-md-3 col-form-label text-md-end">{{ trans('main_trans.Subjects') }}</label>
+                                    <div class="col-md-9">
+                                        <select name="subject_ids[]" class="form-control package-subjects-multi" multiple size="8" disabled>
+                                            @foreach($subjects as $subject)
+                                                <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <small class="text-muted d-block mt-1">{{ trans('main_trans.Hold_Ctrl_to_select_multiple') }}</small>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button class="btn ripple btn-primary" type="submit">{{ trans('main_trans.Add_code_package') }}</button>
@@ -189,6 +225,7 @@
             </div>
         </div>
 
+        <!-- Edit Package Modal -->
         <div class="modal" id="editPackageModal">
             <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                 <div class="modal-content modal-content-demo">
@@ -214,13 +251,39 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="mb-2 d-flex justify-content-between align-items-center">
-                                <label class="mb-0 font-weight-bold">{{ trans('main_trans.Subject_unit_pairs') }}</label>
-                                <button type="button" class="btn btn-sm btn-outline-primary" id="add-edit-package-item">
-                                    <i class="fas fa-plus"></i> {{ trans('main_trans.Add_row') }}
-                                </button>
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label class="mb-2 d-block font-weight-bold">{{ trans('main_trans.Package_content_type') }}</label>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" id="edit_package_mode_with_course" name="package_mode" value="with_course" class="custom-control-input package-mode-radio" checked>
+                                        <label class="custom-control-label" for="edit_package_mode_with_course">{{ trans('main_trans.With_course_subject') }}</label>
+                                    </div>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" id="edit_package_mode_without_course" name="package_mode" value="without_course" class="custom-control-input package-mode-radio">
+                                        <label class="custom-control-label" for="edit_package_mode_without_course">{{ trans('main_trans.Without_course_subject') }}</label>
+                                    </div>
+                                </div>
                             </div>
-                            <div id="edit-package-items-container"></div>
+                            <div class="with-course-section">
+                                <div class="mb-2 d-flex justify-content-between align-items-center">
+                                    <label class="mb-0 font-weight-bold">{{ trans('main_trans.Subject_unit_pairs') }}</label>
+                                    <button type="button" class="btn btn-sm btn-outline-primary add-package-item-btn">
+                                        <i class="fas fa-plus"></i> {{ trans('main_trans.Add_row') }}
+                                    </button>
+                                </div>
+                                <div class="package-items-container"></div>
+                            </div>
+                            <div class="without-course-section" style="display: none;">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">{{ trans('main_trans.Subjects') }}</label>
+                                    <select name="subject_ids[]" class="form-control package-subjects-multi" multiple size="8" disabled>
+                                        @foreach($subjects as $subject)
+                                            <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <small class="text-muted d-block mt-1">{{ trans('main_trans.Hold_Ctrl_to_select_multiple') }}</small>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ trans('main_trans.Close') }}</button>
@@ -231,6 +294,7 @@
             </div>
         </div>
 
+        <!-- Delete Package Modal -->
         <div class="modal" id="modal3">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content modal-content-demo">
@@ -357,6 +421,21 @@
             }
         }
 
+        function applyPackageMode(modal, mode) {
+            const isWithCourse = mode === 'with_course';
+
+            modal.find('.with-course-section').toggle(isWithCourse);
+            modal.find('.without-course-section').toggle(!isWithCourse);
+
+            modal.find('.with-course-section').find('select, input, button').prop('disabled', !isWithCourse);
+            modal.find('.without-course-section').find('select, input').prop('disabled', isWithCourse);
+            modal.find('.package-mode-radio').prop('disabled', false);
+        }
+
+        function getSelectedPackageMode(modal) {
+            return modal.find('.package-mode-radio:checked').val() || 'with_course';
+        }
+
         function buildPackageItemRow(container, index, selectedSubjectId = '', selectedUnitId = '', selectedTeacherId = '', selectedSubjectVideoId = '') {
             if (!selectedTeacherId && selectedUnitId) {
                 selectedTeacherId = getTeacherIdByUnitId(selectedUnitId);
@@ -423,13 +502,28 @@
             });
         }
 
-        $('#add-package-item').on('click', function() {
-            const container = $('#package-items-container');
-            buildPackageItemRow(container, container.find('.package-item-row').length);
+        function resetWithCourseSection(modal, packageItems = []) {
+            const container = modal.find('.package-items-container');
+            container.empty();
+
+            if (packageItems.length === 0) {
+                buildPackageItemRow(container, 0);
+                return;
+            }
+
+            packageItems.forEach(function(item, index) {
+                buildPackageItemRow(container, index, item.subject_id, item.unit_id);
+            });
+        }
+
+        $(document).on('change', '.package-mode-radio', function() {
+            const modal = $(this).closest('.modal');
+            applyPackageMode(modal, $(this).val());
         });
 
-        $('#add-edit-package-item').on('click', function() {
-            const container = $('#edit-package-items-container');
+        $(document).on('click', '.add-package-item-btn', function() {
+            const modal = $(this).closest('.modal');
+            const container = modal.find('.package-items-container');
             buildPackageItemRow(container, container.find('.package-item-row').length);
         });
 
@@ -446,39 +540,56 @@
         });
 
         $(document).on('click', '.remove-package-item', function() {
-            const container = $(this).closest('[id$="package-items-container"]');
+            const container = $(this).closest('.package-items-container');
             $(this).closest('.package-item-row').remove();
             reindexPackageItems(container);
         });
 
         $('#modal1').on('show.bs.modal', function() {
-            const container = $('#package-items-container');
-            container.empty();
-            buildPackageItemRow(container, 0);
+            const modal = $(this);
+            modal.find('input.package-mode-radio[value="with_course"]').prop('checked', true);
+            modal.find('.package-subjects-multi').val([]);
+            resetWithCourseSection(modal);
+            applyPackageMode(modal, 'with_course');
         });
 
         $('.edit-package-btn').on('click', function() {
             const packageId = $(this).data('package-id');
+            const packageMode = $(this).data('package-mode') || 'with_course';
+            const subjectIds = $(this).data('subject-ids') || [];
             const packageItems = $(this).data('package-items') || [];
+            const modal = $('#editPackageModal');
 
             $('#editPackageForm').attr('action', '{{ route('code-package.index') }}/' + packageId);
             $('#edit_name').val($(this).data('package-name'));
             $('#edit_expires_at').val($(this).data('package-expires'));
+            modal.find(`input.package-mode-radio[value="${packageMode}"]`).prop('checked', true);
 
-            const container = $('#edit-package-items-container');
-            container.empty();
-
-            if (packageItems.length === 0) {
-                buildPackageItemRow(container, 0);
+            if (packageMode === 'without_course') {
+                modal.find('.package-subjects-multi').val(subjectIds.map(String));
+                resetWithCourseSection(modal);
             } else {
-                packageItems.forEach(function(item, index) {
-                    buildPackageItemRow(container, index, item.subject_id, item.unit_id);
-                });
+                modal.find('.package-subjects-multi').val([]);
+                resetWithCourseSection(modal, packageItems);
             }
+
+            applyPackageMode(modal, packageMode);
         });
 
         $('#createPackageForm, #editPackageForm').on('submit', function(e) {
-            if ($(this).find('.package-item-row').length === 0) {
+            const modal = $(this).closest('.modal');
+            const mode = getSelectedPackageMode(modal);
+
+            if (mode === 'without_course') {
+                const selectedSubjects = modal.find('.package-subjects-multi').val() || [];
+                if (selectedSubjects.length === 0) {
+                    e.preventDefault();
+                    alert('{{ trans('main_trans.At_least_one_subject_required') }}');
+                }
+                return;
+            }
+
+            if (modal.find('.package-item-row').length === 0) {
                 e.preventDefault();
                 alert('{{ trans('main_trans.At_least_one_subject_unit_required') }}');
             }

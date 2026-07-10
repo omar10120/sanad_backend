@@ -1107,6 +1107,10 @@ return [
     'At_least_one_subject_unit_required' => 'Please add at least one subject and unit pair',
     'Course_subject' => 'Course Subject',
     'Select_course_subject' => 'Select Course Subject',
+    'With_course_subject' => 'With course subject',
+    'Without_course_subject' => 'Without course subject',
+    'Package_content_type' => 'Package content type',
+    'At_least_one_subject_required' => 'Please select at least one subject',
     'Price' => 'Price',
     // Student translations
     'Country_code' => 'Country Code',

@@ -1111,6 +1111,10 @@ return [
      'At_least_one_subject_unit_required' => 'يرجى إضافة زوج واحد على الأقل من المادة والوحدة',
      'Course_subject' => 'مادة الكورس',
      'Select_course_subject' => 'اختر مادة الكورس',
+     'With_course_subject' => 'مع مادة الكورس',
+     'Without_course_subject' => 'بدون مادة الكورس',
+     'Package_content_type' => 'نوع محتوى الحزمة',
+     'At_least_one_subject_required' => 'يرجى اختيار مادة واحدة على الأقل',
 
      // Student translations
      'Country_code' => 'رمز الدولة',
