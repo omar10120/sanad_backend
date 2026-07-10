@@ -10,6 +10,7 @@ use App\Services\QuestionReportService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class ApiQuestionController extends Controller
 {
@@ -42,36 +43,50 @@ class ApiQuestionController extends Controller
      * Get a specific question by UUID only if the authenticated student
      * has access to the subject that contains this question.
      */
-    public function show($uuid): JsonResponse
+
+    
+
+    public function show($uuid, Request $request)
     {
         try {
             $question = $this->questionService->getQuestionByUuid($uuid);
-            if(!$question){
+
+         
+        if (!$question) {
+            if ($request->expectsJson()) {
                 return $this->apiResponse(null, 'السؤال غير موجود!', 404);
             }
+            return redirect('/');
+        }
 
             $question->load(['questionGroup.lesson.subject']);
             $lesson = optional($question->questionGroup)->lesson;
             $subject = optional($lesson)->subject;
 
             if (!$subject) {
-                return $this->apiResponse(null, 'المادة غير موجودة لهذا السؤال', 404);
+                if ($request->is('newapi/*') || $request->expectsJson()) {
+                    return $this->apiResponse(null, 'المادة غير موجودة لهذا السؤال', 404);
+                }
+                return redirect('/');
             }
 
-            $student = Auth::user();
-            if (!$student) {
-                return $this->apiResponse(null, 'غير مصرح', 401);
+            // --- API request: return JSON (no auth required for public question) ---
+            if ($request->is('newapi/*') || $request->expectsJson()) {
+                // Optionally check Auth if you need user-specific data
+                // $student = Auth::user(); 
+                // ... but you can return the question anyway
+                $resource = new QuestionResource($question);
+                return $this->apiResponse($resource, 'السؤال', 200);
             }
 
-//            $hasAccess = $subject->checkStudentAccess($student->id);
-//            if (!$hasAccess) {
-//                return $this->apiResponse(null, trans('auth.unauthorized'), 403);
-//            }
+            // --- Browser request: render the deep‑link landing page ---
+            return view('question.share', compact('question'));
 
-            $resource = new QuestionResource($question);
-            return $this->apiResponse($resource, 'السؤال ' . $question->id, 200);
         } catch (Exception $e) {
-            return $this->apiResponse(null, $e->getMessage(), 500);
+            if ($request->is('newapi/*') || $request->expectsJson()) {
+                return $this->apiResponse(null, $e->getMessage(), 500); 
+            }
+            return redirect('/');
         }
     }
 

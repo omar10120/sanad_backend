@@ -31,7 +31,7 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::get('type/', [ApiTypeController::class, 'index']);
-
+Route::get('question/{uuid}', [ApiQuestionController::class, 'show']);
 Route::group(
     [
         'middleware' => [
@@ -92,7 +92,7 @@ Route::group(
 
     Route::prefix('question')->group(function () {
         Route::get('/', [ApiQuestionController::class, 'index']);
-        Route::get('/{uuid}', [ApiQuestionController::class, 'show']);
+        // Route::get('/{uuid}', [ApiQuestionController::class, 'show']);
         Route::post('/report', [ApiQuestionController::class, 'storeReport']);
     });
 
@@ -101,5 +101,7 @@ Route::group(
         Route::post('/check', [ApiCodeController::class, 'checkCode']);
     });
 });
+
+
 
 
