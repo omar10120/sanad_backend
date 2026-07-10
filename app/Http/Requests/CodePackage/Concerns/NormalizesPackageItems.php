@@ -13,17 +13,18 @@ trait NormalizesPackageItems
         $items = [];
 
         if ($withCourse) {
-            $items = array_merge(
-                $items,
-                collect($this->input('package_items', []))
-                    ->filter(fn ($item) => ! empty($item['subject_id']) && ! empty($item['unit_id']))
-                    ->map(fn ($item) => [
-                        'subject_id' => (int) $item['subject_id'],
-                        'unit_id' => (int) $item['unit_id'],
-                    ])
-                    ->values()
-                    ->all()
-            );
+            $courseItems = collect($this->input('package_items', []))
+                ->filter(fn ($item) => ! empty($item['subject_id']) && ! empty($item['unit_id']))
+                ->map(fn ($item) => [
+                    'subject_id' => (int) $item['subject_id'],
+                    'unit_id' => (int) $item['unit_id'],
+                ])
+                ->values()
+                ->all();
+
+            $this->merge(['_course_package_items' => $courseItems]);
+
+            $items = array_merge($items, $courseItems);
         }
 
         if ($withoutCourse) {
@@ -71,8 +72,7 @@ trait NormalizesPackageItems
             }
 
             if ($withCourse) {
-                $courseItems = collect($this->input('package_items', []))
-                    ->filter(fn ($item) => ! empty($item['subject_id']) && ! empty($item['unit_id']));
+                $courseItems = collect($this->input('_course_package_items', []));
 
                 if ($courseItems->isEmpty()) {
                     $validator->errors()->add(

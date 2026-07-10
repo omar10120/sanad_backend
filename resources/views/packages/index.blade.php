@@ -1,15 +1,5 @@
 @php
-    $formatPackageSubjects = function ($package) {
-        return $package->codePackageSubjects
-            ->groupBy('subject_id')
-            ->map(function ($items) {
-                return [
-                    'subject_name' => $items->first()->subject?->name,
-                    'units' => $items->map(fn ($item) => $item->unit?->name)->filter()->values()->all(),
-                ];
-            })
-            ->values();
-    };
+    use App\Services\CodeService;
 @endphp
 
 @extends('layouts.master')
@@ -70,7 +60,7 @@
                             <tbody>
                             @foreach ($packages as $package)
                                 @php
-                                    $groupedSubjects = $formatPackageSubjects($package);
+                                    $packageContent = app(CodeService::class)->formatPackageSubjectsForDisplay($package);
                                     $hasCourseUnits = $package->codePackageSubjects->contains(fn ($item) => !empty($item->unit_id));
                                     $hasSubjectsOnly = $package->codePackageSubjects->contains(fn ($item) => empty($item->unit_id));
                                     $courseItems = $package->codePackageSubjects
@@ -87,18 +77,33 @@
                                     <td>{{ $package->id }}</td>
                                     <td>{{ $package->name }}</td>
                                     <td>
-                                        @forelse($groupedSubjects as $group)
-                                            <div class="package-subjects-tree mb-2">
-                                                <strong>{{ $group['subject_name'] }}</strong>
-                                                <ul>
-                                                    @foreach($group['units'] as $unitName)
-                                                        <li>├─ {{ $unitName }}</li>
+                                        @if(count($packageContent['study_subjects']) || count($packageContent['course_subjects']))
+                                            @if(count($packageContent['study_subjects']))
+                                                <div class="package-subjects-tree mb-2">
+                                                    <small class="text-muted d-block mb-1">{{ trans('main_trans.Without_course_subject') }}</small>
+                                                    <ul>
+                                                        @foreach($packageContent['study_subjects'] as $subject)
+                                                            <li>{{ $subject['subject_name'] }} ({{ trans('main_trans.Full_subject') }})</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            @endif
+                                            @if(count($packageContent['course_subjects']))
+                                                <div class="package-subjects-tree mb-2">
+                                                    <small class="text-muted d-block mb-1">{{ trans('main_trans.With_course_subject') }}</small>
+                                                    @foreach($packageContent['course_subjects'] as $group)
+                                                        <strong>{{ $group['subject_name'] }}</strong>
+                                                        <ul>
+                                                            @foreach($group['units'] as $unit)
+                                                                <li>├─ {{ $unit['name'] }}</li>
+                                                            @endforeach
+                                                        </ul>
                                                     @endforeach
-                                                </ul>
-                                            </div>
-                                        @empty
+                                                </div>
+                                            @endif
+                                        @else
                                             <span class="text-muted">-</span>
-                                        @endforelse
+                                        @endif
                                     </td>
                                     <td>{{ $package->codes_count }}</td>
                                     <td>{{ $package->expires_at }}</td>

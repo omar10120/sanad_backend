@@ -1116,6 +1116,7 @@ return [
      'Package_content_type' => 'نوع محتوى الحزمة',
      'At_least_one_subject_required' => 'يرجى اختيار مادة واحدة على الأقل',
      'At_least_one_content_type_required' => 'يرجى اختيار نوع محتوى واحد على الأقل (مع أو بدون مادة الكورس)',
+     'Full_subject' => 'المادة كاملة',
 
      // Student translations
      'Country_code' => 'رمز الدولة',

@@ -112,18 +112,33 @@
                                     <td>{{ $package->name }}</td>
 {{--                                    <td>{{ $package->subjects->pluck('name')->toArray() }}</td>--}}
                                     <td>
-                                        @forelse($packageSubjectsGrouped as $group)
-                                            <div class="text-left mb-2">
-                                                <strong>{{ $group['subject_name'] }}</strong>
-                                                <ul class="mb-0 pl-3">
-                                                    @foreach($group['units'] as $unit)
-                                                        <li>├─ {{ $unit['name'] }}</li>
+                                        @if(count($packageSubjectsGrouped['study_subjects']) || count($packageSubjectsGrouped['course_subjects']))
+                                            @if(count($packageSubjectsGrouped['study_subjects']))
+                                                <div class="text-left mb-2">
+                                                    <small class="text-muted d-block mb-1">{{ trans('main_trans.Without_course_subject') }}</small>
+                                                    <ul class="mb-0 pl-3">
+                                                        @foreach($packageSubjectsGrouped['study_subjects'] as $subject)
+                                                            <li>{{ $subject['subject_name'] }} ({{ trans('main_trans.Full_subject') }})</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            @endif
+                                            @if(count($packageSubjectsGrouped['course_subjects']))
+                                                <div class="text-left mb-2">
+                                                    <small class="text-muted d-block mb-1">{{ trans('main_trans.With_course_subject') }}</small>
+                                                    @foreach($packageSubjectsGrouped['course_subjects'] as $group)
+                                                        <strong>{{ $group['subject_name'] }}</strong>
+                                                        <ul class="mb-0 pl-3">
+                                                            @foreach($group['units'] as $unit)
+                                                                <li>├─ {{ $unit['name'] }}</li>
+                                                            @endforeach
+                                                        </ul>
                                                     @endforeach
-                                                </ul>
-                                            </div>
-                                        @empty
+                                                </div>
+                                            @endif
+                                        @else
                                             <span class="text-muted">-</span>
-                                        @endforelse
+                                        @endif
                                     </td>
                                     <td>{{ $code->code }}</td>
                                     <td>{{ $package->expires_at }}</td>

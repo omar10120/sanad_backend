@@ -1112,6 +1112,7 @@ return [
     'Package_content_type' => 'Package content type',
     'At_least_one_subject_required' => 'Please select at least one subject',
     'At_least_one_content_type_required' => 'Select at least one content type (with or without course subject)',
+    'Full_subject' => 'Full subject',
     'Price' => 'Price',
     // Student translations
     'Country_code' => 'Country Code',

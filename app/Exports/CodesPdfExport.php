@@ -89,11 +89,9 @@ class CodesPdfExport
             // Get the package with its codes and subjects
             $package = CodePackage::with(['codes', 'codePackageSubjects.subject', 'codePackageSubjects.unit'])->findOrFail($packageId);
             $codes = $package->codes;
-            $subjects = app(\App\Services\CodeService::class)->formatPackageSubjectsForDisplay($package);
-            $rawSubjects = collect($subjects)->map(function ($group) {
-                return $group['subject_name'] . ': ' . collect($group['units'])->pluck('name')->implode(', ');
-            })->implode(' | ');
-            $subjects = $this->formatSubjects($rawSubjects);
+            $subjects = $this->formatSubjects(
+                app(\App\Services\CodeService::class)->formatPackageSubjectsAsText($package)
+            );
             
             if ($codes->isEmpty()) {
                 throw new \Exception('No codes found in this package.');

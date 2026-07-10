@@ -90,15 +90,27 @@ class CodeService
 
     public function formatPackageSubjectsForDisplay(CodePackage $package): array
     {
-        return $package->codePackageSubjects
+        $items = $package->codePackageSubjects;
+
+        $studySubjects = $items
+            ->filter(fn ($item) => empty($item->unit_id))
+            ->map(fn ($item) => [
+                'subject_id' => $item->subject?->id,
+                'subject_name' => $item->subject?->name,
+            ])
+            ->values()
+            ->all();
+
+        $courseSubjects = $items
+            ->filter(fn ($item) => ! empty($item->unit_id))
             ->groupBy('subject_id')
-            ->map(function ($items) {
-                $subject = $items->first()->subject;
+            ->map(function ($groupItems) {
+                $subject = $groupItems->first()->subject;
 
                 return [
                     'subject_id' => $subject?->id,
                     'subject_name' => $subject?->name,
-                    'units' => $items->map(fn ($item) => [
+                    'units' => $groupItems->map(fn ($item) => [
                         'id' => $item->unit?->id,
                         'name' => $item->unit?->name,
                     ])->values()->all(),
@@ -106,6 +118,28 @@ class CodeService
             })
             ->values()
             ->all();
+
+        return [
+            'study_subjects' => $studySubjects,
+            'course_subjects' => $courseSubjects,
+        ];
+    }
+
+    public function formatPackageSubjectsAsText(CodePackage $package): string
+    {
+        $content = $this->formatPackageSubjectsForDisplay($package);
+        $parts = [];
+
+        foreach ($content['study_subjects'] as $subject) {
+            $parts[] = $subject['subject_name'] . ' (' . trans('main_trans.Full_subject') . ')';
+        }
+
+        foreach ($content['course_subjects'] as $group) {
+            $unitNames = collect($group['units'])->pluck('name')->filter()->implode(', ');
+            $parts[] = $group['subject_name'] . ($unitNames ? ': ' . $unitNames : '');
+        }
+
+        return implode(' | ', $parts);
     }
 
     private function generateCodes($packageId, $count): void

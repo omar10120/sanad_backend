@@ -50,11 +50,7 @@ class CodesExport
             // الحصول على الحزمة والأكواد من قاعدة البيانات
             $package = CodePackage::with(['codes', 'codePackageSubjects.subject', 'codePackageSubjects.unit'])->findOrFail($packageId);
             $codes = $package->codes;
-            $subjects = collect(app(\App\Services\CodeService::class)->formatPackageSubjectsForDisplay($package))
-                ->map(function ($group) {
-                    return $group['subject_name'] . ': ' . collect($group['units'])->pluck('name')->implode(', ');
-                })
-                ->implode(' | ');
+            $subjects = app(\App\Services\CodeService::class)->formatPackageSubjectsAsText($package);
 
             $row = 2;
             foreach ($codes as $code) {
