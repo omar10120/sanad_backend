@@ -236,6 +236,11 @@
                             <div class="col-md-8">
                                 <input class="dropify" name="photo" type="file" data-height="120" accept=".jpg,.png,image/jpeg,image/png">
                             </div>
+                            <div class="col-md-8 text-danger">
+                                <p class="">{{ trans('main_trans.Size_less_than_1MB') }}</p>
+                                <p class="">{{ trans('main_trans.jpg') }}</p>
+                                <p class="">{{ trans('main_trans.resolution_1280_1280') }}</p>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -321,6 +326,11 @@
                             <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Teacher_photo') }}</label>
                             <div class="col-md-8">
                                 <input class="dropify" name="photo" type="file" data-height="120" accept=".jpg,.png,image/jpeg,image/png">
+                            </div>
+                            <div class="col-md-8 text-danger">
+                                <p class="">{{ trans('main_trans.Size_less_than_1MB') }}</p>
+                                <p class="">{{ trans('main_trans.jpg') }}</p>
+                                <p class="">{{ trans('main_trans.resolution_1280_1280') }}</p>
                             </div>
                         </div>
                     </div>
