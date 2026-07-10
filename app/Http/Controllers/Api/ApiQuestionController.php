@@ -56,7 +56,7 @@ class ApiQuestionController extends Controller
             if ($request->expectsJson()) {
                 return $this->apiResponse(null, 'السؤال غير موجود!', 404);
             }
-            return redirect('/');
+            return redirect('/#download');
         }
 
             $question->load(['questionGroup.lesson.subject']);
@@ -67,7 +67,7 @@ class ApiQuestionController extends Controller
                 if ($request->is('newapi/*') || $request->expectsJson()) {
                     return $this->apiResponse(null, 'المادة غير موجودة لهذا السؤال', 404);
                 }
-                return redirect('/');
+                return redirect('/#download');
             }
 
             // --- API request: return JSON (no auth required for public question) ---
@@ -86,7 +86,7 @@ class ApiQuestionController extends Controller
             if ($request->is('newapi/*') || $request->expectsJson()) {
                 return $this->apiResponse(null, $e->getMessage(), 500); 
             }
-            return redirect('/');
+            return redirect('/#download');
         }
     }
 
