@@ -72,8 +72,16 @@
                                 @php
                                     $groupedSubjects = $formatPackageSubjects($package);
                                     $hasCourseUnits = $package->codePackageSubjects->contains(fn ($item) => !empty($item->unit_id));
-                                    $packageMode = $hasCourseUnits ? 'with_course' : 'without_course';
-                                    $subjectIdsOnly = $package->codePackageSubjects->pluck('subject_id')->unique()->values();
+                                    $hasSubjectsOnly = $package->codePackageSubjects->contains(fn ($item) => empty($item->unit_id));
+                                    $courseItems = $package->codePackageSubjects
+                                        ->filter(fn ($item) => !empty($item->unit_id))
+                                        ->map(fn ($item) => ['subject_id' => $item->subject_id, 'unit_id' => $item->unit_id])
+                                        ->values();
+                                    $subjectIdsOnly = $package->codePackageSubjects
+                                        ->filter(fn ($item) => empty($item->unit_id))
+                                        ->pluck('subject_id')
+                                        ->unique()
+                                        ->values();
                                 @endphp
                                 <tr>
                                     <td>{{ $package->id }}</td>
@@ -129,9 +137,10 @@
                                                data-package-id="{{ $package->id }}"
                                                data-package-name="{{ $package->name }}"
                                                data-package-expires="{{ $package->expires_at }}"
-                                               data-package-mode="{{ $packageMode }}"
+                                               data-include-with-course="{{ $hasCourseUnits ? '1' : '0' }}"
+                                               data-include-without-course="{{ $hasSubjectsOnly ? '1' : '0' }}"
+                                               data-course-items="{{ $courseItems->toJson() }}"
                                                data-subject-ids="{{ $subjectIdsOnly->toJson() }}"
-                                               data-package-items="{{ $package->codePackageSubjects->map(fn($item) => ['subject_id' => $item->subject_id, 'unit_id' => $item->unit_id])->values()->toJson() }}"
                                                title="{{ trans('main_trans.Edit_package') }}">
                                                 <i class="fas fa-edit"></i> {{ trans('main_trans.Edit_package') }}
                                             </a>
@@ -183,13 +192,13 @@
                             <div class="row mb-3">
                                 <label class="col-md-3 col-form-label text-md-end">{{ trans('main_trans.Package_content_type') }}</label>
                                 <div class="col-md-9">
-                                    <div class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" id="create_package_mode_with_course" name="package_mode" value="with_course" class="custom-control-input package-mode-radio" checked>
-                                        <label class="custom-control-label" for="create_package_mode_with_course">{{ trans('main_trans.With_course_subject') }}</label>
+                                    <div class="custom-control custom-checkbox custom-control-inline">
+                                        <input type="checkbox" id="create_include_with_course" name="include_with_course" value="1" class="custom-control-input include-with-course-checkbox" checked>
+                                        <label class="custom-control-label" for="create_include_with_course">{{ trans('main_trans.With_course_subject') }}</label>
                                     </div>
-                                    <div class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" id="create_package_mode_without_course" name="package_mode" value="without_course" class="custom-control-input package-mode-radio">
-                                        <label class="custom-control-label" for="create_package_mode_without_course">{{ trans('main_trans.Without_course_subject') }}</label>
+                                    <div class="custom-control custom-checkbox custom-control-inline">
+                                        <input type="checkbox" id="create_include_without_course" name="include_without_course" value="1" class="custom-control-input include-without-course-checkbox">
+                                        <label class="custom-control-label" for="create_include_without_course">{{ trans('main_trans.Without_course_subject') }}</label>
                                     </div>
                                 </div>
                             </div>
@@ -254,13 +263,13 @@
                             <div class="row mb-3">
                                 <div class="col-12">
                                     <label class="mb-2 d-block font-weight-bold">{{ trans('main_trans.Package_content_type') }}</label>
-                                    <div class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" id="edit_package_mode_with_course" name="package_mode" value="with_course" class="custom-control-input package-mode-radio" checked>
-                                        <label class="custom-control-label" for="edit_package_mode_with_course">{{ trans('main_trans.With_course_subject') }}</label>
+                                    <div class="custom-control custom-checkbox custom-control-inline">
+                                        <input type="checkbox" id="edit_include_with_course" name="include_with_course" value="1" class="custom-control-input include-with-course-checkbox" checked>
+                                        <label class="custom-control-label" for="edit_include_with_course">{{ trans('main_trans.With_course_subject') }}</label>
                                     </div>
-                                    <div class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" id="edit_package_mode_without_course" name="package_mode" value="without_course" class="custom-control-input package-mode-radio">
-                                        <label class="custom-control-label" for="edit_package_mode_without_course">{{ trans('main_trans.Without_course_subject') }}</label>
+                                    <div class="custom-control custom-checkbox custom-control-inline">
+                                        <input type="checkbox" id="edit_include_without_course" name="include_without_course" value="1" class="custom-control-input include-without-course-checkbox">
+                                        <label class="custom-control-label" for="edit_include_without_course">{{ trans('main_trans.Without_course_subject') }}</label>
                                     </div>
                                 </div>
                             </div>
@@ -421,19 +430,15 @@
             }
         }
 
-        function applyPackageMode(modal, mode) {
-            const isWithCourse = mode === 'with_course';
+        function applyPackageSections(modal) {
+            const withCourse = modal.find('.include-with-course-checkbox').is(':checked');
+            const withoutCourse = modal.find('.include-without-course-checkbox').is(':checked');
 
-            modal.find('.with-course-section').toggle(isWithCourse);
-            modal.find('.without-course-section').toggle(!isWithCourse);
+            modal.find('.with-course-section').toggle(withCourse);
+            modal.find('.without-course-section').toggle(withoutCourse);
 
-            modal.find('.with-course-section').find('select, input, button').prop('disabled', !isWithCourse);
-            modal.find('.without-course-section').find('select, input').prop('disabled', isWithCourse);
-            modal.find('.package-mode-radio').prop('disabled', false);
-        }
-
-        function getSelectedPackageMode(modal) {
-            return modal.find('.package-mode-radio:checked').val() || 'with_course';
+            modal.find('.with-course-section').find('select, button').prop('disabled', !withCourse);
+            modal.find('.without-course-section').find('select').prop('disabled', !withoutCourse);
         }
 
         function buildPackageItemRow(container, index, selectedSubjectId = '', selectedUnitId = '', selectedTeacherId = '', selectedSubjectVideoId = '') {
@@ -516,9 +521,8 @@
             });
         }
 
-        $(document).on('change', '.package-mode-radio', function() {
-            const modal = $(this).closest('.modal');
-            applyPackageMode(modal, $(this).val());
+        $(document).on('change', '.include-with-course-checkbox, .include-without-course-checkbox', function() {
+            applyPackageSections($(this).closest('.modal'));
         });
 
         $(document).on('click', '.add-package-item-btn', function() {
@@ -547,51 +551,54 @@
 
         $('#modal1').on('show.bs.modal', function() {
             const modal = $(this);
-            modal.find('input.package-mode-radio[value="with_course"]').prop('checked', true);
+            modal.find('.include-with-course-checkbox').prop('checked', true);
+            modal.find('.include-without-course-checkbox').prop('checked', false);
             modal.find('.package-subjects-multi').val([]);
             resetWithCourseSection(modal);
-            applyPackageMode(modal, 'with_course');
+            applyPackageSections(modal);
         });
 
         $('.edit-package-btn').on('click', function() {
             const packageId = $(this).data('package-id');
-            const packageMode = $(this).data('package-mode') || 'with_course';
+            const includeWithCourse = String($(this).data('include-with-course')) === '1';
+            const includeWithoutCourse = String($(this).data('include-without-course')) === '1';
+            const courseItems = $(this).data('course-items') || [];
             const subjectIds = $(this).data('subject-ids') || [];
-            const packageItems = $(this).data('package-items') || [];
             const modal = $('#editPackageModal');
 
             $('#editPackageForm').attr('action', '{{ route('code-package.index') }}/' + packageId);
             $('#edit_name').val($(this).data('package-name'));
             $('#edit_expires_at').val($(this).data('package-expires'));
-            modal.find(`input.package-mode-radio[value="${packageMode}"]`).prop('checked', true);
-
-            if (packageMode === 'without_course') {
-                modal.find('.package-subjects-multi').val(subjectIds.map(String));
-                resetWithCourseSection(modal);
-            } else {
-                modal.find('.package-subjects-multi').val([]);
-                resetWithCourseSection(modal, packageItems);
-            }
-
-            applyPackageMode(modal, packageMode);
+            modal.find('.include-with-course-checkbox').prop('checked', includeWithCourse);
+            modal.find('.include-without-course-checkbox').prop('checked', includeWithoutCourse);
+            modal.find('.package-subjects-multi').val(subjectIds.map(String));
+            resetWithCourseSection(modal, courseItems);
+            applyPackageSections(modal);
         });
 
         $('#createPackageForm, #editPackageForm').on('submit', function(e) {
             const modal = $(this).closest('.modal');
-            const mode = getSelectedPackageMode(modal);
+            const withCourse = modal.find('.include-with-course-checkbox').is(':checked');
+            const withoutCourse = modal.find('.include-without-course-checkbox').is(':checked');
 
-            if (mode === 'without_course') {
+            if (!withCourse && !withoutCourse) {
+                e.preventDefault();
+                alert('{{ trans('main_trans.At_least_one_content_type_required') }}');
+                return;
+            }
+
+            if (withCourse && modal.find('.package-item-row').length === 0) {
+                e.preventDefault();
+                alert('{{ trans('main_trans.At_least_one_subject_unit_required') }}');
+                return;
+            }
+
+            if (withoutCourse) {
                 const selectedSubjects = modal.find('.package-subjects-multi').val() || [];
                 if (selectedSubjects.length === 0) {
                     e.preventDefault();
                     alert('{{ trans('main_trans.At_least_one_subject_required') }}');
                 }
-                return;
-            }
-
-            if (modal.find('.package-item-row').length === 0) {
-                e.preventDefault();
-                alert('{{ trans('main_trans.At_least_one_subject_unit_required') }}');
             }
         });
 

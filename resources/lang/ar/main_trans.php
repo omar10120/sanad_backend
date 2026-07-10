@@ -1115,6 +1115,7 @@ return [
      'Without_course_subject' => 'بدون مادة الكورس',
      'Package_content_type' => 'نوع محتوى الحزمة',
      'At_least_one_subject_required' => 'يرجى اختيار مادة واحدة على الأقل',
+     'At_least_one_content_type_required' => 'يرجى اختيار نوع محتوى واحد على الأقل (مع أو بدون مادة الكورس)',
 
      // Student translations
      'Country_code' => 'رمز الدولة',

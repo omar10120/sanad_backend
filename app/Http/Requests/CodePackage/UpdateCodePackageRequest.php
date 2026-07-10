@@ -29,6 +29,7 @@ class UpdateCodePackageRequest extends FormRequest
             'package_items.min' => trans('main_trans.At_least_one_subject_unit_required'),
             'subject_ids.required' => trans('main_trans.At_least_one_subject_required'),
             'subject_ids.min' => trans('main_trans.At_least_one_subject_required'),
+            'include_with_course' => trans('main_trans.At_least_one_content_type_required'),
         ];
     }
 }
