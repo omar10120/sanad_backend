@@ -36,18 +36,18 @@ trait NormalizesPackageItems
         ];
 
         if ($this->input('package_mode') === 'without_course') {
-            $rules['subject_ids'] = ['required', 'array', 'min:1'];
+            $rules['subject_ids'] = ['nullable', 'array', 'min:1'];
             $rules['subject_ids.*'] = ['required', 'integer', 'exists:subjects,id'];
-            $rules['package_items'] = ['required', 'array', 'min:1'];
-            $rules['package_items.*.subject_id'] = ['required', 'integer', 'exists:subjects,id'];
+            $rules['package_items'] = ['nullable', 'array', 'min:1'];
+            $rules['package_items.*.subject_id'] = ['nullable', 'integer', 'exists:subjects,id'];
             $rules['package_items.*.unit_id'] = ['nullable'];
 
             return $rules;
         }
 
-        $rules['package_items'] = ['required', 'array', 'min:1'];
-        $rules['package_items.*.subject_id'] = ['required', 'integer', 'exists:subjects,id'];
-        $rules['package_items.*.unit_id'] = ['required', 'integer', 'exists:units,id'];
+        $rules['package_items'] = ['nullable', 'array', 'min:1'];
+        $rules['package_items.*.subject_id'] = ['nullable', 'integer', 'exists:subjects,id'];
+        $rules['package_items.*.unit_id'] = ['nullable', 'integer', 'exists:units,id'];
 
         return $rules;
     }
