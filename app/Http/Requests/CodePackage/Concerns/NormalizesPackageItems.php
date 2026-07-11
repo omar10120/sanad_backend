@@ -50,8 +50,8 @@ trait NormalizesPackageItems
         return [
             'include_with_course' => ['sometimes', 'boolean'],
             'include_without_course' => ['sometimes', 'boolean'],
-            'package_items' => ['required', 'array', 'min:1'],
-            'package_items.*.subject_id' => ['required', 'integer', 'exists:subjects,id'],
+            'package_items' => ['nullable', 'array'],
+            'package_items.*.subject_id' => ['nullable', 'integer', 'exists:subjects,id'],
             'package_items.*.unit_id' => ['nullable', 'integer', 'exists:units,id'],
         ];
     }
@@ -62,24 +62,24 @@ trait NormalizesPackageItems
             $withCourse = $this->boolean('include_with_course');
             $withoutCourse = $this->boolean('include_without_course');
 
-            if (! $withCourse && ! $withoutCourse) {
-                $validator->errors()->add(
-                    'include_with_course',
-                    trans('main_trans.At_least_one_content_type_required')
-                );
+            // if (! $withCourse && ! $withoutCourse) {
+            //     $validator->errors()->add(
+            //         'include_with_course',
+            //         trans('main_trans.At_least_one_content_type_required')
+            //     );
 
-                return;
-            }
+            //     return;
+            // }
 
             if ($withCourse) {
                 $courseItems = collect($this->input('_course_package_items', []));
 
-                if ($courseItems->isEmpty()) {
-                    $validator->errors()->add(
-                        'package_items',
-                        trans('main_trans.At_least_one_subject_unit_required')
-                    );
-                }
+                // if ($courseItems->isEmpty()) {
+                //     $validator->errors()->add(
+                //         'package_items',
+                //         trans('main_trans.At_least_one_subject_unit_required')
+                //     );
+                // }
             }
 
             if ($withoutCourse) {
