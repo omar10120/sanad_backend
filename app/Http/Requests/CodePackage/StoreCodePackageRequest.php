@@ -19,7 +19,6 @@ class StoreCodePackageRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'expires_at' => ['required', 'date', 'after:today'],
-            'codes_count' => ['required', 'integer', 'min:1', 'max:10000'],
             'include_with_course' => ['sometimes', 'boolean'],
             'include_without_course' => ['sometimes', 'boolean'],
             'package_items' => ['nullable', 'array'],
@@ -33,9 +32,6 @@ class StoreCodePackageRequest extends FormRequest
             'name.required' => trans('main_trans.Package_name_required'),
             'expires_at.required' => trans('main_trans.Expiry_date_required'),
             'expires_at.after' => trans('main_trans.Expiry_date_must_be_future'),
-            'codes_count.required' => trans('main_trans.Codes_count_required'),
-            'codes_count.min' => trans('main_trans.Codes_count_min_one'),
-            'codes_count.max' => trans('main_trans.Codes_count_max_limit'),
         ];
     }
 }
