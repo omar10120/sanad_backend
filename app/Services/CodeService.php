@@ -103,9 +103,10 @@ class CodeService
 
         $courseSubjects = $items
             ->filter(fn ($item) => ! empty($item->unit_id))
-            ->groupBy('subject_id')
+            ->groupBy(fn ($item) => $item->subject_id ?? 'unit_'.$item->unit_id)
             ->map(function ($groupItems) {
-                $subject = $groupItems->first()->subject;
+                $first = $groupItems->first();
+                $subject = $first->subject;
 
                 return [
                     'subject_id' => $subject?->id,
@@ -136,7 +137,11 @@ class CodeService
 
         foreach ($content['course_subjects'] as $group) {
             $unitNames = collect($group['units'])->pluck('name')->filter()->implode(', ');
-            $parts[] = $group['subject_name'] . ($unitNames ? ': ' . $unitNames : '');
+            if ($group['subject_name']) {
+                $parts[] = $group['subject_name'] . ($unitNames ? ': ' . $unitNames : '');
+            } else {
+                $parts[] = $unitNames;
+            }
         }
 
         return implode(' | ', $parts);

@@ -127,7 +127,9 @@
                                                 <div class="text-left mb-2">
                                                     <small class="text-muted d-block mb-1">{{ trans('main_trans.With_course_subject') }}</small>
                                                     @foreach($packageSubjectsGrouped['course_subjects'] as $group)
-                                                        <strong>{{ $group['subject_name'] }}</strong>
+                                                        @if($group['subject_name'])
+                                                            <strong>{{ $group['subject_name'] }}</strong>
+                                                        @endif
                                                         <ul class="mb-0 pl-3">
                                                             @foreach($group['units'] as $unit)
                                                                 <li>├─ {{ $unit['name'] }}</li>

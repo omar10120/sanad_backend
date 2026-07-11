@@ -92,7 +92,9 @@
                                                 <div class="package-subjects-tree mb-2">
                                                     <small class="text-muted d-block mb-1">{{ trans('main_trans.With_course_subject') }}</small>
                                                     @foreach($packageContent['course_subjects'] as $group)
-                                                        <strong>{{ $group['subject_name'] }}</strong>
+                                                        @if($group['subject_name'])
+                                                            <strong>{{ $group['subject_name'] }}</strong>
+                                                        @endif
                                                         <ul>
                                                             @foreach($group['units'] as $unit)
                                                                 <li>├─ {{ $unit['name'] }}</li>
@@ -459,7 +461,7 @@
                     <div class="row">
                         <div class="col-md-6 col-lg-3">
                             <label class="mb-1">{{ trans('main_trans.Subject') }}</label>
-                            <select class="form-control package-subject-select" name="package_items[${index}][subject_id]" >
+                            <select class="form-control package-subject-select" name="package_items[${index}][subject_id]">
                                 <option value="">{{ trans('main_trans.Select_subject') }}</option>
                             </select>
                         </div>
@@ -522,7 +524,7 @@
             }
 
             packageItems.forEach(function(item, index) {
-                buildPackageItemRow(container, index, item.subject_id, item.unit_id);
+                buildPackageItemRow(container, index, item.subject_id || '', item.unit_id);
             });
         }
 
@@ -592,10 +594,15 @@
                 return;
             }
 
-            if (withCourse && modal.find('.package-item-row').length === 0) {
-                e.preventDefault();
-                alert('{{ trans('main_trans.At_least_one_subject_unit_required') }}');
-                return;
+            if (withCourse) {
+                const hasUnit = modal.find('.package-unit-select').toArray().some(function(select) {
+                    return $(select).val();
+                });
+                if (!hasUnit) {
+                    e.preventDefault();
+                    alert('{{ trans('main_trans.At_least_one_subject_unit_required') }}');
+                    return;
+                }
             }
 
             if (withoutCourse) {
