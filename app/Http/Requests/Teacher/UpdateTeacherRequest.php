@@ -21,7 +21,7 @@ class UpdateTeacherRequest extends FormRequest
             'instagram_link' => 'nullable|string|max:500',
             'telegram_link' => 'nullable|string|max:500',
             'phone' => 'nullable|string|max:50',
-            'price' => 'nullable|numeric|min:0',
+            'price' => 'nullable|string',
             'description' => 'nullable|string',
             'subject_videos' => 'nullable|array',
             'subject_videos.*' => 'integer|exists:subjects_video,id',

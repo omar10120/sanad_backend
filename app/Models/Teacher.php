@@ -24,7 +24,7 @@ class Teacher extends Model
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
+        'price' => 'string',
     ];
 
     public function subjectVideos(): BelongsToMany

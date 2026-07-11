@@ -186,7 +186,7 @@
                         <div class="row mb-3">
                             <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Price') }}</label>
                             <div class="col-md-8">
-                                <input class="form-control" name="price" type="number" step="0.01" min="0">
+                                <input class="form-control" name="price" type="text">
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -279,7 +279,7 @@
                         <div class="row mb-3">
                             <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Price') }}</label>
                             <div class="col-md-8">
-                                <input class="form-control" name="price" id="edit_price" type="number" step="0.01" min="0">
+                                <input class="form-control" name="price" id="edit_price" type="text">
                             </div>
                         </div>
                         <div class="row mb-3">
