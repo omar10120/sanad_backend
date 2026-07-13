@@ -15,6 +15,7 @@
     <link href="{{ URL::asset('assets/plugins/notify/css/notifIt.css') }}" rel="stylesheet" />
     <style>
         .package-item-row { border: 1px solid #e8ebf1; border-radius: 6px; padding: 12px; margin-bottom: 10px; background: #fafbfc; }
+        .package-unit-select[multiple] { min-height: 90px; }
         .package-subjects-tree { text-align: left; display: inline-block; }
         .package-subjects-tree ul { list-style: none; padding-left: 18px; margin-bottom: 0; }
         .package-subjects-tree > strong { display: block; margin-bottom: 6px; }
@@ -412,8 +413,8 @@
             }
         }
 
-        function populateUnitSelect(unitSelect, teacherId, selectedUnitId = '') {
-            unitSelect.html(`<option value="">{{ trans('main_trans.Select_unit') }}</option>`);
+        function populateUnitSelect(unitSelect, teacherId, selectedUnitIds = []) {
+            unitSelect.empty();
             if (!teacherId) {
                 unitSelect.prop('disabled', true);
                 return;
@@ -426,9 +427,34 @@
                     unitSelect.append(`<option value="${unit.id}">${unit.name}</option>`);
                 });
 
-            if (selectedUnitId) {
-                unitSelect.val(selectedUnitId);
+            const ids = Array.isArray(selectedUnitIds)
+                ? selectedUnitIds
+                : (selectedUnitIds ? [selectedUnitIds] : []);
+
+            if (ids.length) {
+                unitSelect.val(ids.map(String));
             }
+        }
+
+        function groupCourseItemsForEdit(packageItems) {
+            const groups = new Map();
+
+            packageItems.forEach(function(item) {
+                const teacherId = getTeacherIdByUnitId(item.unit_id);
+                const key = (item.subject_id || 'null') + '_' + teacherId;
+
+                if (!groups.has(key)) {
+                    groups.set(key, {
+                        subject_id: item.subject_id || '',
+                        teacher_id: teacherId,
+                        unit_ids: [],
+                    });
+                }
+
+                groups.get(key).unit_ids.push(String(item.unit_id));
+            });
+
+            return Array.from(groups.values());
         }
 
         function applyPackageSections(modal) {
@@ -442,9 +468,13 @@
             modal.find('.without-course-section').find('select').prop('disabled', !withoutCourse);
         }
 
-        function buildPackageItemRow(container, index, selectedSubjectId = '', selectedUnitId = '', selectedTeacherId = '', selectedSubjectVideoId = '') {
-            if (!selectedTeacherId && selectedUnitId) {
-                selectedTeacherId = getTeacherIdByUnitId(selectedUnitId);
+        function buildPackageItemRow(container, index, selectedSubjectId = '', selectedUnitIds = [], selectedTeacherId = '', selectedSubjectVideoId = '') {
+            const unitIds = Array.isArray(selectedUnitIds)
+                ? selectedUnitIds
+                : (selectedUnitIds ? [selectedUnitIds] : []);
+
+            if (!selectedTeacherId && unitIds.length) {
+                selectedTeacherId = getTeacherIdByUnitId(unitIds[0]);
             }
             if (!selectedSubjectVideoId && selectedTeacherId) {
                 selectedSubjectVideoId = resolveSubjectVideoIdByTeacherId(selectedTeacherId);
@@ -473,9 +503,9 @@
                         </div>
                         <div class="col-md-6 col-lg-2">
                             <label class="mb-1">{{ trans('main_trans.Unit') }}</label>
-                            <select class="form-control package-unit-select" name="package_items[${index}][unit_id]" required disabled>
-                                <option value="">{{ trans('main_trans.Select_unit') }}</option>
+                            <select class="form-control package-unit-select" name="package_items[${index}][unit_ids][]" multiple disabled>
                             </select>
+                            <small class="text-muted d-block mt-1">{{ trans('main_trans.Hold_Ctrl_to_select_multiple') }}</small>
                         </div>
                         <div class="col-md-12 col-lg-2 d-flex align-items-end">
                             <button type="button" class="btn btn-outline-danger btn-block remove-package-item">
@@ -493,7 +523,7 @@
             container.append(row);
             populateSubjectVideoSelect(row.find('.package-subject-video-select'), selectedSubjectVideoId);
             populateTeacherSelect(row.find('.package-teacher-select'), selectedSubjectVideoId, selectedTeacherId);
-            populateUnitSelect(row.find('.package-unit-select'), selectedTeacherId, selectedUnitId);
+            populateUnitSelect(row.find('.package-unit-select'), selectedTeacherId, unitIds);
 
             if (selectedSubjectId) {
                 row.find('.package-subject-select').val(selectedSubjectId);
@@ -504,7 +534,7 @@
             container.find('.package-item-row').each(function(index) {
                 $(this).attr('data-index', index);
                 $(this).find('.package-subject-select').attr('name', `package_items[${index}][subject_id]`);
-                $(this).find('.package-unit-select').attr('name', `package_items[${index}][unit_id]`);
+                $(this).find('.package-unit-select').attr('name', `package_items[${index}][unit_ids][]`);
             });
         }
 
@@ -517,9 +547,14 @@
                 return;
             }
 
-            packageItems.forEach(function(item, index) {
-                buildPackageItemRow(container, index, item.subject_id || '', item.unit_id);
+            groupCourseItemsForEdit(packageItems).forEach(function(item, index) {
+                buildPackageItemRow(container, index, item.subject_id, item.unit_ids, item.teacher_id);
             });
+        }
+
+        function rowHasSelectedUnits(unitSelect) {
+            const val = unitSelect.val();
+            return Array.isArray(val) ? val.length > 0 : !!val;
         }
 
         $(document).on('change', '.include-with-course-checkbox, .include-without-course-checkbox', function() {
@@ -536,12 +571,12 @@
             const row = $(this).closest('.package-item-row');
             const subjectVideoId = $(this).val();
             populateTeacherSelect(row.find('.package-teacher-select'), subjectVideoId);
-            populateUnitSelect(row.find('.package-unit-select'), '');
+            populateUnitSelect(row.find('.package-unit-select'), '', []);
         });
 
         $(document).on('change', '.package-teacher-select', function() {
             const row = $(this).closest('.package-item-row');
-            populateUnitSelect(row.find('.package-unit-select'), $(this).val());
+            populateUnitSelect(row.find('.package-unit-select'), $(this).val(), []);
         });
 
         $(document).on('click', '.remove-package-item', function() {
@@ -590,7 +625,7 @@
 
             if (withCourse) {
                 const hasUnit = modal.find('.package-unit-select').toArray().some(function(select) {
-                    return $(select).val();
+                    return rowHasSelectedUnits($(select));
                 });
                 if (!hasUnit) {
                     e.preventDefault();

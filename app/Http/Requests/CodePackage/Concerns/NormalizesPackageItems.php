@@ -11,17 +11,21 @@ trait NormalizesPackageItems
         $items = [];
 
         if ($withCourse) {
-            $items = array_merge(
-                $items,
-                collect($this->input('package_items', []))
-                    ->filter(fn ($item) => ! empty($item['unit_id']))
-                    ->map(fn ($item) => [
-                        'subject_id' => ! empty($item['subject_id']) ? (int) $item['subject_id'] : null,
-                        'unit_id' => (int) $item['unit_id'],
-                    ])
-                    ->values()
-                    ->all()
-            );
+            foreach ($this->input('package_items', []) as $item) {
+                $subjectId = ! empty($item['subject_id']) ? (int) $item['subject_id'] : null;
+                $unitIds = collect($item['unit_ids'] ?? $item['unit_id'] ?? [])
+                    ->flatten()
+                    ->filter()
+                    ->unique()
+                    ->values();
+
+                foreach ($unitIds as $unitId) {
+                    $items[] = [
+                        'subject_id' => $subjectId,
+                        'unit_id' => (int) $unitId,
+                    ];
+                }
+            }
         }
 
         if ($withoutCourse) {
