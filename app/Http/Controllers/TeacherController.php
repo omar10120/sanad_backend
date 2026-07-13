@@ -97,4 +97,12 @@ class TeacherController extends Controller
 
         return response()->json(['success' => true]);
     }
+    public function toggle($teacher_id)
+    {
+        $this->checkPermission(PermissionEnum::TEACHER_EDIT);
+
+        $this->teacherService->toggleTeacher((int) $teacher_id);
+
+        return back();
+    }
 }

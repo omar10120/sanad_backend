@@ -21,10 +21,12 @@ class Teacher extends Model
         'photo',
         'price',
         'description',
+        'is_active',
     ];
 
     protected $casts = [
         'price' => 'string',
+        'is_active' => 'boolean',
     ];
 
     public function subjectVideos(): BelongsToMany

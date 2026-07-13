@@ -215,4 +215,11 @@ class TeacherService
 
         $teacher->subjectVideos()->sync($syncData);
     }
+
+    public function toggleTeacher(int $teacherId): bool
+    {
+        $teacher = Teacher::findOrFail($teacherId);
+
+        return $teacher->update(['is_active' => ! $teacher->is_active]);
+    }
 }

@@ -135,6 +135,16 @@
                                                    data-toggle="modal" href="#modal2">
                                                     <i class="fas fa-pen"></i>
                                                 </a>
+                                                <form action="{{ route('teachers.toggle', $teacher->id) }}" method="POST"
+                                                      style="display: initial">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit"
+                                                            class="btn {{ $teacher->is_active ? 'btn-outline-success' : 'btn-outline-danger' }}">
+                                                        <i class="fas {{ !$teacher->is_active ? 'fa-times' : 'fa-check' }}"></i>
+                                                        {{ !$teacher->is_active ? ' ' . trans('main_trans.Disable') : ' ' . trans('main_trans.Enable') }}
+                                                    </button>
+                                                </form>
                                             @endcan
                                             @can('Teacher-delete')
                                                 <a class="modal-effect btn btn-danger my-1" data-effect="effect-flip-vertical"

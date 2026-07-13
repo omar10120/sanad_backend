@@ -23,6 +23,7 @@ class UpdateTeacherRequest extends FormRequest
             'phone' => 'nullable|string|max:50',
             'price' => 'nullable|string',
             'description' => 'nullable|string',
+            'is_active' => 'required|boolean',
             'subject_videos' => 'nullable|array',
             'subject_videos.*' => 'integer|exists:subjects_video,id',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',

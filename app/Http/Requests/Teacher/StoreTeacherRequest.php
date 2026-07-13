@@ -20,6 +20,7 @@ class StoreTeacherRequest extends FormRequest
             'instagram_link' => 'nullable|string|max:500',
             'telegram_link' => 'nullable|string|max:500',
             'phone' => 'nullable|string|max:50',
+            'is_active' => 'required|boolean',
             'price' => 'nullable|string',
             'description' => 'nullable|string',
             'subject_video_id' => 'required|integer|exists:subjects_video,id',

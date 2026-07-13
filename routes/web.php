@@ -137,6 +137,7 @@ Route::group(
     Route::post('/teacher', [TeacherController::class, 'store'])->name('teacher.store');
     Route::patch('/teacher/update', [TeacherController::class, 'update'])->name('teacher.update');
     Route::delete('/teacher/destroy', [TeacherController::class, 'destroy'])->name('teacher.destroy');
+    Route::patch('/teachers/{teacher_id}/toggle', [TeacherController::class, 'toggle'])->name('teachers.toggle');
     Route::post('/subject-video/{subjectVideo}/teachers/reorder', [TeacherController::class, 'reorder'])
         ->name('teachers.reorder');
     Route::get('/archived-teacher/{subject_video}', [ArchivedTeacherController::class, 'show'])
