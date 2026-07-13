@@ -252,6 +252,13 @@ return [
     'Lesson-show-deleted' => 'Lesson show deleted',
     'Lesson-restore-deleted' => 'Lesson restore deleted',
 
+    'LessonVideo-show' => 'Lesson Video show',
+    'LessonVideo-add' => 'Lesson Video add',
+    'LessonVideo-edit' => 'Lesson Video edit',
+    'LessonVideo-delete' => 'Lesson Video delete',
+    'LessonVideo-show-deleted' => 'Lesson Video show deleted',
+    'LessonVideo-restore-deleted' => 'Lesson Video restore deleted',
+
     'Question-show'=>'Question show',
     'Question-add'=>'Question add',
     'Question-edit'=>'Question edit',
@@ -979,6 +986,12 @@ return [
     'Clear_hint' => 'Clear hint',
     'Clear_tags' => 'Clear all tags',
     'All' => 'All',
+    'Notification-show' => 'Notification show',
+    'Notification-edit' => 'Notification edit',
+    'Notification-add' => 'Notification add',
+    'Notification-delete' => 'Notification delete',
+    'Notification-show-deleted' => 'Notification show deleted',
+    'Notification-restore-deleted' => 'Notification restore deleted',
 
     // Pro Feature Modal
     'Pro_Feature' => 'Pro Feature',
@@ -1095,6 +1108,8 @@ return [
     'No_teachers_available_description' => 'Add a teacher to get started.',
     'Are_you_sure_to_delete_permanently' => 'Are you sure you want to permanently delete this teacher?',
     'LessonVideo-restore-deleted' => 'Lesson Videos',
+    'LessonVideo-show-deleted' => 'Lesson Videos show deleted',
+    'LessonVideo-restore-deleted' => 'Lesson Videos restore deleted',
     'YoutubeLinkVideo-show' => 'YoutubeLinkVideo_show',
     'YoutubeLinkVideo-add' => 'YoutubeLinkVideo-add',
     'YoutubeLinkVideo-edit' => 'YoutubeLinkVideo-edit',
@@ -1123,4 +1138,11 @@ return [
     'Saudi_Arabia' => 'Saudi Arabia',
     'Yemen' => 'Yemen',
     'Oman' => 'Oman',
+    // Subject Video translations
+    'SubjectVideo-show' => 'Subject Video show',
+    'SubjectVideo-add' => 'Subject Video add',
+    'SubjectVideo-edit' => 'Subject Video edit',
+    'SubjectVideo-delete' => 'Subject Video delete',
+    'SubjectVideo-show-deleted' => 'Subject Video show deleted',
+    'SubjectVideo-restore-deleted' => 'Subject Video restore deleted'
 ];

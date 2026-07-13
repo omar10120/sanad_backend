@@ -252,6 +252,13 @@ return [
     'Lesson-show-deleted' => 'عرض الدروس المحذوفة',
     'Lesson-restore-deleted' => 'استعادة الدروس المحذوفة',
 
+    'LessonVideo-show' => 'عرض فيديوهات الدروس',
+    'LessonVideo-add' => 'إضافة فيديو للدرس',
+    'LessonVideo-edit' => 'تعديل فيديو للدرس',
+    'LessonVideo-delete' => 'حذف فيديو للدرس',
+    'LessonVideo-show-deleted' => 'عرض فيديوهات الدروس المحذوفة',
+    'LessonVideo-restore-deleted' => 'استعادة فيديوهات الدروس',
+
     'Question-show'=>'عرض الأسئلة',
     'Question-add'=>'إضافة سؤال',
     'Question-edit'=>'تعديل سؤال',
@@ -980,7 +987,12 @@ return [
     'Clear_hint' => 'حذف التلميح',
     'Clear_tags' => 'حذف كل الوسوم',
     'All' => 'الكل',
-
+    'Notification-show' => 'عرض الإشعار',
+    'Notification-edit' => 'تعديل الإشعار',
+    'Notification-add' => 'إضافة الإشعار',
+    'Notification-delete' => 'حذف الإشعار',
+    'Notification-show-deleted' => 'عرض الإشعارات المحذوفة',
+    'Notification-restore-deleted' => 'استعادة الإشعارات المحذوفة',
     // Pro Feature Modal
     'Pro_Feature' => 'ميزة احترافية',
     'Pro_Feature_Title' => 'هذه الميزة متاحة في النسخة الاحترافية فقط',
@@ -1095,6 +1107,7 @@ return [
     'No_youtube_link_videos_available_description' => 'أضف فيديو للبدء.',
     'No_teachers_available_description' => 'أضف معلم للبدء.',
     'Are_you_sure_to_delete_permanently' => 'هل أنت متأكد من الحذف النهائي لهذا المعلم؟',
+    
     'Price' => 'السعر',
 
      // LessonVideo (video)
@@ -1117,6 +1130,8 @@ return [
      'At_least_one_subject_required' => 'يرجى اختيار مادة واحدة على الأقل',
      'At_least_one_content_type_required' => 'يرجى اختيار نوع محتوى واحد على الأقل (مع أو بدون مادة الكورس)',
      'Full_subject' => 'المادة كاملة',
+     'LessonVideo-show-deleted' => 'عرض فيديوهات الدروس المحذوفة',
+     'LessonVideo-restore-deleted' => 'استعادة فيديوهات الدروس',
 
      // Student translations
      'Country_code' => 'رمز الدولة',
@@ -1127,4 +1142,12 @@ return [
      'Saudi_Arabia' => 'المملكة العربية السعودية',
      'Yemen' => 'اليمن',
      'Oman' => 'عمان',
+
+     // Subject Video translations
+     'SubjectVideo-show' => 'عرض مواد الكورسات',
+     'SubjectVideo-add' => 'إضافة مواد الكورسات',
+     'SubjectVideo-edit' => 'تعديل مواد الكورسات',
+     'SubjectVideo-delete' => 'حذف مواد الكورسات',
+     'SubjectVideo-show-deleted' => 'عرض مواد الكورسات المحذوفة',
+     'SubjectVideo-restore-deleted' => 'استعادة مواد الكورسات المحذوفة'
 ];

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('instagram_link')->nullable();
             $table->string('phone')->nullable();
             $table->string('photo')->nullable();
-            $table->decimal('price', 10, 2)->nullable();
+            $table->string('price')->nullable();
             $table->text('description')->nullable();
             $table->softDeletes();
             $table->timestamps();
