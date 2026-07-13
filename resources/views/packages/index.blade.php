@@ -186,6 +186,14 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
+                                <label for="codes_count" class="col-md-3 col-form-label text-md-end">{{ trans('main_trans.Codes_count') }}</label>
+                                <div class="col-md-9">
+                                    <input id="codes_count" class="form-control" name="codes_count" type="number" min="1" required>
+                                </div>
+                            </div>
+
+                            
+                            <div class="row mb-3">
                                 <label for="expires_at" class="col-md-3 col-form-label text-md-end">{{ trans('main_trans.Expires_at') }}</label>
                                 <div class="col-md-9">
                                     <input id="expires_at" class="form-control" name="expires_at" type="date" required>
