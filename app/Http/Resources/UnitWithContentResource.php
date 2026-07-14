@@ -33,6 +33,7 @@ class UnitWithContentResource extends JsonResource
             'teacher_id' => $this->teacher_id,
             'number_of_lessons' => $this->lesson_videos_count ?? $lessonVideos->count(),
             'is_locked' => $this->isLocked,
+            'is_active' => $this->is_active,
             'lesson_videos' => LessonVideoResource::collection(
                 $lessonVideos->map(fn ($lessonVideo) => new LessonVideoResource($lessonVideo, $this->isLocked))
             ),
