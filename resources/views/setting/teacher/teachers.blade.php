@@ -230,6 +230,15 @@
                             </div>
                         </div>
                         <div class="row mb-3">
+                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Status') }}</label>
+                            <div class="col-md-8">
+                                <select class="form-control" name="is_active" id="is_active" required>
+                                    <option value="1" selected>{{ trans('main_trans.Enable') }}</option>
+                                    <option value="0">{{ trans('main_trans.Disable') }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
                             <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Course_subjects') }} <span class="tx-danger">*</span></label>
                             <div class="col-md-8">
                                 <select name="subject_videos[]" class="form-control subject-videos-select" required >
@@ -320,6 +329,15 @@
                             <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Description') }}</label>
                             <div class="col-md-8">
                                 <textarea class="form-control" name="description" id="edit_description" rows="4"></textarea>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Status') }}</label>
+                            <div class="col-md-8">
+                                <select class="form-control" name="is_active" id="edit_is_active" required>
+                                    <option value="1">{{ trans('main_trans.Enable') }}</option>
+                                    <option value="0">{{ trans('main_trans.Disable') }}</option>
+                                </select>
                             </div>
                         </div>
                         <div class="row mb-3">
