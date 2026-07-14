@@ -119,12 +119,13 @@ class ApiSubjectVideoService
 
     public function findTeacher(int $id): ?Teacher
     {
-        return Teacher::withCount('units')->find($id);
+        return Teacher::withCount('units')->where('is_active', true)->find($id);
     }
 
     public function getUnitsByTeacher(int $teacherId): Collection
     {
         return Unit::where('teacher_id', $teacherId)
+            ->where('is_active', true)
             ->withCount('lessonVideos')
             ->orderBy('order')
             ->get();
@@ -133,6 +134,7 @@ class ApiSubjectVideoService
     public function getUnitsByTeacherWithContent(int $teacherId): Collection
     {
         $result =  Unit::where('teacher_id', $teacherId)
+        ->where('is_active', true)
         ->withCount('lessonVideos')
         ->with([
             'lessonVideos' => fn ($query) => $query->orderBy('order'),
