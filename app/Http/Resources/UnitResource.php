@@ -30,6 +30,7 @@ class UnitResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'is_active' => $this->is_active,
             'display_order' => $this->order,
             'teacher_id' => $this->teacher_id,
             'number_of_lessons' => $this->lesson_videos_count ?? $this->lessonVideos()->count(),

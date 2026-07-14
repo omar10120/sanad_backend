@@ -22,6 +22,7 @@ class TeacherResource extends JsonResource
             'instagram_link' => $this->instagram_link,
             'telegram_link' => $this->telegram_link,
             'phone' => $this->phone,
+            'is_active' => $this->is_active,
             'photo' => $photo,
             'price' => $this->price,
             'description' => $this->description,
