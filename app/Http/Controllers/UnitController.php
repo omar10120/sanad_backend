@@ -75,6 +75,7 @@ class UnitController extends Controller
         $this->unitService->updateUnit($data['id'], [
             'name' => $data['name'],
             'teacher_id' => $data['teacher_id'],
+            'is_active' => $data['is_active'] ?? true,
         ]);
 
         session()->flash('edit', trans('main_trans.Unit_edit_successfully'));
@@ -105,5 +106,14 @@ class UnitController extends Controller
         $unit->updateOrder($request->ordered_ids);
 
         return response()->json(['success' => true]);
+    }
+
+    public function toggle($unit_id)
+    {
+        $this->checkPermission(PermissionEnum::UNIT_EDIT);
+
+        $this->unitService->toggleUnit((int) $unit_id);
+
+        return back();
     }
 }

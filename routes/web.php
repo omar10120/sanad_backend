@@ -152,6 +152,7 @@ Route::group(
     Route::post('/unit', [UnitController::class, 'store'])->name('unit.store');
     Route::patch('/unit/update', [UnitController::class, 'update'])->name('unit.update');
     Route::delete('/unit/destroy', [UnitController::class, 'destroy'])->name('unit.destroy');
+    Route::patch('/units/{unit_id}/toggle', [UnitController::class, 'toggle'])->name('units.toggle');
     Route::post('/teachers/{teacher}/units/reorder', [UnitController::class, 'reorder'])
         ->name('units.reorder');
 

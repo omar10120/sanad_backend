@@ -87,10 +87,22 @@
                                             @can('Unit-edit')
                                                 <a class="modal-effect btn btn-info" data-effect="effect-flip-vertical"
                                                    data-id="{{ $unit->id }}" data-name="{{ $unit->name }}"
-                                                   data-teacher_selected="{{ $unit->teacher_id }}" data-toggle="modal"
+                                                   data-teacher_selected="{{ $unit->teacher_id }}"
+                                                   data-is_active="{{ $unit->is_active ? 1 : 0 }}"
+                                                   data-toggle="modal"
                                                    href="#modal2" title="{{ trans('main_trans.Edit') }}">
                                                     <i class="fas fa-pen"></i> {{ trans('main_trans.Edit') }}
                                                 </a>
+                                                <form action="{{ route('units.toggle', $unit->id) }}" method="POST"
+                                                      style="display: initial">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit"
+                                                            class="btn {{ $unit->is_active ? 'btn-outline-success' : 'btn-outline-danger' }}">
+                                                        <i class="fas {{ !$unit->is_active ? 'fa-times' : 'fa-check' }}"></i>
+                                                        {{ !$unit->is_active ? ' ' . trans('main_trans.Disable') : ' ' . trans('main_trans.Enable') }}
+                                                    </button>
+                                                </form>
                                             @endcan
                                             @can('Unit-delete')
                                                 <a class="modal-effect btn btn-danger" data-effect="effect-flip-vertical"
@@ -145,6 +157,15 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="row mb-3 mx-1">
+                            <label for="is_active" class="col-sm-2 col-form-label">{{ trans('main_trans.Status') }}</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" name="is_active" id="is_active" required>
+                                    <option value="1" selected>{{ trans('main_trans.Enable') }}</option>
+                                    <option value="0">{{ trans('main_trans.Disable') }}</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ trans('main_trans.Close') }}</button>
@@ -183,6 +204,15 @@
                                     @foreach($teachers as $teacher)
                                         <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
                                     @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3 mx-1">
+                            <label for="edit_is_active" class="col-sm-2 col-form-label">{{ trans('main_trans.Status') }}</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" name="is_active" id="edit_is_active" required>
+                                    <option value="1">{{ trans('main_trans.Enable') }}</option>
+                                    <option value="0">{{ trans('main_trans.Disable') }}</option>
                                 </select>
                             </div>
                         </div>
@@ -251,6 +281,7 @@
         var modal = $(this);
         modal.find('.modal-body #name').val('');
         modal.find('.modal-body #teacher_id').val('{{ $teacher_selected->id }}');
+        modal.find('.modal-body #is_active').val('1');
     });
 
     $('#modal2').on('show.bs.modal', function(event) {
@@ -259,6 +290,7 @@
         modal.find('.modal-body #id').val(button.data('id'));
         modal.find('.modal-body #name').val(button.data('name'));
         modal.find('.modal-body #teacher_id').val(button.data('teacher_selected'));
+        modal.find('.modal-body #edit_is_active').val(String(button.data('is_active')));
     });
 
     $('#modal3').on('show.bs.modal', function(event) {

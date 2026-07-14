@@ -14,6 +14,11 @@ class Unit extends Model
         'teacher_id',
         'name',
         'order',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     public function teacher(): BelongsTo
