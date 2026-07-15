@@ -25,7 +25,7 @@ class ApiSubjectVideoService
 
     public function findSubjectVideo(int $id): ?SubjectVideo
     {
-        return SubjectVideo::where('is_active', true)->find($id);
+        return SubjectVideo::find($id);
     }
 
     public function getTeachers(int $subjectVideoId): Collection
@@ -81,16 +81,16 @@ class ApiSubjectVideoService
     public function getAllSubjectVideoData(int $subjectVideoId, bool $isLocked): array
     {
         $subjectVideo = SubjectVideo::with([
-            'teachers.units.lessonVideos.youtubeLinks',
+            'teachers.units.lessonVideos.youtubeLinks' => fn ($query) => $query->where('is_active', true),
         ])->findOrFail($subjectVideoId);
 
         $teachers = $subjectVideo->teachers;
         $units = $teachers->flatMap->units->sortBy('order')->values();
-        $lessonVideos = $units->flatMap->lessonVideos->sortBy('order')->values();
+        $lessonVideos = $units->flatMap->lessonVideos->where('is_active', true)->sortBy('order')->values();
 
         if ($isLocked) {
             $firstUnit = $units->first();
-            $firstLesson = $firstUnit?->lessonVideos->sortBy('order')->first();
+            $firstLesson = $firstUnit?->lessonVideos->where('is_active', true)->sortBy('order')->first();
             $lessonVideos = $firstLesson ? collect([$firstLesson]) : collect();
             $units = $firstUnit ? collect([$firstUnit]) : collect();
             $teachers = $teachers->take(1);
@@ -98,7 +98,7 @@ class ApiSubjectVideoService
 
         $youtubeLinks = $lessonVideos->flatMap(function (LessonVideo $lessonVideo) {
             return $lessonVideo->youtubeLinks;
-        })->sortBy('order')->values();
+        })->where('is_active', true)->sortBy('order')->values();
 
         return [
             'subject_video' => $subjectVideo,
@@ -165,12 +165,12 @@ class ApiSubjectVideoService
 
     public function findLessonVideo(int $id): ?LessonVideo
     {
-        return LessonVideo::with(['unit'])->withCount('youtubeLinks')->find($id);
+        return LessonVideo::where('is_active', true)->with(['unit'])->withCount('youtubeLinks')->find($id);
     }
 
     public function getYoutubeLinksByLessonVideo(int $lessonVideoId, bool $isLocked): Collection
     {
-        $query = YoutubeLinkVideo::where('lesson_video_id', $lessonVideoId)->orderBy('order');
+        $query = YoutubeLinkVideo::where('lesson_video_id', $lessonVideoId)->where('is_active', true)->orderBy('order');
 
         if ($isLocked) {
             return $query->limit(1)->get();

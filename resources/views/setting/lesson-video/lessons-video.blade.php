@@ -109,6 +109,21 @@
                                                     <i class="fas fa-pen"></i> {{ trans('main_trans.Edit') }}
                                                 </a>
                                             @endcan
+
+                                            @can('LessonVideo-edit')
+                                                <form action="{{ route('lesson-video.toggle', $lessonVideo->id) }}" method="POST"
+                                                      style="display: initial">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit"
+                                                            class="btn {{ $lessonVideo->is_active ? 'btn-outline-success' : 'btn-outline-danger' }}">
+                                                        <i class="fas {{ !$lessonVideo->is_active ? 'fa-times' : 'fa-check' }}"></i>
+                                                        {{ !$lessonVideo->is_active ? ' ' . trans('main_trans.Disable') : ' ' . trans('main_trans.Enable') }}
+                                                    </button>
+                                                </form>
+                                            @endcan
+                                          
+
                                             @can('LessonVideo-delete')
                                                 <a class="modal-effect btn btn-danger" data-effect="effect-flip-vertical"
                                                    data-id="{{ $lessonVideo->id }}" data-title="{{ $lessonVideo->title }}" data-toggle="modal"
@@ -159,6 +174,15 @@
                                     @foreach($units as $unit)
                                         <option value="{{ $unit->id }}" {{ $unit->id == $unit_selected->id ? 'selected' : '' }}>{{ $unit->name }}</option>
                                     @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3 mx-1">
+                            <label for="is_active" class="col-sm-2 col-form-label">{{ trans('main_trans.Active') }}</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" name="is_active" id="is_active" required>
+                                    <option value="1">{{ trans('main_trans.Enable') }}</option>
+                                    <option value="0">{{ trans('main_trans.Disable') }}</option>
                                 </select>
                             </div>
                         </div>

@@ -112,4 +112,13 @@ class LessonVideoController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    public function toggle($lesson_video_id)
+    {
+        $this->checkPermission(PermissionEnum::LESSON_VIDEO_EDIT);
+
+        $this->lessonVideoService->toggleLessonVideo((int) $lesson_video_id);
+
+        return back();
+    }
 }

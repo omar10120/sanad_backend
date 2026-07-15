@@ -22,6 +22,7 @@ class LessonVideoResource extends JsonResource
             'title' => $this->title,
             'display_order' => $this->order,
             'unit_id' => $this->unit_id,
+            'is_active' => $this->is_active,
             'number_of_videos' => $this->youtube_links_count ?? $this->youtubeLinks()->count(),
         ];
 

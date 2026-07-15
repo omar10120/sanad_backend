@@ -18,6 +18,7 @@ class UpdateLessonVideoRequest extends FormRequest
             'id' => ['required', 'integer', 'exists:lessons_video,id'],
             'title' => ['required', 'string', 'max:255'],
             'unit_id' => ['required', 'integer', 'exists:units,id'],
+            'is_active' => 'boolean',
         ];
     }
 
@@ -33,6 +34,7 @@ class UpdateLessonVideoRequest extends FormRequest
             'unit_id.required' => trans('main_trans.Unit_required'),
             'unit_id.integer' => trans('main_trans.Unit_id_must_be_integer'),
             'unit_id.exists' => trans('main_trans.Unit_not_exists'),
+            'is_active.boolean' => 'The active status must be true or false.',
         ];
     }
 

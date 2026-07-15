@@ -107,4 +107,11 @@ class LessonVideoService
         $lessonVideo = LessonVideo::onlyTrashed()->findOrFail($id);
         $lessonVideo->forceDelete();
     }
+
+    public function toggleLessonVideo(int $lessonVideoId): bool
+    {
+        $lessonVideo = LessonVideo::findOrFail($lessonVideoId);
+
+        return $lessonVideo->update(['is_active' => ! $lessonVideo->is_active]);
+    }
 }

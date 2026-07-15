@@ -17,6 +17,7 @@ class StoreLessonVideoRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'unit_id' => ['required', 'integer', 'exists:units,id'],
+            'is_active' => 'boolean',
         ];
     }
 
@@ -25,7 +26,7 @@ class StoreLessonVideoRequest extends FormRequest
         return [
             'title.required' => trans('main_trans.Lesson_video_title_required'),
             'title.string' => trans('main_trans.Lesson_video_title_must_be_string'),
-            'title.max' => trans('main_trans.Lesson_video_title_max_length'),
+            'title.max' => trans('main_trans.Lesson_video_title_max_length'),   
             'unit_id.required' => trans('main_trans.Unit_required'),
             'unit_id.integer' => trans('main_trans.Unit_id_must_be_integer'),
             'unit_id.exists' => trans('main_trans.Unit_not_exists'),
