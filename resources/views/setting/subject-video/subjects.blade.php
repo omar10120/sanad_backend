@@ -171,7 +171,7 @@
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Link') }} <span class="tx-danger">*</span></label>
+                            <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Link') }} </label>
                             <div class="col-md-8">
                                 <input class="form-control" name="link">
                             </div>
