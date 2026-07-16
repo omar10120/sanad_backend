@@ -19,6 +19,11 @@ class LessonVideo extends Model
         'title',
         'unit_id',
         'order',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     public function unit(): BelongsTo

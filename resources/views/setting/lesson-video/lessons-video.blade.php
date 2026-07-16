@@ -104,7 +104,9 @@
                                             @can('LessonVideo-edit')
                                                 <a class="modal-effect btn btn-info" data-effect="effect-flip-vertical"
                                                    data-id="{{ $lessonVideo->id }}" data-title="{{ $lessonVideo->title }}"
-                                                   data-unit_selected="{{ $lessonVideo->unit_id }}" data-toggle="modal"
+                                                   data-unit_selected="{{ $lessonVideo->unit_id }}"
+                                                   data-is_active="{{ $lessonVideo->is_active ? 1 : 0 }}"
+                                                   data-toggle="modal"
                                                    href="#modal2" title="{{ trans('main_trans.Edit') }}">
                                                     <i class="fas fa-pen"></i> {{ trans('main_trans.Edit') }}
                                                 </a>
@@ -224,6 +226,15 @@
                                     @foreach($units as $unit)
                                         <option value="{{ $unit->id }}">{{ $unit->name }}</option>
                                     @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3 mx-1">
+                            <label for="edit_is_active" class="col-sm-2 col-form-label">{{ trans('main_trans.Active') }}</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" name="is_active" id="edit_is_active" required>
+                                    <option value="1">{{ trans('main_trans.Enable') }}</option>
+                                    <option value="0">{{ trans('main_trans.Disable') }}</option>
                                 </select>
                             </div>
                         </div>

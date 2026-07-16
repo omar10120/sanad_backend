@@ -63,12 +63,21 @@ class LessonVideoService
 
     public function createLessonVideo(array $data): LessonVideo
     {
+        $data['is_active'] = array_key_exists('is_active', $data)
+            ? (bool) $data['is_active']
+            : true;
+
         return LessonVideo::create($data);
     }
 
     public function updateLessonVideo(int $id, array $data): LessonVideo
     {
         $lessonVideo = LessonVideo::findOrFail($id);
+
+        if (array_key_exists('is_active', $data)) {
+            $data['is_active'] = (bool) $data['is_active'];
+        }
+
         $lessonVideo->update($data);
 
         return $lessonVideo;

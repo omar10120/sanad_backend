@@ -160,7 +160,8 @@ Route::group(
     Route::post('/lesson-video', [LessonVideoController::class, 'store'])->name('lesson-video.store');
     Route::patch('/lesson-video/update', [LessonVideoController::class, 'update'])->name('lesson-video.update');
     Route::delete('/lesson-video/destroy', [LessonVideoController::class, 'destroy'])->name('lesson-video.destroy');
-    Route::patch('/lesson-videos/{lessonVideo}/toggle', [LessonVideoController::class, 'toggle'])->name('lesson-videos.toggle');
+    Route::patch('/lesson-videos/{lesson_video_id}/toggle', [LessonVideoController::class, 'toggle'])
+        ->name('lesson-video.toggle');
     Route::post('/units/{unit}/lessons-video/reorder', [LessonVideoController::class, 'reorder'])
         ->name('lessons-video.reorder');
     Route::get('/archived-lesson-video/{unit}', [ArchivedLessonVideoController::class, 'show'])

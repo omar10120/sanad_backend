@@ -81,6 +81,7 @@ class LessonVideoController extends Controller
         $this->lessonVideoService->updateLessonVideo($data['id'], [
             'title' => $data['title'],
             'unit_id' => $data['unit_id'],
+            'is_active' => $data['is_active'] ?? true,
         ]);
 
         session()->flash('edit', trans('main_trans.Lesson_video_edit_successfully'));

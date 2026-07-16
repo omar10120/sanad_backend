@@ -17,8 +17,17 @@ class StoreLessonVideoRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'unit_id' => ['required', 'integer', 'exists:units,id'],
-            'is_active' => 'boolean',
+            'is_active' => ['nullable', 'boolean'],
         ];
+    }
+
+    public function prepareForValidation(): void
+    {
+        if ($this->has('is_active')) {
+            $this->merge([
+                'is_active' => filter_var($this->input('is_active'), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false,
+            ]);
+        }
     }
 
     public function messages(): array
