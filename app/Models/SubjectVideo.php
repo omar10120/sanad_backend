@@ -38,6 +38,7 @@ class SubjectVideo extends Model
     public function teachers(): BelongsToMany
     {
         return $this->belongsToMany(Teacher::class, 'teacher_has_subject_video', 'subject_video_id', 'teacher_id')
+            ->where('is_active', true)
             ->withPivot('order')
             ->orderByPivot('order');
     }
@@ -52,7 +53,7 @@ class SubjectVideo extends Model
         
         $unitIds = Unit::whereHas('teacher.subjectVideos', function ($query) {
             $query->where('subjects_video.id', $this->id);
-        })->when($unitId, fn ($query) => $query->where('id', $unitId))
+        })->where('is_active', true)->when($unitId, fn ($query) => $query->where('id', $unitId))
             ->pluck('id');
 
         if ($unitIds->isEmpty()) {
