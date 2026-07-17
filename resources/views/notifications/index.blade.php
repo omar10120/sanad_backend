@@ -71,7 +71,13 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="badge badge-{{ $notification->status === 'sent' ? 'success' : ($notification->status === 'draft' ? 'warning' : 'info') }}">
+                                        <span class="badge badge-{{ match($notification->status) {
+                                            'sent' => 'success',
+                                            'draft' => 'warning',
+                                            'processing' => 'primary',
+                                            'failed' => 'danger',
+                                            default => 'info',
+                                        } }}">
                                             {{ trans('main_trans.' . ucfirst($notification->status)) }}
                                         </span>
                                     </td>
@@ -102,11 +108,13 @@
                                                 </a>
                                             @endcan
 
-                                            @if($notification->status === 'draft')
+                                            @if(in_array($notification->status, ['draft', 'failed'], true))
                                                 @can('Notification-edit')
+                                                    @if($notification->status === 'draft')
                                                     <a href="{{ route('notifications.edit', $notification->id) }}" class="btn btn-sm btn-warning" title="{{ trans('main_trans.Edit') }}">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
+                                                    @endif
                                                 @endcan
 
                                                 @can('Notification-send')

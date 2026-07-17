@@ -36,11 +36,13 @@
                     <div class="d-flex justify-content-between">
                         <h4 class="card-title mg-b-0">{{ trans('main_trans.Notification_details') }}</h4>
                         <div>
-                            @if($notification->status === 'draft')
+                            @if(in_array($notification->status, ['draft', 'failed'], true))
                                 @can('Notification-edit')
+                                    @if($notification->status === 'draft')
                                     <a href="{{ route('notifications.edit', $notification->id) }}" class="btn btn-warning">
                                         <i class="fas fa-edit"></i> {{ trans('main_trans.Edit') }}
                                     </a>
+                                    @endif
                                 @endcan
 
                                 @can('Notification-send')
@@ -101,7 +103,13 @@
                             <div class="form-group">
                                 <label>{{ trans('main_trans.Status') }}</label>
                                 <p>
-                                    <span class="badge badge-{{ $notification->status === 'sent' ? 'success' : ($notification->status === 'draft' ? 'warning' : 'info') }}">
+                                    <span class="badge badge-{{ match($notification->status) {
+                                        'sent' => 'success',
+                                        'draft' => 'warning',
+                                        'processing' => 'primary',
+                                        'failed' => 'danger',
+                                        default => 'info',
+                                    } }}">
                                         {{ trans('main_trans.' . ucfirst($notification->status)) }}
                                     </span>
                                 </p>
@@ -181,12 +189,13 @@
         </div>
     </div>
 
-    @if($notification->status === 'sent' && $notification->send_results && config('features.advanced_notifications'))
+    @if(in_array($notification->status, ['sent', 'failed'], true) && $notification->logs()->exists() && config('features.advanced_notifications'))
         <div class="row row-sm">
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-header pb-0">
                         <h4 class="card-title mg-b-0">{{ trans('main_trans.Send_results') }}</h4>
+                        <small class="text-muted">{{ trans('main_trans.Failed_sends') }}: {{ $notification->failed_sends }}</small>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -200,16 +209,16 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($notification->send_results as $result)
+                                @foreach($notification->logs()->latest()->limit(500)->get() as $log)
                                     <tr>
-                                        <td>{{ $result['student_id'] }}</td>
+                                        <td>{{ $log->student_id }}</td>
                                         <td>
-                                            <span class="badge badge-{{ $result['status'] === 'success' ? 'success' : 'danger' }}">
-                                                {{ ucfirst($result['status']) }}
+                                            <span class="badge badge-{{ $log->status === 'success' ? 'success' : 'danger' }}">
+                                                {{ ucfirst($log->status) }}
                                             </span>
                                         </td>
-                                        <td>{{ isset($result['sent_at']) ? $result['sent_at'] : '-' }}</td>
-                                        <td>{{ $result['error'] ?? '-' }}</td>
+                                        <td>{{ $log->created_at }}</td>
+                                        <td>{{ $log->error_message ?? '-' }}</td>
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -244,7 +253,7 @@
     <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.responsive.min.js') }}"></script>
     <script src="{{ URL::asset('assets/plugins/notify/js/notifIt.js') }}"></script>
     <script src="{{ URL::asset('assets/plugins/notify/js/notifit-custom.js') }}"></script>
-    @if($notification->status === 'sent' && $notification->send_results && config('features.advanced_notifications'))
+    @if(in_array($notification->status, ['sent', 'failed'], true) && $notification->logs()->exists() && config('features.advanced_notifications'))
     <script>
         $('#sendResultsTable').DataTable({
             responsive: true,
