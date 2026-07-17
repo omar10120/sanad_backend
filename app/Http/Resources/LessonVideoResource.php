@@ -24,6 +24,7 @@ class LessonVideoResource extends JsonResource
             'unit_id' => $this->unit_id,
             'is_active' => $this->is_active,
             'number_of_videos' => $this->youtube_links_count ?? $this->youtubeLinks()->count(),
+            'youtube_links' => YoutubeLinkVideoResource::collection($this->youtubeLinks),
         ];
 
         if ($this->relationLoaded('youtubeLinks')) {

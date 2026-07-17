@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\CodePackage;
 use App\Models\LessonVideo;
 use App\Models\SubjectVideo;
+
 use App\Models\Teacher;
 use App\Models\Type;
 use App\Models\Unit;
@@ -119,7 +120,7 @@ class ApiSubjectVideoService
 
     public function findTeacher(int $id): ?Teacher
     {
-        return Teacher::withCount('units')->where('is_active', true)->find($id);
+        return Teacher::withCount('units')->with('subjectVideos')->where('is_active', true)->find($id);
     }
 
     public function getUnitsByTeacher(int $teacherId): Collection
