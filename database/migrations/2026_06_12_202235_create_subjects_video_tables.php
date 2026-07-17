@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('subjects_video', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('icon');
-            $table->string('link');
+            $table->string('icon')->nullable();
+            $table->string('link')->nullable();
             $table->boolean('is_active')->default(true);
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
