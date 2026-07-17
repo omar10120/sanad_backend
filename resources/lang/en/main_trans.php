@@ -922,6 +922,7 @@ return [
     'Notification_title' => 'Notification Title',
     'Notification_body' => 'Notification Body',
     'Notification_type' => 'Notification Type',
+    'Notification-send' => 'Notification send',
     'Target_type' => 'Target Type',
     'Target_students' => 'Target Students',
     'Target_types' => 'Target Types',

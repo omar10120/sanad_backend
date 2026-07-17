@@ -996,6 +996,7 @@ return [
     'Notification-delete' => 'حذف الإشعار',
     'Notification-show-deleted' => 'عرض الإشعارات المحذوفة',
     'Notification-restore-deleted' => 'استعادة الإشعارات المحذوفة',
+    'Notification-send' => 'إرسال الإشعار',
     // Pro Feature Modal
     'Pro_Feature' => 'ميزة احترافية',
     'Pro_Feature_Title' => 'هذه الميزة متاحة في النسخة الاحترافية فقط',

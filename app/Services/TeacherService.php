@@ -119,9 +119,9 @@ class TeacherService
     public function getArchivedTeachers(int $subjectVideoId): Collection
     {
         return Teacher::onlyTrashed()
-            ->whereHas('subjectVideos', function ($query) use ($subjectVideoId) {
-                $query->where('subject_video_id', $subjectVideoId);
-            })
+            // ->whereHas('subjectVideos', function ($query) use ($subjectVideoId) {
+            //     $query->where('subject_video_id', $subjectVideoId);
+            // })
             ->get();
     }
 
