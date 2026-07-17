@@ -93,7 +93,7 @@
                             <div class="modal-content modal-content-demo">
                                 <div class="modal-header">
                                     <h6 class="modal-title">{{ trans('main_trans.Restore_question_group') }}</h6><button aria-label="Close" class="close" data-dismiss="modal"
-                                                                                                                type="button"><span aria-hidden="true">&times;</span></button>
+                                        type="button"><span aria-hidden="true">&times;</span></button>
                                 </div>
                                 <form action="{{route('archived-question-group.update','archived-question-group')}}" method="post">
                                     {{method_field('patch')}}
