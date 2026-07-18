@@ -17,7 +17,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
-
 class UserController extends Controller
 {
     use HasPermissionChecks;
@@ -51,8 +50,9 @@ class UserController extends Controller
 
         $roles = $this->userService->getAllRoles();
         $availableSubjects = $this->userSubjectService->getAllSubjects();
+        $availableTeachers = $this->userSubjectService->getAllTeachers();
         
-        return view('users.add_user', compact('roles', 'availableSubjects'));
+        return view('users.add_user', compact('roles', 'availableSubjects', 'availableTeachers'));
     }
 
     /**
@@ -76,10 +76,15 @@ class UserController extends Controller
             $this->userService->moveUploadedFile($request, $user->id, $photoName);
         }
 
-        // Assign subjects if provided and user is not Owner
-        if ($request->has('subjects') && !$user->hasRole('Owner')) {
+        // Assign subjects and teacher if provided and user is not Owner
+        if ($request->filled('subjects') && ! $user->hasRole('Owner')) {
             $subjectIds = $request->input('subjects', []);
-            $this->userSubjectService->assignSubjectsToUser($user->id, $subjectIds);
+            $teacherId = $request->input('teacher_id') ?: null;
+            $this->userSubjectService->assignSubjectsToUser(
+                $user->id,
+                $subjectIds,
+                $teacherId ? (int) $teacherId : null
+            );
         }
 
         session()->flash('add', trans('main_trans.User_add_successfully'));
@@ -132,10 +137,15 @@ class UserController extends Controller
         // Update user role
         $this->userService->updateUserRole($user, $request->roles_name[0]);
 
-        // Update subject assignments if provided and user is not Owner
-        if ($request->has('subjects') && !$user->hasRole('Owner')) {
+        // Update subject assignments and teacher if provided and user is not Owner
+        if ($request->filled('subjects') && ! $user->hasRole('Owner')) {
             $subjectIds = $request->input('subjects', []);
-            $this->userSubjectService->assignSubjectsToUser($user->id, $subjectIds);
+            $teacherId = $request->input('teacher_id') ?: null;
+            $this->userSubjectService->assignSubjectsToUser(
+                $user->id,
+                $subjectIds,
+                $teacherId ? (int) $teacherId : null
+            );
         }
 
         session()->flash('edit', trans('main_trans.User_edit_successfully'));

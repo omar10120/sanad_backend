@@ -45,6 +45,7 @@ class UpdateUserRequest extends FormRequest
             'roles_name.*' => ['required', 'string', 'exists:roles,name'],
             'subjects' => ['nullable', 'array'],
             'subjects.*' => ['integer', 'exists:subjects,id'],
+            'teacher_id' => ['nullable', 'integer', 'exists:teachers,id'],
         ];
     }
 
@@ -66,6 +67,7 @@ class UpdateUserRequest extends FormRequest
             'photo.image' => trans('main_trans.Photo_must_be_image'),
             'photo.mimes' => trans('main_trans.Photo_must_be_jpeg_png_jpg'),
             'photo.max' => trans('main_trans.Photo_max_size'),
+            
         ];
     }
 
@@ -86,6 +88,7 @@ class UpdateUserRequest extends FormRequest
             'is_instructor' => trans('main_trans.Is_instructor'),
             'status' => trans('main_trans.Status'),
             'roles_name' => trans('main_trans.Roles'),
+            
         ];
     }
 }

@@ -135,6 +135,7 @@ return [
     'Assign_Subjects'=>'تعيين المواد',
     'Assign_Subjects_to_User'=>'تعيين المواد للمستخدم',
     'Available_Subjects'=>'المواد المتاحة',
+    'Available_Teachers'=>'الأساتذة المتاحة',
     'Currently_Assigned_Subjects'=>'المواد المعينة حالياً',
     'Save_Assignments'=>'حفظ التعيينات',
     'Cancel'=>'إلغاء',

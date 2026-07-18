@@ -2,19 +2,38 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use App\Models\Subject;
+use App\Models\Teacher;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 class UserSubjectService
 {
     /**
-     * Assign subjects to a user
+     * Assign subjects to a user, optionally linking the same teacher_id on each pivot row.
      */
-    public function assignSubjectsToUser(int $userId, array $subjectIds): bool
+    public function assignSubjectsToUser(int $userId, array $subjectIds, ?int $teacherId = null): bool
     {
         $user = User::findOrFail($userId);
-        $user->subjects()->sync($subjectIds);
+
+        $subjectIds = collect($subjectIds)
+            ->filter()
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values();
+
+        $syncData = [];
+        foreach ($subjectIds as $subjectId) {
+            $syncData[$subjectId] = [
+                'teacher_id' => $teacherId,
+            ];
+        }
+
+        DB::transaction(function () use ($user, $syncData) {
+            $user->subjects()->sync($syncData);
+        });
+
         return true;
     }
 
@@ -25,6 +44,7 @@ class UserSubjectService
     {
         $user = User::findOrFail($userId);
         $user->subjects()->detach($subjectIds);
+
         return true;
     }
 
@@ -34,6 +54,7 @@ class UserSubjectService
     public function getUserSubjects(int $userId): Collection
     {
         $user = User::findOrFail($userId);
+
         return $user->subjects()->get();
     }
 
@@ -43,6 +64,7 @@ class UserSubjectService
     public function getSubjectUsers(int $subjectId): Collection
     {
         $subject = Subject::findOrFail($subjectId);
+
         return $subject->users()->get();
     }
 
@@ -65,7 +87,15 @@ class UserSubjectService
      */
     public function getAllSubjects(): Collection
     {
-        return Subject::all();
+        return Subject::orderBy('name')->get();
+    }
+
+    /**
+     * Get all teachers
+     */
+    public function getAllTeachers(): Collection
+    {
+        return Teacher::orderBy('name')->get();
     }
 
     /**
@@ -75,13 +105,12 @@ class UserSubjectService
     {
         $user = User::findOrFail($userId);
 
-        // If user is owner, they have access to all subjects
         if ($user->hasRole('Owner')) {
             return collect();
         }
 
         $assignedSubjectIds = $user->getAllowedSubjectIds();
-        return Subject::whereNotIn('id', $assignedSubjectIds)
-            ->get();
+
+        return Subject::whereNotIn('id', $assignedSubjectIds)->get();
     }
 }

@@ -13,6 +13,7 @@ class UserHasSubject extends Model
         'user_id',
         'subject_id',
         'unit_id',
+        'teacher_id',
     ];
 
     public function user(): BelongsTo
@@ -28,5 +29,10 @@ class UserHasSubject extends Model
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
+    }
+
+    public function teacher(): BelongsTo
+    {
+        return $this->belongsTo(Teacher::class);
     }
 }

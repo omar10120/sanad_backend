@@ -135,6 +135,7 @@ return [
     'Assign_Subjects'=>'Assign Subjects',
     'Assign_Subjects_to_User'=>'Assign Subjects to User',
     'Available_Subjects'=>'Available Subjects',
+    'Available_Teachers'=>'Available Teachers',
     'Currently_Assigned_Subjects'=>'Currently Assigned Subjects',
     'Save_Assignments'=>'Save Assignments',
     'Cancel'=>'Cancel',

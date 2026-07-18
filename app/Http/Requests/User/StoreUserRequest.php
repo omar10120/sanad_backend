@@ -45,6 +45,7 @@ class StoreUserRequest extends FormRequest
             'roles_name.*' => ['required', 'string', 'exists:roles,name'],
             'subjects' => ['nullable', 'array'],
             'subjects.*' => ['integer', 'exists:subjects,id'],
+            'teacher_id' => ['nullable', 'integer', 'exists:teachers,id'],
         ];
     }
 

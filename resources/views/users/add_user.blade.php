@@ -140,6 +140,15 @@
                                     </select>
                                     <small class="form-text text-muted">{{ trans('main_trans.Hold_Ctrl_Select_Multiple') }}</small>
                                 </div>
+                                <div class="form-group">
+                                    <label for="teacher_id" class="form-label card-title mb-1">{{ trans('main_trans.Available_Teachers') }}</label>
+                                    <select name="teacher_id" id="teacher_id" class="form-control">
+                                        <option value="">{{ trans('main_trans.Select_teacher') }}</option>
+                                        @foreach($availableTeachers as $teacher)
+                                            <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
