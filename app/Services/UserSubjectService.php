@@ -113,4 +113,16 @@ class UserSubjectService
 
         return Subject::whereNotIn('id', $assignedSubjectIds)->get();
     }
+    /**
+     * Get assigned teacher_id from user_has_subject pivot (single shared teacher).
+     */
+    public function getUserTeacherId(int $userId): ?int
+    {
+        $teacherId = DB::table('user_has_subject')
+            ->where('user_id', $userId)
+            ->whereNotNull('teacher_id')
+            ->value('teacher_id');
+
+        return $teacherId ? (int) $teacherId : null;
+    }
 }

@@ -114,8 +114,18 @@ class UserController extends Controller
         $userRole = $this->userService->getUserRoles($user);
         $assignedSubjects = $this->userSubjectService->getUserSubjects($id);
         $availableSubjects = $this->userSubjectService->getAllSubjects();
+        $availableTeachers = $this->userSubjectService->getAllTeachers();
+        $assignedTeacherId = $this->userSubjectService->getUserTeacherId($id);
 
-        return view('users.edit_user', compact('user', 'roles', 'userRole', 'assignedSubjects', 'availableSubjects'));
+        return view('users.edit_user', compact(
+            'user',
+            'roles',
+            'userRole',
+            'assignedSubjects',
+            'availableSubjects',
+            'availableTeachers',
+            'assignedTeacherId'
+        ));
     }
 
     /**

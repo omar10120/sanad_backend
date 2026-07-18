@@ -150,7 +150,21 @@
                                                 <small class="form-text text-muted">{{ trans('main_trans.Hold_Ctrl_Select_Multiple') }}</small>
                                             </div>
                                         </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="teacher_id" class="form-label card-title mb-1">{{ trans('main_trans.Available_Teachers') }}</label>
+                                                <select name="teacher_id" id="teacher_id" class="form-control">
+                                                    <option value="">{{ trans('main_trans.Select_teacher') }}</option>
+                                                    @foreach($availableTeachers as $teacher)
+                                                        <option value="{{ $teacher->id }}"
+                                                            {{ (int) $assignedTeacherId === (int) $teacher->id ? 'selected' : '' }}>
+                                                            {{ $teacher->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
 
+                                            </div>
+                                        </div>
                                         <div class="col-md-6">
                                             <h6>{{ trans('main_trans.Currently_Assigned_Subjects') }}</h6>
                                             @if($assignedSubjects->count() > 0)
