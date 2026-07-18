@@ -9,6 +9,7 @@ use App\Models\Unit;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -221,5 +222,67 @@ class TeacherService
         $teacher = Teacher::findOrFail($teacherId);
 
         return $teacher->update(['is_active' => ! $teacher->is_active]);
+    }
+
+    /**
+     * Teacher IDs assigned to the authenticated user via user_has_subject.teacher_id
+     */
+    public function getAllowedTeacherIdsForUser(): array
+    {
+        $user = Auth::user();
+
+        if (! $user) {
+            return [];
+        }
+
+        if ($user->hasRole('Owner')) {
+            return Teacher::pluck('id')->all();
+        }
+
+        return DB::table('user_has_subject')
+            ->where('user_id', $user->id)
+            ->whereNotNull('teacher_id')
+            ->distinct()
+            ->pluck('teacher_id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+    }
+
+    /**
+     * Teachers available to the authenticated user.
+     */
+    public function getTeachersForUser(): Collection
+    {
+        $user = Auth::user();
+
+        if ($user && $user->hasRole('Owner')) {
+            return Teacher::orderBy('name')->get();
+        }
+
+        $teacherIds = $this->getAllowedTeacherIdsForUser();
+
+        if (empty($teacherIds)) {
+            return new Collection();
+        }
+
+        return Teacher::whereIn('id', $teacherIds)->orderBy('name')->get();
+    }
+
+    /**
+     * Teachers for a subject video, limited to the authenticated user's assigned teachers.
+     */
+    public function getTeachersForSubjectVideoForUser(int $subjectVideoId): Collection
+    {
+        $subjectVideo = $this->getSubjectVideoWithTeachers($subjectVideoId);
+        $teachers = $subjectVideo->teachers;
+
+        $user = Auth::user();
+        if ($user && $user->hasRole('Owner')) {
+            return $teachers;
+        }
+
+        $allowedIds = $this->getAllowedTeacherIdsForUser();
+
+        return $teachers->whereIn('id', $allowedIds)->values();
     }
 }

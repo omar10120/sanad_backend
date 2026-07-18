@@ -35,7 +35,7 @@ class TeacherController extends Controller
 
         $subject_video_selected = $this->teacherService->getSubjectVideoWithTeachers($subject_video_id);
         $archivedTeachersCount = $this->teacherService->getArchivedTeachers($subject_video_id)->count();
-        $teachers = $subject_video_selected->teachers;
+        $teachers = $this->teacherService->getTeachersForSubjectVideoForUser((int) $subject_video_id);
         $subjectVideos = $this->teacherService->getAllSubjectVideos();
 
         return view('setting.teacher.teachers', compact(
