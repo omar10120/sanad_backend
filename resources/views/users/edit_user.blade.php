@@ -152,8 +152,21 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
+                                                <div class="custom-control custom-checkbox mb-2">
+                                                    <input type="hidden" name="show_all_teachers" value="0">
+                                                    <input type="checkbox" class="custom-control-input" id="show_all_teachers"
+                                                           name="show_all_teachers" value="1"
+                                                           {{ $user->show_all_teachers ? 'checked' : '' }}>
+                                                    <label class="custom-control-label" for="show_all_teachers">
+                                                        {{ trans('main_trans.Show_all_teachers') }}
+                                                    </label>
+                                                </div>
+                                                <small class="form-text text-muted">{{ trans('main_trans.Show_all_teachers_hint') }}</small>
+                                            </div>
+                                            <div class="form-group">
                                                 <label for="teacher_id" class="form-label card-title mb-1">{{ trans('main_trans.Available_Teachers') }}</label>
-                                                <select name="teacher_id" id="teacher_id" class="form-control">
+                                                <select name="teacher_id" id="teacher_id" class="form-control"
+                                                    {{ $user->show_all_teachers ? 'disabled' : '' }}>
                                                     <option value="">{{ trans('main_trans.Select_teacher') }}</option>
                                                     @foreach($availableTeachers as $teacher)
                                                         <option value="{{ $teacher->id }}"
@@ -162,7 +175,6 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
-
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -221,4 +233,21 @@
     <script src="{{URL::asset('assets/plugins/parsleyjs/parsley.min.js')}}"></script>
     <!-- Internal Form-validation js -->
     <script src="{{URL::asset('assets/js/form-validation.js')}}"></script>
+    <script>
+        (function () {
+            var checkbox = document.getElementById('show_all_teachers');
+            var teacherSelect = document.getElementById('teacher_id');
+            if (!checkbox || !teacherSelect) return;
+
+            function syncTeacherSelect() {
+                teacherSelect.disabled = checkbox.checked;
+                if (checkbox.checked) {
+                    teacherSelect.value = '';
+                }
+            }
+
+            checkbox.addEventListener('change', syncTeacherSelect);
+            syncTeacherSelect();
+        })();
+    </script>
 @endsection

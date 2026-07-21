@@ -136,6 +136,8 @@ return [
     'Assign_Subjects_to_User'=>'تعيين المواد للمستخدم',
     'Available_Subjects'=>'المواد المتاحة',
     'Available_Teachers'=>'الأساتذة المتاحة',
+    'Show_all_teachers'=>'عرض جميع الأساتذة',
+    'Show_all_teachers_hint'=>'عند التحديد يظهر للمستخدم جميع الأساتذة. بدون تحديد وبدون اختيار أستاذ لن يظهر أي أستاذ.',
     'Currently_Assigned_Subjects'=>'المواد المعينة حالياً',
     'Save_Assignments'=>'حفظ التعيينات',
     'Cancel'=>'إلغاء',

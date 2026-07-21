@@ -125,4 +125,30 @@ class UserSubjectService
 
         return $teacherId ? (int) $teacherId : null;
     }
+
+    /**
+     * Restricted teacher IDs for a user.
+     * null  → show all teachers (Owner or show_all_teachers)
+     * []    → show no teachers
+     * [ids] → show only those teachers
+     */
+    public function getRestrictedTeacherIdsForUser(int $userId): ?array
+    {
+        $user = User::findOrFail($userId);
+
+        if ($user->hasRole('Owner') || $user->show_all_teachers) {
+            return null;
+        }
+
+        $teacherIds = DB::table('user_has_subject')
+            ->where('user_id', $userId)
+            ->whereNotNull('teacher_id')
+            ->distinct()
+            ->pluck('teacher_id')
+            ->map(fn ($id) => (int) $id)
+            ->values()
+            ->all();
+
+        return $teacherIds;
+    }
 }

@@ -62,24 +62,19 @@ class UserController extends Controller
     {
         $this->checkPermission(PermissionEnum::USER_ADD);
 
-        // Prepare user data
         $userData = $this->userService->prepareUserData($request);
-
-        // Handle file upload
         $photoName = $this->userService->handleFileUpload($request);
-
-        // Create user
         $user = $this->userService->createUser($userData, $photoName, $request->roles_name[0]);
 
-        // Move uploaded file if exists
         if ($photoName) {
             $this->userService->moveUploadedFile($request, $user->id, $photoName);
         }
 
-        // Assign subjects and teacher if provided and user is not Owner
         if ($request->filled('subjects') && ! $user->hasRole('Owner')) {
             $subjectIds = $request->input('subjects', []);
-            $teacherId = $request->input('teacher_id') ?: null;
+            $showAllTeachers = $request->boolean('show_all_teachers');
+            $teacherId = $showAllTeachers ? null : ($request->input('teacher_id') ?: null);
+
             $this->userSubjectService->assignSubjectsToUser(
                 $user->id,
                 $subjectIds,
@@ -150,7 +145,9 @@ class UserController extends Controller
         // Update subject assignments and teacher if provided and user is not Owner
         if ($request->filled('subjects') && ! $user->hasRole('Owner')) {
             $subjectIds = $request->input('subjects', []);
-            $teacherId = $request->input('teacher_id') ?: null;
+            $showAllTeachers = $request->boolean('show_all_teachers');
+            $teacherId = $showAllTeachers ? null : ($request->input('teacher_id') ?: null);
+
             $this->userSubjectService->assignSubjectsToUser(
                 $user->id,
                 $subjectIds,

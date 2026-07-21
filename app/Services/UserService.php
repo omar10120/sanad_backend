@@ -252,6 +252,7 @@ class UserService
     {
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
+        $input['show_all_teachers'] = $request->boolean('show_all_teachers');
 
         return $input;
     }
@@ -264,12 +265,18 @@ class UserService
      */
     public function prepareUserUpdateData(Request $request)
     {
-        return [
+        $data = [
             'phone' => $request->phone,
             'name_ar' => $request->name_ar,
             'name_en' => $request->name_en,
             'email' => $request->email,
             'status' => $request->status,
         ];
+
+        if ($request->has('show_all_teachers')) {
+            $data['show_all_teachers'] = $request->boolean('show_all_teachers');
+        }
+
+        return $data;
     }
 }

@@ -29,6 +29,7 @@ class User extends Authenticatable
         'phone',
         'photo',
         'status',
+        'show_all_teachers',
         'password',
     ];
 
@@ -92,6 +93,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'status' => 'boolean',
+            'show_all_teachers' => 'boolean',
             'password' => 'hashed',
         ];
     }

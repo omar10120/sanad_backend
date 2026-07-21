@@ -46,6 +46,7 @@ class StoreUserRequest extends FormRequest
             'subjects' => ['nullable', 'array'],
             'subjects.*' => ['integer', 'exists:subjects,id'],
             'teacher_id' => ['nullable', 'integer', 'exists:teachers,id'],
+            'show_all_teachers' => ['nullable', 'boolean'],
         ];
     }
 

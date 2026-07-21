@@ -136,6 +136,8 @@ return [
     'Assign_Subjects_to_User'=>'Assign Subjects to User',
     'Available_Subjects'=>'Available Subjects',
     'Available_Teachers'=>'Available Teachers',
+    'Show_all_teachers'=>'Show all teachers',
+    'Show_all_teachers_hint'=>'If checked, this user can see all teachers. If unchecked with no teacher selected, no teachers are shown.',
     'Currently_Assigned_Subjects'=>'Currently Assigned Subjects',
     'Save_Assignments'=>'Save Assignments',
     'Cancel'=>'Cancel',

@@ -225,9 +225,12 @@ class TeacherService
     }
 
     /**
-     * Teacher IDs assigned to the authenticated user via user_has_subject.teacher_id
+     * Teacher IDs for the authenticated user.
+     * null  → show all (Owner or show_all_teachers)
+     * []    → show none
+     * [ids] → show only those teachers
      */
-    public function getAllowedTeacherIdsForUser(): array
+    public function getRestrictedTeacherIdsForUser(): ?array
     {
         $user = Auth::user();
 
@@ -235,8 +238,8 @@ class TeacherService
             return [];
         }
 
-        if ($user->hasRole('Owner')) {
-            return Teacher::pluck('id')->all();
+        if ($user->hasRole('Owner') || $user->show_all_teachers) {
+            return null;
         }
 
         return DB::table('user_has_subject')
@@ -245,6 +248,7 @@ class TeacherService
             ->distinct()
             ->pluck('teacher_id')
             ->map(fn ($id) => (int) $id)
+            ->values()
             ->all();
     }
 
@@ -253,19 +257,17 @@ class TeacherService
      */
     public function getTeachersForUser(): Collection
     {
-        $user = Auth::user();
+        $restrictedIds = $this->getRestrictedTeacherIdsForUser();
 
-        if ($user && $user->hasRole('Owner')) {
+        if ($restrictedIds === null) {
             return Teacher::orderBy('name')->get();
         }
 
-        $teacherIds = $this->getAllowedTeacherIdsForUser();
-
-        if (empty($teacherIds)) {
+        if ($restrictedIds === []) {
             return new Collection();
         }
 
-        return Teacher::whereIn('id', $teacherIds)->orderBy('name')->get();
+        return Teacher::whereIn('id', $restrictedIds)->orderBy('name')->get();
     }
 
     /**
@@ -276,13 +278,12 @@ class TeacherService
         $subjectVideo = $this->getSubjectVideoWithTeachers($subjectVideoId);
         $teachers = $subjectVideo->teachers;
 
-        $user = Auth::user();
-        if ($user && $user->hasRole('Owner')) {
+        $restrictedIds = $this->getRestrictedTeacherIdsForUser();
+
+        if ($restrictedIds === null) {
             return $teachers;
         }
 
-        $allowedIds = $this->getAllowedTeacherIdsForUser();
-
-        return $teachers->whereIn('id', $allowedIds)->values();
+        return $teachers->whereIn('id', $restrictedIds)->values();
     }
 }
