@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\DB;
 class UserSubjectService
 {
     /**
-     * Assign subjects to a user, optionally linking the same teacher_id on each pivot row.
+     * Assign subjects to a user (independent of teacher access).
+     * Pivot teacher_id mirrors users.teacher_id when subjects exist.
      */
     public function assignSubjectsToUser(int $userId, array $subjectIds, ?int $teacherId = null): bool
     {
@@ -23,15 +24,43 @@ class UserSubjectService
             ->unique()
             ->values();
 
+        $pivotTeacherId = $teacherId ?? ($user->show_all_teachers ? null : $user->teacher_id);
+
         $syncData = [];
         foreach ($subjectIds as $subjectId) {
             $syncData[$subjectId] = [
-                'teacher_id' => $teacherId,
+                'teacher_id' => $pivotTeacherId,
             ];
         }
 
         DB::transaction(function () use ($user, $syncData) {
             $user->subjects()->sync($syncData);
+        });
+
+        return true;
+    }
+
+    /**
+     * Assign teacher access independently of subjects.
+     */
+    public function assignTeacherAccess(int $userId, bool $showAllTeachers, ?int $teacherId = null): bool
+    {
+        $user = User::findOrFail($userId);
+
+        $resolvedTeacherId = $showAllTeachers ? null : $teacherId;
+
+        DB::transaction(function () use ($user, $showAllTeachers, $resolvedTeacherId) {
+            $user->update([
+                'show_all_teachers' => $showAllTeachers,
+                'teacher_id' => $resolvedTeacherId,
+            ]);
+
+            // Keep existing subject pivots aligned when present.
+            if ($user->subjects()->exists()) {
+                DB::table('user_has_subject')
+                    ->where('user_id', $user->id)
+                    ->update(['teacher_id' => $resolvedTeacherId]);
+            }
         });
 
         return true;
@@ -113,11 +142,18 @@ class UserSubjectService
 
         return Subject::whereNotIn('id', $assignedSubjectIds)->get();
     }
+
     /**
-     * Get assigned teacher_id from user_has_subject pivot (single shared teacher).
+     * Get assigned teacher_id from users table (falls back to pivot for legacy rows).
      */
     public function getUserTeacherId(int $userId): ?int
     {
+        $user = User::findOrFail($userId);
+
+        if ($user->teacher_id) {
+            return (int) $user->teacher_id;
+        }
+
         $teacherId = DB::table('user_has_subject')
             ->where('user_id', $userId)
             ->whereNotNull('teacher_id')
@@ -140,15 +176,10 @@ class UserSubjectService
             return null;
         }
 
-        $teacherIds = DB::table('user_has_subject')
-            ->where('user_id', $userId)
-            ->whereNotNull('teacher_id')
-            ->distinct()
-            ->pluck('teacher_id')
-            ->map(fn ($id) => (int) $id)
-            ->values()
-            ->all();
+        if ($user->teacher_id) {
+            return [(int) $user->teacher_id];
+        }
 
-        return $teacherIds;
+        return [];
     }
 }

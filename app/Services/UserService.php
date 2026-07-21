@@ -253,6 +253,9 @@ class UserService
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
         $input['show_all_teachers'] = $request->boolean('show_all_teachers');
+        $input['teacher_id'] = $input['show_all_teachers']
+            ? null
+            : ($request->input('teacher_id') ?: null);
 
         return $input;
     }
@@ -273,8 +276,10 @@ class UserService
             'status' => $request->status,
         ];
 
-        if ($request->has('show_all_teachers')) {
-            $data['show_all_teachers'] = $request->boolean('show_all_teachers');
+        if ($request->has('show_all_teachers') || $request->exists('teacher_id')) {
+            $showAll = $request->boolean('show_all_teachers');
+            $data['show_all_teachers'] = $showAll;
+            $data['teacher_id'] = $showAll ? null : ($request->input('teacher_id') ?: null);
         }
 
         return $data;

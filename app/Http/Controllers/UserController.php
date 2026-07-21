@@ -70,16 +70,22 @@ class UserController extends Controller
             $this->userService->moveUploadedFile($request, $user->id, $photoName);
         }
 
-        if ($request->filled('subjects') && ! $user->hasRole('Owner')) {
-            $subjectIds = $request->input('subjects', []);
+        if (! $user->hasRole('Owner')) {
             $showAllTeachers = $request->boolean('show_all_teachers');
             $teacherId = $showAllTeachers ? null : ($request->input('teacher_id') ?: null);
 
-            $this->userSubjectService->assignSubjectsToUser(
+            $this->userSubjectService->assignTeacherAccess(
                 $user->id,
-                $subjectIds,
+                $showAllTeachers,
                 $teacherId ? (int) $teacherId : null
             );
+
+            if ($request->filled('subjects')) {
+                $this->userSubjectService->assignSubjectsToUser(
+                    $user->id,
+                    $request->input('subjects', [])
+                );
+            }
         }
 
         session()->flash('add', trans('main_trans.User_add_successfully'));
@@ -142,17 +148,25 @@ class UserController extends Controller
         // Update user role
         $this->userService->updateUserRole($user, $request->roles_name[0]);
 
-        // Update subject assignments and teacher if provided and user is not Owner
-        if ($request->filled('subjects') && ! $user->hasRole('Owner')) {
-            $subjectIds = $request->input('subjects', []);
-            $showAllTeachers = $request->boolean('show_all_teachers');
-            $teacherId = $showAllTeachers ? null : ($request->input('teacher_id') ?: null);
+        // Subjects and teacher access are independent.
+        if (! $user->hasRole('Owner')) {
+            if ($request->has('show_all_teachers') || $request->exists('teacher_id')) {
+                $showAllTeachers = $request->boolean('show_all_teachers');
+                $teacherId = $showAllTeachers ? null : ($request->input('teacher_id') ?: null);
 
-            $this->userSubjectService->assignSubjectsToUser(
-                $user->id,
-                $subjectIds,
-                $teacherId ? (int) $teacherId : null
-            );
+                $this->userSubjectService->assignTeacherAccess(
+                    $user->id,
+                    $showAllTeachers,
+                    $teacherId ? (int) $teacherId : null
+                );
+            }
+
+            if ($request->has('subjects')) {
+                $this->userSubjectService->assignSubjectsToUser(
+                    $user->id,
+                    $request->input('subjects', [])
+                );
+            }
         }
 
         session()->flash('edit', trans('main_trans.User_edit_successfully'));

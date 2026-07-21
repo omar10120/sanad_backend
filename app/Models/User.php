@@ -30,6 +30,7 @@ class User extends Authenticatable
         'photo',
         'status',
         'show_all_teachers',
+        'teacher_id',
         'password',
     ];
 
@@ -41,6 +42,11 @@ class User extends Authenticatable
     public function type(): BelongsTo
     {
         return $this->belongsTo(Type::class);
+    }
+
+    public function teacher(): BelongsTo
+    {
+        return $this->belongsTo(Teacher::class);
     }
 
     public function subjects(): BelongsToMany

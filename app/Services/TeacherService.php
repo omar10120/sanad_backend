@@ -242,14 +242,11 @@ class TeacherService
             return null;
         }
 
-        return DB::table('user_has_subject')
-            ->where('user_id', $user->id)
-            ->whereNotNull('teacher_id')
-            ->distinct()
-            ->pluck('teacher_id')
-            ->map(fn ($id) => (int) $id)
-            ->values()
-            ->all();
+        if ($user->teacher_id) {
+            return [(int) $user->teacher_id];
+        }
+
+        return [];
     }
 
     /**
