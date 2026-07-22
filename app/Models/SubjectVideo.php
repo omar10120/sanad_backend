@@ -38,9 +38,13 @@ class SubjectVideo extends Model
     public function teachers(): BelongsToMany
     {
         return $this->belongsToMany(Teacher::class, 'teacher_has_subject_video', 'subject_video_id', 'teacher_id')
-            ->where('is_active', true)
             ->withPivot('order')
             ->orderByPivot('order');
+    }
+
+    public function activeTeachers(): BelongsToMany
+    {
+        return $this->teachers()->where('teachers.is_active', true);
     }
 
     public function checkStudentAccess(int $studentId, ?int $unitId = null): bool

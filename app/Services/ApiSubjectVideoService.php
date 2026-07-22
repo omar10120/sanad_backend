@@ -37,7 +37,7 @@ class ApiSubjectVideoService
             return collect();
         }
 
-        return $subjectVideo->teachers()->where('is_active', true)->withCount('units')->get();
+        return $subjectVideo->activeTeachers()->withCount('units')->get();
     }
 
     public function studentHasAccess(SubjectVideo $subjectVideo, int $studentId): bool
@@ -82,10 +82,10 @@ class ApiSubjectVideoService
     public function getAllSubjectVideoData(int $subjectVideoId, bool $isLocked): array
     {
         $subjectVideo = SubjectVideo::with([
-            'teachers.units.lessonVideos.youtubeLinks' => fn ($query) => $query->where('is_active', true),
+            'activeTeachers.units.lessonVideos.youtubeLinks' => fn ($query) => $query->where('is_active', true),
         ])->findOrFail($subjectVideoId);
 
-        $teachers = $subjectVideo->teachers;
+        $teachers = $subjectVideo->activeTeachers;
         $units = $teachers->flatMap->units->sortBy('order')->values();
         $lessonVideos = $units->flatMap->lessonVideos->where('is_active', true)->sortBy('order')->values();
 

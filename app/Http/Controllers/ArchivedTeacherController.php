@@ -37,7 +37,10 @@ class ArchivedTeacherController extends Controller
     {
         $this->checkPermission(PermissionEnum::TEACHER_RESTORE_DELETED);
 
-        $this->teacherService->restoreTeacher($request->id);
+        $this->teacherService->restoreTeacher(
+            (int) $request->id,
+            $request->filled('subject_video_id') ? (int) $request->subject_video_id : null
+        );
         session()->flash('restore', trans('main_trans.Teacher_restore_successfully'));
         return back();
     }

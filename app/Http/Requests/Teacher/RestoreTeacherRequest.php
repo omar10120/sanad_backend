@@ -15,6 +15,7 @@ class RestoreTeacherRequest extends FormRequest
     {
         return [
             'id' => 'required|integer|exists:teachers,id',
+            'subject_video_id' => 'nullable|integer|exists:subjects_video,id',
         ];
     }
 }

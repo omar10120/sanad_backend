@@ -34,7 +34,7 @@ class SubjectVideoResource extends JsonResource
     {
         $student = Auth::user();
         $subjectVideo = SubjectVideo::withCount([
-            'teachers',
+            'activeTeachers as teachers_count',
         ])->find($this->id);
 
         $apiService = app(ApiSubjectVideoService::class);
@@ -60,7 +60,7 @@ class SubjectVideoResource extends JsonResource
             'dark_color_code' => $this->dark_color_code ? $this->hexToFlutterColor($this->dark_color_code) : null,
             'link' => $this->link,
             'description' => $this->description,
-            'number_of_teachers' => $subjectVideo->teachers_count ?? $subjectVideo->teachers()->count(),
+            'number_of_teachers' => $subjectVideo->teachers_count ?? $subjectVideo->activeTeachers()->count(),
             'number_of_units' => $unitsCount,
             'is_locked' => $isLocked,
             'expires_at' => $student ? $apiService->getStudentValidToDate($subjectVideo, $student->id) : null,

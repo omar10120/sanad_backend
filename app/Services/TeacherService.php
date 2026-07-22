@@ -2,10 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\LessonVideo;
 use App\Models\SubjectVideo;
 use App\Models\Teacher;
-use App\Models\Unit;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
@@ -73,22 +71,11 @@ class TeacherService
 
     public function deleteTeacher(int $id): array
     {
-        $teacher = Teacher::with(['units.lessonVideos.youtubeLinks'])->findOrFail($id);
+        $teacher = Teacher::findOrFail($id);
 
         try {
-            DB::transaction(function () use ($teacher) {
-                foreach ($teacher->units as $unit) {
-                    $this->deleteUnitWithRelations($unit);
-                }
-
-                $teacher->subjectVideos()->detach();
-
-                if ($teacher->photo) {
-                    $this->deleteTeacherPhoto($teacher->id, $teacher->photo);
-                }
-
-                $teacher->delete();
-            });
+            // Soft-delete only — keep subject-video pivots and units so restore works.
+            $teacher->delete();
 
             return [
                 'success' => true,
@@ -102,33 +89,27 @@ class TeacherService
         }
     }
 
-    private function deleteUnitWithRelations(Unit $unit): void
-    {
-        foreach ($unit->lessonVideos as $lessonVideo) {
-            $this->deleteLessonVideoWithRelations($lessonVideo);
-        }
-
-        $unit->delete();
-    }
-
-    private function deleteLessonVideoWithRelations(LessonVideo $lessonVideo): void
-    {
-        $lessonVideo->youtubeLinks()->delete();
-        $lessonVideo->delete();
-    }
-
     public function getArchivedTeachers(int $subjectVideoId): Collection
     {
         return Teacher::onlyTrashed()
-            // ->whereHas('subjectVideos', function ($query) use ($subjectVideoId) {
-            //     $query->where('subject_video_id', $subjectVideoId);
-            // })
+            ->where(function ($query) use ($subjectVideoId) {
+                $query->whereHas('subjectVideos', function ($q) use ($subjectVideoId) {
+                    $q->where('subjects_video.id', $subjectVideoId);
+                })->orWhereDoesntHave('subjectVideos');
+            })
+            ->orderByDesc('deleted_at')
             ->get();
     }
 
-    public function restoreTeacher(int $id): void
+    public function restoreTeacher(int $id, ?int $subjectVideoId = null): void
     {
-        Teacher::onlyTrashed()->findOrFail($id)->restore();
+        $teacher = Teacher::onlyTrashed()->findOrFail($id);
+        $teacher->restore();
+
+        // Re-attach if pivot was removed by older soft-delete logic.
+        if ($subjectVideoId) {
+            $this->attachToSubjectVideo($teacher, $subjectVideoId);
+        }
     }
 
     public function forceDeleteTeacher(int $id): void

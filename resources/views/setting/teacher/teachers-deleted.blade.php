@@ -87,6 +87,7 @@
                     <div class="modal-body">
                         <p>{{ trans('main_trans.Are_you_sure_to_restore') }}</p>
                         <input type="hidden" name="id" id="restore_id">
+                        <input type="hidden" name="subject_video_id" value="{{ $subject_video_selected->id }}">
                         <input class="form-control" name="name" id="restore_name" type="text" readonly>
                     </div>
                     <div class="modal-footer">
