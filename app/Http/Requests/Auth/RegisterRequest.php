@@ -62,8 +62,9 @@ class RegisterRequest extends FormRequest
             'last_name.required' => 'Last name is required.',
             'last_name.min' => 'Last name must be at least 2 characters long.',
             'phone.required' => 'Phone number is required.',
-            'phone.size' => 'Phone number must be exactly 10 characters long.',
-            'phone.regex' => 'Phone number must begin with 09.',
+            'phone.min' => 'Phone number must be at least 7 digits.',
+            'phone.max' => 'Phone number must be at most 14 digits.',
+            
             'phone.unique' => 'This phone number is already registered.',
             'country_code.required' => 'Country code is required.',
             'country_code.size' => 'Country code must be at lest 4 characters long.',
