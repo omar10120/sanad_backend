@@ -26,7 +26,6 @@ class VerifyPhoneRequest extends FormRequest
             'phone.required' => 'Phone number is required.',
             'phone.min' => 'Phone number must be at least 7 digits.',
             'phone.max' => 'Phone number must be at most 14 digits.',
-        
             'code.required' => 'Verification code is required.',
             'code.size' => 'Verification code must be exactly 6 digits.',
             'type.required' => 'Verification type is required.',
