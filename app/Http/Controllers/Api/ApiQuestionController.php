@@ -11,7 +11,8 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-
+use Illuminate\Auth\AuthenticationException;
+use App\Http\Middleware\CheckSanctumToken;
 class ApiQuestionController extends Controller
 {
     use ApiResponseTrait;
@@ -49,6 +50,11 @@ class ApiQuestionController extends Controller
     public function show($uuid, Request $request)
     {
         try {
+
+        if (!auth('sanctum')->check()) {
+            // throw new AuthenticationException('Unauthenticated');
+            return redirect('/#download');   
+        }
             $question = $this->questionService->getQuestionByUuid($uuid);
 
          
@@ -56,7 +62,7 @@ class ApiQuestionController extends Controller
             if ($request->expectsJson()) {
                 return $this->apiResponse(null, 'السؤال غير موجود!', 404);
             }
-            return redirect('/#download');
+            // return redirect('/#download');
         }
 
             $question->load(['questionGroup.lesson.subject']);
