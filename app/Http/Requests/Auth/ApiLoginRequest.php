@@ -23,7 +23,7 @@ class ApiLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone' => 'required|string|size:10|regex:/^09/',
+            'phone' => 'required|string|min:7|max:14',
             'country_code' => 'required|string|min:2|max:4',
             'password' => 'required|string|min:8',
             'device_id' => 'nullable|string',
@@ -48,7 +48,8 @@ class ApiLoginRequest extends FormRequest
     {
         return [
             'phone.required' => 'Phone number is required.',
-            'phone.size' => 'Phone number must be exactly 10 digits.',
+            'phone.min' => 'Phone number must be at least 7 digits.',
+            'phone.max' => 'Phone number must be at most 14 digits.',
             'phone.regex' => 'Phone number must start with 09.',
             'country_code.required' => 'Country code is required.',
             'country_code.size' => 'Country code must be at lest 4 characters long.',
