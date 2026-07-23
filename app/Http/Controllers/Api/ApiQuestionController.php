@@ -73,7 +73,7 @@ class ApiQuestionController extends Controller
                 if ($request->is('newapi/*') || $request->expectsJson()) {
                     return $this->apiResponse(null, 'المادة غير موجودة لهذا السؤال', 404);
                 }
-                return redirect('/#download');
+                // return redirect('/#download');
             }
 
             // --- API request: return JSON (no auth required for public question) ---
