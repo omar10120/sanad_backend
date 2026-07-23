@@ -34,7 +34,7 @@ class StoreUserRequest extends FormRequest
                 'max:255',
                 'unique:users,email',
             ],
-            'phone' => ['nullable', 'string', 'max:10', 'min:10'],
+            'phone' => ['nullable', 'string', 'size:min:10|max:14|unique:students'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'password_confirmation' => ['required', 'string'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
