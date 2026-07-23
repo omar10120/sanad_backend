@@ -26,7 +26,7 @@ class RegisterRequest extends FormRequest
             'first_name' => 'required|string|min:2|max:255',
             'father_name' => 'required|string|min:2|max:255',
             'last_name' => 'required|string|min:2|max:255',
-            'phone' => 'required|string|size:min:10|max:14|unique:students',
+            'phone' => 'required|string|min:7|max:14|unique:students',
             'country_code' => 'required|string|size:4|regex:/^\+/',
             'verification_code' => 'required|string|size:6|regex:/^\d+$/',
             'city' => 'required|string|max:255',

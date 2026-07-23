@@ -14,7 +14,7 @@ class VerifyPhoneRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone' => 'required|string|size:10|regex:/^09/',
+            'phone' => 'required|string|min:7|max:14',
             'code' => 'required|string|size:6',
             'type' => 'required|in:registration,password_reset,phone_change',
         ];
@@ -24,7 +24,8 @@ class VerifyPhoneRequest extends FormRequest
     {
         return [
             'phone.required' => 'Phone number is required.',
-            'phone.size' => 'Phone number must be exactly 10 digits.',
+            'phone.min' => 'Phone number must be at least 10 digits.',
+            'phone.max' => 'Phone number must be at most 14 digits.',
             'phone.regex' => 'Phone number must start with 09.',
             'code.required' => 'Verification code is required.',
             'code.size' => 'Verification code must be exactly 6 digits.',

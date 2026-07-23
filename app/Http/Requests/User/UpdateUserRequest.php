@@ -36,7 +36,7 @@ class UpdateUserRequest extends FormRequest
                 'max:255',
                 Rule::unique('users', 'email')->ignore($userId),
             ],
-            'phone' => ['nullable', 'string', 'max:10', 'min:14'],
+            'phone' => ['nullable', 'string', 'max:14', 'min:7'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
             'bio' => ['nullable', 'string', 'max:1000'],
             'is_instructor' => ['nullable', 'boolean'],
