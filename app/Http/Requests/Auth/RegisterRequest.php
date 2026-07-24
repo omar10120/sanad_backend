@@ -27,7 +27,7 @@ class RegisterRequest extends FormRequest
             'father_name' => 'required|string|min:2|max:255',
             'last_name' => 'required|string|min:2|max:255',
             'phone' => 'required|string|min:7|max:14|unique:students',
-            'country_code' => 'required|string|size:4|regex:/^\+/',
+            'country_code' => 'required|string',
             'verification_code' => 'required|string|size:6|regex:/^\d+$/',
             'city' => 'required|string|max:255',
             'email' => 'nullable|string|email|unique:students',
@@ -67,8 +67,6 @@ class RegisterRequest extends FormRequest
             
             'phone.unique' => 'This phone number is already registered.',
             'country_code.required' => 'Country code is required.',
-            'country_code.size' => 'Country code must be at lest 4 characters long.',
-            'country_code.regex' => 'Country code must begin with +.',
             'city.required' => 'City is required.',
             'email.email' => 'Please enter a valid email address.',
             'email.unique' => 'This email is already registered.',

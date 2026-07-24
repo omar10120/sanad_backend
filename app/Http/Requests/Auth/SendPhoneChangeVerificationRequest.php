@@ -32,7 +32,7 @@ class SendPhoneChangeVerificationRequest extends FormRequest
 
         return [
             'new_phone' => 'required|string|size:10|regex:/^09/|unique:students,phone,' . $studentId,
-            'country_code' => 'required|string|min:2|max:6',
+            'country_code' => 'required|string',
         ];
     }
 
@@ -49,8 +49,7 @@ class SendPhoneChangeVerificationRequest extends FormRequest
             'new_phone.regex' => 'New phone number must start with 09.',
             'new_phone.unique' => 'This phone number is already registered.',
             'country_code.required' => 'Country code is required.',
-            'country_code.min' => 'Country code must be at least 2 characters long.',
-            'country_code.max' => 'Country code must be at most 4 characters long.',
+            
         ];
     }
 }

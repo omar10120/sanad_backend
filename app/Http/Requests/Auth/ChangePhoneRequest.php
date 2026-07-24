@@ -33,7 +33,7 @@ class ChangePhoneRequest extends FormRequest
         return [
             'new_phone' => 'required|string|size:10|regex:/^09/|unique:students,phone,' . $studentId . ',country_code,' . $this->user()->country_code,
             'verification_code' => 'required|string|size:6',
-            'country_code' => 'required|string|min:2|max:6',
+            'country_code' => 'required|string',
         ];
     }
 
@@ -52,8 +52,6 @@ class ChangePhoneRequest extends FormRequest
             'verification_code.required' => 'Verification code is required.',
             'verification_code.size' => 'Verification code must be exactly 6 digits.',
             'country_code.required' => 'Country code is required.',
-            'country_code.min' => 'Country code must be at least 2 characters long.',
-            'country_code.max' => 'Country code must be at most 4 characters long.',
         ];
     }
 }

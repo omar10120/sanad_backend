@@ -24,7 +24,7 @@ class ApiLoginRequest extends FormRequest
     {
         return [
             'phone' => 'required|string|min:7|max:14',
-            'country_code' => 'required|string|min:2|max:4',
+            'country_code' => 'required|string',
             'password' => 'required|string|min:8',
             'device_id' => 'nullable|string',
             'brand' => 'nullable|string',
@@ -52,8 +52,8 @@ class ApiLoginRequest extends FormRequest
             'phone.max' => 'Phone number must be at most 14 digits.',
             'phone.regex' => 'Phone number must start with 09.',
             'country_code.required' => 'Country code is required.',
-            'country_code.size' => 'Country code must be at lest 4 characters long.',
-            'country_code.regex' => 'Country code must begin with +.',
+            
+            
             'password.required' => 'Password is required.',
             'password.min' => 'Password must be at least 8 characters.',
             'device_id.required' => 'Device ID is required.',
