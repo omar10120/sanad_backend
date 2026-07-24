@@ -47,6 +47,7 @@ class UnitController extends Controller
         $teacher_selected = $this->unitService->getTeacherById($teacher_id);
         $subject_video_selected = $this->unitService->getSubjectVideoById($subject_video_id);
         $units = $this->unitService->getUnitsByTeacher($teacher_id);
+        $archivedUnitsCount = $this->unitService->getArchivedUnitsByTeacher($teacher_id)->count();
         $teachers = $this->unitService->getTeachersBySubjectVideo($subject_video_id);
 
         return view('setting.unit.units', compact(
@@ -54,6 +55,7 @@ class UnitController extends Controller
             'teachers',
             'teacher_selected',
             'subject_video_selected',
+            'archivedUnitsCount',
         ));
     }
 

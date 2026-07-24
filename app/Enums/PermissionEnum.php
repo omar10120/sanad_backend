@@ -82,13 +82,15 @@ enum PermissionEnum: string
     case UNIT_ADD = 'Unit-add';
     case UNIT_EDIT = 'Unit-edit';
     case UNIT_DELETE = 'Unit-delete';
+    case UNIT_SHOW_DELETED = 'Unit-show-deleted';
+    case UNIT_RESTORE_DELETED = 'Unit-restore-deleted';
 
     // Lesson video permissions
     case LESSON_VIDEO_SHOW = 'LessonVideo-show';
     case LESSON_VIDEO_ADD = 'LessonVideo-add';
     case LESSON_VIDEO_EDIT = 'LessonVideo-edit';
     case LESSON_VIDEO_DELETE = 'LessonVideo-delete';
-    case LESSON_VIDEO_SHOW_DELETED = 'LessonVideo-show-deleted';
+    case LESSON_VIDEO_SHOW_DELETED = 'LessonVideo-show-deleted';    
     case LESSON_VIDEO_RESTORE_DELETED = 'LessonVideo-restore-deleted';
 
     // Youtube link video permissions

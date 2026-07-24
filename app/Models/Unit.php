@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
-use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
 class Unit extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'teacher_id',
         'name',
@@ -54,11 +56,6 @@ class Unit extends Model
             ->exists();
     }
 
-    public function canBeDeleted(): bool
-    {
-        return $this->lessonVideos()->count() === 0;
-    }
-
     protected static function boot(): void
     {
         parent::boot();
@@ -67,12 +64,6 @@ class Unit extends Model
             if (empty($unit->order)) {
                 $lastOrder = self::where('teacher_id', $unit->teacher_id)->max('order') ?? 0;
                 $unit->order = $lastOrder + 1;
-            }
-        });
-
-        static::deleting(function (Unit $unit) {
-            if (!$unit->canBeDeleted()) {
-                throw new Exception(trans('main_trans.Unit_has_related_data'));
             }
         });
     }

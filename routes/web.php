@@ -13,6 +13,7 @@ use App\Http\Controllers\SubjectVideoController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\ArchivedTeacherController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\ArchivedUnitController;
 use App\Http\Controllers\LessonVideoController;
 use App\Http\Controllers\ArchivedLessonVideoController;
 use App\Http\Controllers\YoutubeLinkVideoController;
@@ -154,6 +155,12 @@ Route::group(
     Route::patch('/units/{unit_id}/toggle', [UnitController::class, 'toggle'])->name('units.toggle');
     Route::post('/teachers/{teacher}/units/reorder', [UnitController::class, 'reorder'])
         ->name('units.reorder');
+    Route::get('/archived-unit/{teacher}', [ArchivedUnitController::class, 'show'])
+        ->name('archived-unit.teacher');
+    Route::patch('/archived-unit/update', [ArchivedUnitController::class, 'update'])
+        ->name('archived-unit.update');
+    Route::delete('/archived-unit/destroy', [ArchivedUnitController::class, 'destroy'])
+        ->name('archived-unit.destroy');
 
     Route::get('/unit-lesson-video/{unit}', [LessonVideoController::class, 'byUnit'])
         ->name('unit.lesson-video');

@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
+use App\Models\LessonVideo;
 use App\Models\SubjectVideo;
 use App\Models\Teacher;
 use App\Models\Unit;
-use App\Models\LessonVideo;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+
 class UnitService
 {
     public function getUnitsByTeacher(int $teacherId): Collection
@@ -16,6 +17,15 @@ class UnitService
         return Unit::where('teacher_id', $teacherId)
             ->withCount('lessonVideos')
             ->orderBy('order')
+            ->get();
+    }
+
+    public function getArchivedUnitsByTeacher(int $teacherId): Collection
+    {
+        return Unit::onlyTrashed()
+            ->where('teacher_id', $teacherId)
+            ->withCount('lessonVideos')
+            ->orderByDesc('deleted_at')
             ->get();
     }
 
@@ -72,15 +82,13 @@ class UnitService
         return $unit->update(['is_active' => ! $unit->is_active]);
     }
 
-    
     public function deleteUnit(int $id): array
     {
-        $unit = Unit::with(['lessonVideos.youtubeLinks'])->findOrFail($id);
+        $unit = Unit::findOrFail($id);
 
         try {
-            DB::transaction(function () use ($unit) {
-                $this->deleteUnitWithRelations($unit);
-            });
+            // Soft-delete only — keep lesson videos so restore works.
+            $unit->delete();
 
             return [
                 'success' => true,
@@ -94,20 +102,31 @@ class UnitService
         }
     }
 
-    private function deleteUnitWithRelations(Unit $unit): void
+    public function restoreUnit(int $id): void
     {
-        foreach ($unit->lessonVideos as $lessonVideo) {
-            $this->deleteLessonVideoWithRelations($lessonVideo);
-        }
-
-        $unit->delete();
+        Unit::onlyTrashed()->findOrFail($id)->restore();
     }
 
+    public function forceDeleteUnit(int $id): void
+    {
+        $unit = Unit::onlyTrashed()
+            ->with([
+                'lessonVideos' => fn ($query) => $query->withTrashed()->with('youtubeLinks'),
+            ])
+            ->findOrFail($id);
 
+        DB::transaction(function () use ($unit) {
+            foreach ($unit->lessonVideos as $lessonVideo) {
+                $this->forceDeleteLessonVideoWithRelations($lessonVideo);
+            }
 
-    private function deleteLessonVideoWithRelations(LessonVideo $lessonVideo): void
+            $unit->forceDelete();
+        });
+    }
+
+    private function forceDeleteLessonVideoWithRelations(LessonVideo $lessonVideo): void
     {
         $lessonVideo->youtubeLinks()->delete();
-        $lessonVideo->delete();
+        $lessonVideo->forceDelete();
     }
 }

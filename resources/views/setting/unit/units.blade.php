@@ -41,7 +41,7 @@
                         </a>
                     </div>
                     @can('Unit-add')
-                        <div class="col-12 col-sm-12 col-lg-4 col-xl-6">
+                        <div class="col-12 col-sm-12 col-lg-4 @can('Unit-show-deleted') col-xl-4 @else col-xl-6 @endcan">
                             <a class="modal-effect btn btn-outline-primary btn-block" data-effect="effect-flip-vertical" data-toggle="modal" href="#modal1">
                                 {{ trans('main_trans.Add_unit') }}
                             </a>
@@ -53,6 +53,16 @@
                                 <i class="fas fa-sort"></i> {{ trans('main_trans.Reorder') }}
                             </button>
                         </div>
+                    @endcan
+                    @can('Unit-show-deleted')
+                        @if($archivedUnitsCount)
+                            <div class="col-12 col-sm-12 col-lg-4 col-xl-2">
+                                <a class="btn btn-outline-primary btn-block"
+                                   href="{{ route('archived-unit.teacher', ['teacher' => $teacher_selected->id, 'subject_video' => $subject_video_selected->id]) }}">
+                                    {{ trans('main_trans.Deleted_units') }}
+                                </a>
+                            </div>
+                        @endif
                     @endcan
                 </div>
 
