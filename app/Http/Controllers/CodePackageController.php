@@ -80,10 +80,18 @@ class CodePackageController extends Controller
         $package = $this->codeService->findPackage($id);
         $subjects = $this->codeService->getAllSubjects();
         $units = $this->codeService->getAllUnits();
-        $teachers = $this->codeService->getAllTeachers();
+        $subjectVideos = $this->codeService->getAllSubjectVideos();
+        $teachers = $this->codeService->getTeachersForPackageUi();
         $packageSubjectsGrouped = $this->codeService->formatPackageSubjectsForDisplay($package);
 
-        return view('packages.show', compact('package', 'subjects', 'units', 'teachers', 'packageSubjectsGrouped'));
+        return view('packages.show', compact(
+            'package',
+            'subjects',
+            'units',
+            'subjectVideos',
+            'teachers',
+            'packageSubjectsGrouped'
+        ));
     }
 
     public function destroy(DeleteCodePackageRequest $request): RedirectResponse
@@ -143,7 +151,7 @@ class CodePackageController extends Controller
             $this->codeService->updatePackage($id, [
                 'name' => $request->name,
                 'expires_at' => $request->expires_at,
-            ], $request->package_items);
+            ], $request->package_items ?? []);
 
             session()->flash('edit', trans('main_trans.Code_package_edit_successfully'));
             return back();
