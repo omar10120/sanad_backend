@@ -53,12 +53,12 @@ class CodeService
             ->findOrFail($id);
     }
 
-    public function createPackage(array $packageData, array $packageItems): CodePackage
+    public function createPackage(array $packageData, array $packageItems, int $codesCount = 1): CodePackage
     {
-        return DB::transaction(function () use ($packageData, $packageItems) {
+        return DB::transaction(function () use ($packageData, $packageItems, $codesCount) {
             $package = CodePackage::create($packageData);
             $this->syncPackageSubjects($package, $packageItems);
-            $this->generateCodes($package->id, 1);
+            $this->generateCodes($package->id, max(1, $codesCount));
 
             return $package->load(['codePackageSubjects.subject', 'codePackageSubjects.unit']);
         });

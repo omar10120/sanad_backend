@@ -58,7 +58,8 @@ class CodePackageController extends Controller
                     'name' => $request->name,
                     'expires_at' => $request->expires_at,
                 ],
-                $request->package_items ?? []
+                $request->package_items ?? [],
+                (int) $request->codes_count
             );
 
             session()->flash('add', trans('main_trans.Code_package_add_successfully'));
