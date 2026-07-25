@@ -31,7 +31,7 @@ class SendPhoneChangeVerificationRequest extends FormRequest
         $studentId = $this->user()->id;
 
         return [
-            'new_phone' => 'required|string|size:10|regex:/^09/|unique:students,phone,' . $studentId,
+            'new_phone' => 'required|string|min:7|max:14|unique:students,phone,' . $studentId,
             'country_code' => 'required|string',
         ];
     }
@@ -45,11 +45,10 @@ class SendPhoneChangeVerificationRequest extends FormRequest
     {
         return [
             'new_phone.required' => 'New phone number is required.',
-            'new_phone.size' => 'New phone number must be exactly 10 digits.',
-            'new_phone.regex' => 'New phone number must start with 09.',
+            'new_phone.min' => 'New phone number must be at least 7 digits.',
+            'new_phone.max' => 'New phone number must be at most 14 digits.',
             'new_phone.unique' => 'This phone number is already registered.',
             'country_code.required' => 'Country code is required.',
-            
         ];
     }
 }
