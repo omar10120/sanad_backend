@@ -89,6 +89,7 @@ class YoutubeLinkVideoController extends Controller
             'youtube_link' => $data['youtube_link'],
             'video_time' => $data['video_time'] ?? null,
             'lesson_video_id' => $data['lesson_video_id'],
+            'is_active' => $data['is_active'] ?? true,
         ]);
 
         session()->flash('edit', trans('main_trans.Youtube_link_video_edit_successfully'));
@@ -101,6 +102,15 @@ class YoutubeLinkVideoController extends Controller
 
         $this->youtubeLinkVideoService->deleteYoutubeLinkVideo($request->id);
         session()->flash('delete', trans('main_trans.Youtube_link_video_delete_successfully'));
+
+        return back();
+    }
+
+    public function toggle($youtube_link_video_id)
+    {
+        $this->checkPermission(PermissionEnum::YOUTUBE_LINK_VIDEO_EDIT);
+
+        $this->youtubeLinkVideoService->toggleYoutubeLinkVideo((int) $youtube_link_video_id);
 
         return back();
     }

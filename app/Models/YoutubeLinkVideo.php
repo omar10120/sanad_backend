@@ -16,10 +16,12 @@ class YoutubeLinkVideo extends Model
         'order',
         'youtube_link',
         'video_time',
+        'is_active',
     ];
 
     protected $casts = [
         'video_time' => 'integer',
+        'is_active' => 'boolean',
     ];
 
     public function lessonVideo(): BelongsTo

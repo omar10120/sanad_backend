@@ -183,6 +183,8 @@ Route::group(
     Route::post('/youtube-link-video', [YoutubeLinkVideoController::class, 'store'])->name('youtube-link-video.store');
     Route::patch('/youtube-link-video/update', [YoutubeLinkVideoController::class, 'update'])->name('youtube-link-video.update');
     Route::delete('/youtube-link-video/destroy', [YoutubeLinkVideoController::class, 'destroy'])->name('youtube-link-video.destroy');
+    Route::patch('/youtube-link-videos/{youtube_link_video_id}/toggle', [YoutubeLinkVideoController::class, 'toggle'])
+        ->name('youtube-link-video.toggle');
     Route::post('/lesson-videos/{lessonVideo}/youtube-links/reorder', [YoutubeLinkVideoController::class, 'reorder'])
         ->name('youtube-links-video.reorder');
 

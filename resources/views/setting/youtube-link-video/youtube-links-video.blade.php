@@ -92,11 +92,22 @@
                                                    data-name="{{ $youtubeLink->name }}"
                                                    data-youtube_link="{{ $youtubeLink->youtube_link }}"
                                                    data-video_time="{{ $youtubeLink->video_time }}"
+                                                   data-is_active="{{ $youtubeLink->is_active ? 1 : 0 }}"
                                                    data-lesson_video_selected="{{ $youtubeLink->lesson_video_id }}"
                                                    data-toggle="modal"
                                                    href="#modal2" title="{{ trans('main_trans.Edit') }}">
                                                     <i class="fas fa-pen"></i> {{ trans('main_trans.Edit') }}
                                                 </a>
+                                                <form action="{{ route('youtube-link-video.toggle', $youtubeLink->id) }}" method="POST"
+                                                      style="display: initial">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit"
+                                                            class="btn {{ $youtubeLink->is_active ? 'btn-outline-success' : 'btn-outline-danger' }}">
+                                                        <i class="fas {{ !$youtubeLink->is_active ? 'fa-times' : 'fa-check' }}"></i>
+                                                        {{ !$youtubeLink->is_active ? ' ' . trans('main_trans.Disable') : ' ' . trans('main_trans.Enable') }}
+                                                    </button>
+                                                </form>
                                             @endcan
                                             @can('YoutubeLinkVideo-delete')
                                                 <a class="modal-effect btn btn-danger" data-effect="effect-flip-vertical"
@@ -166,6 +177,15 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="row mb-3 mx-1">
+                            <label for="is_active" class="col-sm-3 col-form-label">{{ trans('main_trans.Status') }}</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" name="is_active" id="is_active" required>
+                                    <option value="1" selected>{{ trans('main_trans.Enable') }}</option>
+                                    <option value="0">{{ trans('main_trans.Disable') }}</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ trans('main_trans.Close') }}</button>
@@ -217,6 +237,15 @@
                                     @foreach($lessonVideos as $lessonVideo)
                                         <option value="{{ $lessonVideo->id }}">{{ $lessonVideo->title }}</option>
                                     @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3 mx-1">
+                            <label for="edit_is_active" class="col-sm-3 col-form-label">{{ trans('main_trans.Status') }}</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" name="is_active" id="edit_is_active" required>
+                                    <option value="1">{{ trans('main_trans.Enable') }}</option>
+                                    <option value="0">{{ trans('main_trans.Disable') }}</option>
                                 </select>
                             </div>
                         </div>
@@ -288,6 +317,7 @@
         modal.find('.modal-body #youtube_link').val('');
         modal.find('.modal-body #video_time').val('');
         modal.find('.modal-body #lesson_video_id').val('{{ $lesson_video_selected->id }}');
+        modal.find('.modal-body #is_active').val('1');
     });
 
     $('#modal2').on('show.bs.modal', function(event) {
@@ -298,6 +328,7 @@
         modal.find('.modal-body #youtube_link').val(button.data('youtube_link'));
         modal.find('.modal-body #video_time').val(button.data('video_time'));
         modal.find('.modal-body #lesson_video_id').val(button.data('lesson_video_selected'));
+        modal.find('.modal-body #edit_is_active').val(String(button.data('is_active')));
     });
 
     $('#modal3').on('show.bs.modal', function(event) {

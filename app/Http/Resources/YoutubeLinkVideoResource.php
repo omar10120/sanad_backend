@@ -15,6 +15,7 @@ class YoutubeLinkVideoResource extends JsonResource
             'display_order' => $this->order,
             'youtube_link' => $this->youtube_link,
             'video_time' => $this->video_time,
+            'is_active' => $this->is_active,
             'lesson_video_id' => $this->lesson_video_id,
         ];
     }

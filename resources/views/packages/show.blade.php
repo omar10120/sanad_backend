@@ -10,7 +10,7 @@
     <link href="{{ URL::asset('assets/plugins/datatable/css/jquery.dataTables.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('assets/plugins/datatable/css/responsive.dataTables.min.css') }}" rel="stylesheet">
     <!--Internal   Notify -->
-    <link href="{{ URL::asset('assets/plugins/notify/css/notifIt.css') }}" rel="stylesheet" />
+    <link href="{{ URL::asset('assets/plugins/notif/css/notifIt.css') }}" rel="stylesheet" />
     <style>
         .gap-2 {
             gap: 0.5rem;

@@ -19,7 +19,17 @@ class StoreYoutubeLinkVideoRequest extends FormRequest
             'youtube_link' => ['required', 'string', 'max:500', 'url'],
             'video_time' => ['nullable', 'integer', 'min:0'],
             'lesson_video_id' => ['required', 'integer', 'exists:lessons_video,id'],
+            'is_active' => ['nullable', 'boolean'],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('is_active')) {
+            $this->merge([
+                'is_active' => filter_var($this->input('is_active'), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false,
+            ]);
+        }
     }
 
     public function messages(): array
