@@ -22,7 +22,7 @@ class ArchivedUnitController extends Controller
 
     public function show(Request $request, $teacher_id)
     {
-        $this->checkPermission(PermissionEnum::UNIT_SHOW_DELETED);
+        $this->checkPermission(PermissionEnum::UNIT_EDIT);
 
         $subject_video_id = $request->query('subject_video');
         if (! $subject_video_id) {
@@ -46,7 +46,8 @@ class ArchivedUnitController extends Controller
 
     public function update(RestoreUnitRequest $request)
     {
-        $this->checkPermission(PermissionEnum::UNIT_RESTORE_DELETED);
+        // $this->checkPermission(PermissionEnum::UNIT_RESTORE_DELETED);
+        $this->checkPermission(PermissionEnum::UNIT_EDIT);
 
         $this->unitService->restoreUnit((int) $request->id);
         session()->flash('restore', trans('main_trans.Unit_restore_successfully'));
@@ -56,7 +57,7 @@ class ArchivedUnitController extends Controller
 
     public function destroy(ForceDeleteUnitRequest $request)
     {
-        $this->checkPermission(PermissionEnum::UNIT_DELETE);
+        $this->checkPermission(PermissionEnum::UNIT_EDIT);
 
         $this->unitService->forceDeleteUnit((int) $request->id);
         session()->flash('delete', trans('main_trans.Unit_delete_successfully'));

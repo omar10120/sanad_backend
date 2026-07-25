@@ -50,7 +50,7 @@
                                     <td>{{ $unit->name }}</td>
                                     <td>{{ $unit->lesson_videos_count }}</td>
                                     <td>
-                                        @can('Unit-restore-deleted')
+                                        @can('Unit-edit')
                                             <a class="modal-effect btn btn-info" data-effect="effect-flip-vertical"
                                                data-id="{{ $unit->id }}" data-name="{{ $unit->name }}" data-toggle="modal"
                                                href="#modal2" title="{{ trans('main_trans.Restore') }}">

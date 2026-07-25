@@ -41,7 +41,7 @@
                         </a>
                     </div>
                     @can('Unit-add')
-                        <div class="col-12 col-sm-12 col-lg-4 @can('Unit-show-deleted') col-xl-4 @else col-xl-6 @endcan">
+                        <div class="col-12 col-sm-12 col-lg-4 @can('Unit-add') col-xl-4 @else col-xl-6 @endcan">
                             <a class="modal-effect btn btn-outline-primary btn-block" data-effect="effect-flip-vertical" data-toggle="modal" href="#modal1">
                                 {{ trans('main_trans.Add_unit') }}
                             </a>
@@ -54,7 +54,7 @@
                             </button>
                         </div>
                     @endcan
-                    @can('Unit-show-deleted')
+                    @can('Unit-add')
                         @if($archivedUnitsCount)
                             <div class="col-12 col-sm-12 col-lg-4 col-xl-2">
                                 <a class="btn btn-outline-primary btn-block"
