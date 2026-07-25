@@ -29,9 +29,17 @@ class ChangePhoneRequest extends FormRequest
     public function rules(): array
     {
         $studentId = $this->user()->id;
-
+        $countryCode = $this->user()->country_code;
+    
         return [
-            'new_phone' => 'required|string|size:10|regex:/^09/|unique:students,phone,' . $studentId . ',country_code,' . $this->user()->country_code,
+            'new_phone' => [
+                'required',
+                'string',
+                'min:10',
+                'max:10',
+                // Correct unique rule with where clause
+                'unique:students,phone,' . $studentId . ',id,country_code,' . $countryCode
+            ],
             'verification_code' => 'required|string|size:6',
             'country_code' => 'required|string',
         ];

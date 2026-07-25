@@ -190,8 +190,13 @@ class ApiAuthController extends Controller
         try {
             /** @var Student $student */
             $student = auth('student')->user();
-            $result = $this->authService->changePhoneNumber($student, $request->validated()['new_phone'], $request->validated()['country_code'], $request->validated()['verification_code']);
-
+            
+            // Get all validated data as array
+            $validatedData = $request->validated();
+            
+            // Pass the entire array
+            $result = $this->authService->changePhoneNumber($student, $validatedData);
+    
             if ($result['success']) {
                 return $this->apiResponse(
                     $result['student'],
@@ -199,7 +204,7 @@ class ApiAuthController extends Controller
                     $result['status']
                 );
             }
-
+    
             return $this->apiResponse(null, $result['message'], $result['status']);
         } catch (Exception $e) {
             return $this->apiResponse(null, 'حدث خطأ أثناء تغيير رقم الهاتف', 500);

@@ -310,7 +310,7 @@ class AuthService
     {
         $newPhone = $data['new_phone'];
         $verificationCode = $data['verification_code'];
-
+        
         if ($student->phone === $newPhone) {
             return [
                 'success' => false,
