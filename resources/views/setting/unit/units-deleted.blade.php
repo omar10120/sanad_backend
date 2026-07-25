@@ -50,13 +50,13 @@
                                     <td>{{ $unit->name }}</td>
                                     <td>{{ $unit->lesson_videos_count }}</td>
                                     <td>
-                                        @can('Unit-edit')
+                                        @can('Unit-restore-deleted')
                                             <a class="modal-effect btn btn-info" data-effect="effect-flip-vertical"
                                                data-id="{{ $unit->id }}" data-name="{{ $unit->name }}" data-toggle="modal"
                                                href="#modal2" title="{{ trans('main_trans.Restore') }}">
                                                 <i class="fas fa-trash-restore"></i>
                                             </a>
-                                    
+                                        @endcan
                                         @can('Unit-delete')
                                             <a class="modal-effect btn btn-danger" data-effect="effect-flip-vertical"
                                                data-id="{{ $unit->id }}" data-name="{{ $unit->name }}" data-toggle="modal"
