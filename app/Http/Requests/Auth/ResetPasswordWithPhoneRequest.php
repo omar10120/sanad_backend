@@ -14,7 +14,7 @@ class ResetPasswordWithPhoneRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone' => 'required|string|size:10|regex:/^09/',
+            'phone' => 'required|string|min:7|max:14',
             'verification_code' => 'required|string|size:6',
             'password' => 'required|string|min:8',
         ];
@@ -24,8 +24,9 @@ class ResetPasswordWithPhoneRequest extends FormRequest
     {
         return [
             'phone.required' => 'Phone number is required.',
-            'phone.size' => 'Phone number must be exactly 10 digits.',
-            'phone.regex' => 'Phone number must start with 09.',
+            'phone.min' => 'Phone number must be at least 7 digits.',
+            'phone.max' => 'Phone number must be at most 14 digits.',
+            
             'verification_code.required' => 'Verification code is required.',
             'verification_code.size' => 'Verification code must be exactly 6 digits.',
             'password.required' => 'Password is required.',
