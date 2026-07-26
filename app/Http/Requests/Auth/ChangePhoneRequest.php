@@ -35,9 +35,8 @@ class ChangePhoneRequest extends FormRequest
             'new_phone' => [
                 'required',
                 'string',
-                'min:10',
-                'max:10',
-                // Correct unique rule with where clause
+                'min:7',
+                'max:14',
                 'unique:students,phone,' . $studentId . ',id,country_code,' . $countryCode
             ],
             'verification_code' => 'required|string|size:6',
@@ -54,9 +53,8 @@ class ChangePhoneRequest extends FormRequest
     {
         return [
             'new_phone.required' => 'New phone number is required.',
-            'new_phone.size' => 'New phone number must be exactly 10 digits.',
-            'new_phone.regex' => 'New phone number must start with 09.',
-            'new_phone.unique' => 'This phone number is already registered for this country.',
+            'new_phone.size' => 'New phone number must be exactly 7-14 digits.',
+            
             'verification_code.required' => 'Verification code is required.',
             'verification_code.size' => 'Verification code must be exactly 6 digits.',
             'country_code.required' => 'Country code is required.',
