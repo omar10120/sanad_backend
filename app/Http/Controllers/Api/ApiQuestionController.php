@@ -50,44 +50,51 @@ class ApiQuestionController extends Controller
     public function show($uuid, Request $request)
     {
         try {
-
-        if (!auth('sanctum')->check()) {
-            // throw new AuthenticationException('Unauthenticated');
-            return redirect('/#download');   
-        }
+            // Check if the request is from a Dart/Flutter app
+            $userAgent = $request->header('User-Agent');
+            $isDartApp = $userAgent && str_starts_with($userAgent, 'Dart/');
+            
+            // Only check auth and redirect if NOT a Dart app
+            if (!$isDartApp && !auth('sanctum')->check()) {
+                return redirect('/#download');   
+            }
+            
             $question = $this->questionService->getQuestionByUuid($uuid);
-
-         
-        if (!$question) {
-            if ($request->expectsJson()) {
+            
+            if (!$question) {
+                if ($request->expectsJson() || $request->is('newapi/*')) {
+                    return $this->apiResponse(null, 'السؤال غير موجود!', 404);
+                }
+                if (!$isDartApp) {
+                    return redirect('/#download');
+                }
+                // For Dart apps, return JSON error
                 return $this->apiResponse(null, 'السؤال غير موجود!', 404);
             }
-            // return redirect('/#download');
-        }
-
+    
             $question->load(['questionGroup.lesson.subject']);
             $lesson = optional($question->questionGroup)->lesson;
             $subject = optional($lesson)->subject;
-
+    
             if (!$subject) {
                 if ($request->is('newapi/*') || $request->expectsJson()) {
                     return $this->apiResponse(null, 'المادة غير موجودة لهذا السؤال', 404);
                 }
-                // return redirect('/#download');
+                if (!$isDartApp) {
+                    return redirect('/#download');
+                }
+                return $this->apiResponse(null, 'المادة غير موجودة لهذا السؤال', 404);
             }
-
-            // --- API request: return JSON (no auth required for public question) ---
-            if ($request->is('newapi/*') || $request->expectsJson()) {
-                // Optionally check Auth if you need user-specific data
-                // $student = Auth::user(); 
-                // ... but you can return the question anyway
+    
+            // --- API request: return JSON ---
+            if ($request->is('newapi/*') || $request->expectsJson() || $isDartApp) {
                 $resource = new QuestionResource($question);
                 return $this->apiResponse($resource, 'السؤال', 200);
             }
-
+    
             // --- Browser request: render the deep‑link landing page ---
             return view('question.share', compact('question'));
-
+    
         } catch (Exception $e) {
             if ($request->is('newapi/*') || $request->expectsJson()) {
                 return $this->apiResponse(null, $e->getMessage(), 500); 
