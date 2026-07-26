@@ -54,8 +54,8 @@ class ApiQuestionController extends Controller
             $userAgent = $request->header('User-Agent');
             $isDartApp = $userAgent && str_starts_with($userAgent, 'Dart/');
             
-            // Only check auth and redirect if NOT a Dart app
-            if (!$isDartApp && !auth('sanctum')->check()) {
+            
+            if (!$isDartApp ) {
                 return redirect('/#download');   
             }
             
