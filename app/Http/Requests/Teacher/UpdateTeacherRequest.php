@@ -17,8 +17,8 @@ class UpdateTeacherRequest extends FormRequest
             'id' => 'required|integer|exists:teachers,id',
             'name' => 'required|string|max:255',
             'estimation_time' => [
-                'nullable',
-                'date_format:H:i',         
+                'nullable'
+                
               
             ],
             'whatsapp_link' => 'nullable|string|max:500',
