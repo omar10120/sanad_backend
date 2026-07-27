@@ -42,7 +42,7 @@
                         </a>
                     </div>
                     @can('YoutubeLinkVideo-add')
-                        <div class="col-12 col-sm-12 col-lg-4 col-xl-6">
+                        <div class="col-12 col-sm-12 col-lg-4 @can('YoutubeLinkVideo-edit') col-xl-4 @else col-xl-6 @endcan">
                             <a class="modal-effect btn btn-outline-primary btn-block" data-effect="effect-flip-vertical" data-toggle="modal" href="#modal1">
                                 {{ trans('main_trans.Add_youtube_link_video') }}
                             </a>
@@ -54,6 +54,21 @@
                                 <i class="fas fa-sort"></i> {{ trans('main_trans.Reorder') }}
                             </button>
                         </div>
+                    @endcan
+                    @can('YoutubeLinkVideo-edit')
+                        @if($archivedYoutubeLinksCount)
+                            <div class="col-12 col-sm-12 col-lg-4 col-xl-2">
+                                <a class="btn btn-outline-primary btn-block"
+                                   href="{{ route('archived-youtube-link-video.lesson-video', [
+                                        'lesson_video' => $lesson_video_selected->id,
+                                        'subject_video' => $subject_video_selected->id,
+                                        'teacher' => $teacher_selected->id,
+                                        'unit' => $unit_selected->id,
+                                   ]) }}">
+                                    {{ trans('main_trans.Deleted_youtube_link_videos') }}
+                                </a>
+                            </div>
+                        @endif
                     @endcan
                 </div>
 

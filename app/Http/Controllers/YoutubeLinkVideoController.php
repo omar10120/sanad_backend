@@ -57,6 +57,9 @@ class YoutubeLinkVideoController extends Controller
         $teacher_selected = $this->youtubeLinkVideoService->getTeacherById($teacher_id);
         $subject_video_selected = $this->youtubeLinkVideoService->getSubjectVideoById($subject_video_id);
         $youtubeLinks = $this->youtubeLinkVideoService->getYoutubeLinksByLessonVideo($lesson_video_id);
+        $archivedYoutubeLinksCount = $this->youtubeLinkVideoService
+            ->getArchivedYoutubeLinksByLessonVideo((int) $lesson_video_id)
+            ->count();
         $lessonVideos = $this->youtubeLinkVideoService->getLessonVideosByUnit($unit_id);
 
         return view('setting.youtube-link-video.youtube-links-video', compact(
@@ -66,6 +69,7 @@ class YoutubeLinkVideoController extends Controller
             'unit_selected',
             'teacher_selected',
             'subject_video_selected',
+            'archivedYoutubeLinksCount',
         ));
     }
 

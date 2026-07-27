@@ -98,6 +98,8 @@ enum PermissionEnum: string
     case YOUTUBE_LINK_VIDEO_ADD = 'YoutubeLinkVideo-add';
     case YOUTUBE_LINK_VIDEO_EDIT = 'YoutubeLinkVideo-edit';
     case YOUTUBE_LINK_VIDEO_DELETE = 'YoutubeLinkVideo-delete';
+    case YOUTUBE_LINK_VIDEO_SHOW_DELETED = 'YoutubeLinkVideo-show-deleted';
+    case YOUTUBE_LINK_VIDEO_RESTORE_DELETED = 'YoutubeLinkVideo-restore-deleted';
 
     // Role permissions
     case ROLE_SHOW = 'Role-show';

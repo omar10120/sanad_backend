@@ -17,6 +17,7 @@ use App\Http\Controllers\ArchivedUnitController;
 use App\Http\Controllers\LessonVideoController;
 use App\Http\Controllers\ArchivedLessonVideoController;
 use App\Http\Controllers\YoutubeLinkVideoController;
+use App\Http\Controllers\ArchivedYoutubeLinkVideoController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\PhoneVerificationCodeController;
 use App\Http\Controllers\TypeController;
@@ -187,6 +188,12 @@ Route::group(
         ->name('youtube-link-video.toggle');
     Route::post('/lesson-videos/{lessonVideo}/youtube-links/reorder', [YoutubeLinkVideoController::class, 'reorder'])
         ->name('youtube-links-video.reorder');
+    Route::get('/archived-youtube-link-video/{lesson_video}', [ArchivedYoutubeLinkVideoController::class, 'show'])
+        ->name('archived-youtube-link-video.lesson-video');
+    Route::patch('/archived-youtube-link-video/update', [ArchivedYoutubeLinkVideoController::class, 'update'])
+        ->name('archived-youtube-link-video.update');
+    Route::delete('/archived-youtube-link-video/destroy', [ArchivedYoutubeLinkVideoController::class, 'destroy'])
+        ->name('archived-youtube-link-video.destroy');
 
     Route::get('/tag-subject/{subject}', [TagController::class, 'showBySubject'])
         ->name('tag.showBySubject');
