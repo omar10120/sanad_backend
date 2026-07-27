@@ -22,7 +22,6 @@ class YoutubeLinkVideo extends Model
     ];
 
     protected $casts = [
-        'video_time' => 'integer',
         'is_active' => 'boolean',
     ];
 

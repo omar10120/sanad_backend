@@ -244,8 +244,9 @@
                             <label for="video_time" class="col-sm-3 col-form-label">{{ trans('main_trans.Video_time') }}</label>
                             <div class="col-sm-9">
                                 <!-- <input class="form-control" name="video_time" id="video_time" type="number" min="0"> -->
+                                <!-- <input class="form-control" type="time" id="video_time" name="video_time"> -->
                                 <input class="form-control" type="time" id="video_time" name="video_time"
-                                     >
+                                >
                             </div>
                         </div>
                         <div class="row mb-3 mx-1">

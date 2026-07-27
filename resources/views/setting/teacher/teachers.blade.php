@@ -191,8 +191,7 @@
                             <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Estimation_time') }} </label>
                             <div class="col-md-8">
                                 <!-- <input class="form-control" name="estimation_time" type="number" min="0" > -->
-                                    <input class="form-control" type="time" id="estimation_time" name="estimation_time"
-                                        >
+                                    <input class="form-control" type="time" id="estimation_time" name="estimation_time">
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -295,7 +294,7 @@
                             <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Estimation_time') }} </label>
                             <div class="col-md-8">
                                 <!-- <input class="form-control" name="estimation_time" id="edit_estimation_time" type="number" min="0" > -->
-                                <input class="form-control" type="time" id="edit_estimation_time" name="estimation_time" >
+                                <input class="form-control" type="time" id="estimation_time" name="estimation_time" >
                             </div>
                         </div>
                         <div class="row mb-3">
