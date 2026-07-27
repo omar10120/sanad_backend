@@ -491,12 +491,7 @@
             const row = $(`
                 <div class="package-item-row" data-index="${index}">
                     <div class="row">
-                        <div class="col-md-6 col-lg-3">
-                            <label class="mb-1">{{ trans('main_trans.Subject') }}</label>
-                            <select class="form-control package-subject-select" name="package_items[${index}][subject_id]">
-                                <option value="">{{ trans('main_trans.Select_subject') }}</option>
-                            </select>
-                        </div>
+                   
                         <div class="col-md-6 col-lg-3">
                             <label class="mb-1">{{ trans('main_trans.Course_subject') }}</label>
                             <select class="form-control package-subject-video-select">

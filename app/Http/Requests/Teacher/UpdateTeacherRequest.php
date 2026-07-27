@@ -26,7 +26,7 @@ class UpdateTeacherRequest extends FormRequest
             'is_active' => 'required|boolean',
             'subject_videos' => 'nullable|array',
             'subject_videos.*' => 'integer|exists:subjects_video,id',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:1048',
         ];
     }
 }
