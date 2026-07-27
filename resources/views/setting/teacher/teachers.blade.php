@@ -190,7 +190,9 @@
                         <div class="row mb-3">
                             <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Estimation_time') }} </label>
                             <div class="col-md-8">
-                                <input class="form-control" name="estimation_time" type="number" min="0" >
+                                <!-- <input class="form-control" name="estimation_time" type="number" min="0" > -->
+                                    <input class="form-control" type="time" id="estimation_time" name="estimation_time"
+                                        >
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -292,7 +294,8 @@
                         <div class="row mb-3">
                             <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Estimation_time') }} </label>
                             <div class="col-md-8">
-                                <input class="form-control" name="estimation_time" id="edit_estimation_time" type="number" min="0" >
+                                <!-- <input class="form-control" name="estimation_time" id="edit_estimation_time" type="number" min="0" > -->
+                                <input class="form-control" type="time" id="edit_estimation_time" name="estimation_time" >
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -416,7 +419,7 @@
             var button = $(event.relatedTarget);
             $('#edit_id').val(button.data('id'));
             $('#edit_name').val(button.data('name'));
-            $('#edit_estimation_time').val(button.data('estimation_time'));
+            $('#edit_estimation_time').val(button.data('estimation_time') || '00:00');
             $('#edit_whatsapp_link').val(button.data('whatsapp_link'));
             $('#edit_instagram_link').val(button.data('instagram_link'));
             $('#edit_telegram_link').val(button.data('telegram_link'));

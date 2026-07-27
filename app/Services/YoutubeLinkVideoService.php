@@ -9,6 +9,9 @@ use App\Models\Unit;
 use App\Models\YoutubeLinkVideo;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Facades\Time;   
+
+
 
 class YoutubeLinkVideoService
 {
@@ -69,30 +72,41 @@ class YoutubeLinkVideoService
 
     public function createYoutubeLinkVideo(array $data): YoutubeLinkVideo
     {
-        $data['is_active'] = array_key_exists('is_active', $data)
-            ? (bool) $data['is_active']
-            : true;
+        $data['is_active'] = $data['is_active'] ?? true;
 
         $lessonVideo = LessonVideo::findOrFail($data['lesson_video_id']);
         $unit = Unit::findOrFail($lessonVideo->unit_id);
         $teacher = Teacher::findOrFail($unit->teacher_id);
-        $this->updateTeacherEstimationTime($teacher, (int) ($data['video_time'] ?? 0));
+
+        $videoTime = $data['video_time'] ?? '00:00:00';
+        $teacher->estimation_time = Time::add($teacher->estimation_time, $videoTime);
+        $teacher->save();
 
         return YoutubeLinkVideo::create($data);
     }
 
     public function updateYoutubeLinkVideo(int $id, array $data): YoutubeLinkVideo
     {
+        $youtubeLinkVideo = YoutubeLinkVideo::findOrFail($id);
+
+        // Use existing values if not provided
+        $lessonVideoId = $data['lesson_video_id'] ?? $youtubeLinkVideo->lesson_video_id;
+        $lessonVideo = LessonVideo::findOrFail($lessonVideoId);
+        $unit = Unit::findOrFail($lessonVideo->unit_id);
+        $teacher = Teacher::findOrFail($unit->teacher_id);
+
+        $oldVideoTime = $youtubeLinkVideo->video_time ?? '00:00:00';
+        $newVideoTime = $data['video_time'] ?? '00:00:00';
+
+        // Subtract old, add new
+        $teacher->estimation_time = Time::sub($teacher->estimation_time, $oldVideoTime);
+        $teacher->estimation_time = Time::add($teacher->estimation_time, $newVideoTime);
+        $teacher->save();
+
+        // Update other fields (including is_active if provided)
         if (array_key_exists('is_active', $data)) {
             $data['is_active'] = (bool) $data['is_active'];
         }
-
-        $lessonVideo = LessonVideo::findOrFail($data['lesson_video_id']);
-        $unit = Unit::findOrFail($lessonVideo->unit_id);
-        $teacher = Teacher::findOrFail($unit->teacher_id);
-        $youtubeLinkVideo = YoutubeLinkVideo::findOrFail($id);
-        $teacher->estimation_time -= (int) ($youtubeLinkVideo->video_time ?? 0);
-        $this->updateTeacherEstimationTime($teacher, (int) ($data['video_time'] ?? 0));
         $youtubeLinkVideo->update($data);
 
         return $youtubeLinkVideo;
@@ -104,7 +118,9 @@ class YoutubeLinkVideoService
         $lessonVideo = LessonVideo::findOrFail($youtubeLinkVideo->lesson_video_id);
         $unit = Unit::findOrFail($lessonVideo->unit_id);
         $teacher = Teacher::findOrFail($unit->teacher_id);
-        $teacher->estimation_time -= (int) ($youtubeLinkVideo->video_time ?? 0);
+
+        $videoTime = $youtubeLinkVideo->video_time ?? '00:00:00';
+        $teacher->estimation_time = Time::sub($teacher->estimation_time, $videoTime);
         $teacher->save();
 
         return (bool) $youtubeLinkVideo->delete();
@@ -118,7 +134,10 @@ class YoutubeLinkVideoService
         $lessonVideo = LessonVideo::findOrFail($youtubeLinkVideo->lesson_video_id);
         $unit = Unit::findOrFail($lessonVideo->unit_id);
         $teacher = Teacher::findOrFail($unit->teacher_id);
-        $this->updateTeacherEstimationTime($teacher, (int) ($youtubeLinkVideo->video_time ?? 0));
+
+        $videoTime = $youtubeLinkVideo->video_time ?? '00:00:00';
+        $teacher->estimation_time = Time::add($teacher->estimation_time, $videoTime);
+        $teacher->save();
     }
 
     public function forceDeleteYoutubeLinkVideo(int $id): void
@@ -130,13 +149,7 @@ class YoutubeLinkVideoService
     public function toggleYoutubeLinkVideo(int $youtubeLinkVideoId): bool
     {
         $youtubeLinkVideo = YoutubeLinkVideo::findOrFail($youtubeLinkVideoId);
-
-        return $youtubeLinkVideo->update(['is_active' => ! $youtubeLinkVideo->is_active]);
+        return $youtubeLinkVideo->update(['is_active' => !$youtubeLinkVideo->is_active]);
     }
 
-    public function updateTeacherEstimationTime(Teacher $teacher, int $videoTime): void
-    {
-        $teacher->estimation_time += $videoTime;
-        $teacher->save();
-    }
 }

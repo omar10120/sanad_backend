@@ -15,7 +15,11 @@ class StoreTeacherRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'estimation_time' => 'nullable|integer|min:0',
+            'estimation_time' => [
+                'nullable',
+                'date_format:H:i',
+              
+            ],
             'whatsapp_link' => 'nullable|string|max:500',
             'instagram_link' => 'nullable|string|max:500',
             'telegram_link' => 'nullable|string|max:500',

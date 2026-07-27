@@ -28,7 +28,7 @@ class TeacherService
         $subjectVideoId = (int) $data['subject_video_id'];
         $subjectVideos = $data['subject_videos'] ?? [$subjectVideoId];
         unset($data['subject_video_id'], $data['subject_videos']);
-        $data['estimation_time'] = $data['estimation_time'] ?? 0;
+        $data['estimation_time'] = $data['estimation_time'] ?? '00:00';
         $teacher = Teacher::create($data);
 
         if ($photoFile) {
@@ -46,7 +46,7 @@ class TeacherService
     public function updateTeacher(int $id, array $data, $photoFile = null): Teacher
     {
         $teacher = Teacher::findOrFail($id);
-        $teacher->estimation_time = $data['estimation_time'] ?? 0;
+        $teacher->estimation_time = $data['estimation_time'] ?? '00:00';
         if ($photoFile) {
             if ($teacher->photo) {
                 $this->deleteTeacherPhoto($teacher->id, $teacher->photo);

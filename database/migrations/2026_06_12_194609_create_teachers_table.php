@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('teachers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('estimation_time');
+            $table->time('estimation_time');
             $table->string('whatsapp_link')->nullable();
             $table->string('instagram_link')->nullable();
             $table->string('phone')->nullable();

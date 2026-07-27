@@ -178,7 +178,9 @@
                         <div class="row mb-3 mx-1">
                             <label for="video_time" class="col-sm-3 col-form-label">{{ trans('main_trans.Video_time') }}</label>
                             <div class="col-sm-9">
-                                <input class="form-control" name="video_time" id="video_time" type="number" min="0" placeholder="{{ trans('main_trans.Video_time_placeholder') }}">
+                                <!-- <input class="form-control" name="video_time" id="video_time" type="number" min="0" placeholder="{{ trans('main_trans.Video_time_placeholder') }}"> -->
+                                <input class="form-control" type="time" id="video_time" name="video_time"
+                                     >
                             </div>
                         </div>
                         <div class="row mb-3 mx-1">
@@ -241,7 +243,9 @@
                         <div class="row mb-3 mx-1">
                             <label for="video_time" class="col-sm-3 col-form-label">{{ trans('main_trans.Video_time') }}</label>
                             <div class="col-sm-9">
-                                <input class="form-control" name="video_time" id="video_time" type="number" min="0">
+                                <!-- <input class="form-control" name="video_time" id="video_time" type="number" min="0"> -->
+                                <input class="form-control" type="time" id="video_time" name="video_time"
+                                     >
                             </div>
                         </div>
                         <div class="row mb-3 mx-1">
@@ -330,7 +334,7 @@
         var modal = $(this);
         modal.find('.modal-body #name').val('');
         modal.find('.modal-body #youtube_link').val('');
-        modal.find('.modal-body #video_time').val('');
+        modal.find('.modal-body #video_time').val('00:00');
         modal.find('.modal-body #lesson_video_id').val('{{ $lesson_video_selected->id }}');
         modal.find('.modal-body #is_active').val('1');
     });
@@ -341,7 +345,7 @@
         modal.find('.modal-body #id').val(button.data('id'));
         modal.find('.modal-body #name').val(button.data('name'));
         modal.find('.modal-body #youtube_link').val(button.data('youtube_link'));
-        modal.find('.modal-body #video_time').val(button.data('video_time'));
+        modal.find('.modal-body #video_time').val(button.data('video_time') || '00:00');
         modal.find('.modal-body #lesson_video_id').val(button.data('lesson_video_selected'));
         modal.find('.modal-body #edit_is_active').val(String(button.data('is_active')));
     });

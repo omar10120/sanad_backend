@@ -21,7 +21,7 @@ return new class extends Migration
         
             $table->string('youtube_link');
         
-            $table->integer('video_time')->nullable(); 
+            $table->time('video_time')->nullable(); 
             $table->timestamps();
         
       

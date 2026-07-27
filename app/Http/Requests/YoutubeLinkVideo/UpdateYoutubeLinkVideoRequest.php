@@ -18,7 +18,11 @@ class UpdateYoutubeLinkVideoRequest extends FormRequest
             'id' => ['required', 'integer', 'exists:youtube_links_video,id'],
             'name' => ['required', 'string', 'max:255'],
             'youtube_link' => ['required', 'string', 'max:500', 'url'],
-            'video_time' => ['nullable', 'integer', 'min:0'],
+            'video_time' => [
+                'nullable',
+                'date_format:H:i',          
+              
+            ],
             'lesson_video_id' => ['required', 'integer', 'exists:lessons_video,id'],
             'is_active' => ['nullable', 'boolean'],
         ];
