@@ -328,7 +328,11 @@
     <script src="{{ URL::asset('assets/js/modal.js') }}"></script>
 
     <script>
-      
+        const subjects = [
+            @foreach($subjects as $subject)
+                { id: {{ $subject->id }}, name: @json($subject->name) },
+            @endforeach
+        ];
         const subjectVideos = [
             @foreach($subjectVideos as $subjectVideo)
                 { id: {{ $subjectVideo->id }}, name: @json($subjectVideo->name) },
