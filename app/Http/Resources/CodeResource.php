@@ -10,7 +10,10 @@ class CodeResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $this->package->loadMissing(['codePackageSubjects.subject', 'codePackageSubjects.unit']);
+        $this->package->loadMissing([
+            'codePackageSubjects.subject',
+            'codePackageSubjects.unit.teacher',
+        ]);
 
         return [
             'id' => $this->id,

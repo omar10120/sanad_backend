@@ -90,6 +90,7 @@ class CodeService
 
     public function formatPackageSubjectsForDisplay(CodePackage $package): array
     {
+        $package->loadMissing(['codePackageSubjects.subject', 'codePackageSubjects.unit.teacher']);
         $items = $package->codePackageSubjects;
 
         $studySubjects = $items
@@ -114,6 +115,10 @@ class CodeService
                     'units' => $groupItems->map(fn ($item) => [
                         'id' => $item->unit?->id,
                         'name' => $item->unit?->name,
+                        'subject_id' => $item->subject?->id ?? $subject?->id,
+                        'subject_name' => $item->subject?->name ?? $subject?->name,
+                        'teacher_id' => $item->unit?->teacher?->id,
+                        'teacher_name' => $item->unit?->teacher?->name,
                     ])->values()->all(),
                 ];
             })
@@ -136,11 +141,19 @@ class CodeService
         }
 
         foreach ($content['course_subjects'] as $group) {
-            $unitNames = collect($group['units'])->pluck('name')->filter()->implode(', ');
+            $unitParts = collect($group['units'])->map(function ($unit) {
+                $label = $unit['name'] ?? '';
+                if (! empty($unit['teacher_name'])) {
+                    $label .= ' (' . $unit['teacher_name'] . ')';
+                }
+
+                return $label;
+            })->filter()->implode(', ');
+
             if ($group['subject_name']) {
-                $parts[] = $group['subject_name'] . ($unitNames ? ': ' . $unitNames : '');
+                $parts[] = $group['subject_name'] . ($unitParts ? ': ' . $unitParts : '');
             } else {
-                $parts[] = $unitNames;
+                $parts[] = $unitParts;
             }
         }
 
@@ -197,7 +210,7 @@ class CodeService
             ->whereHas('package', function ($query) {
                 $query->where('expires_at', '>', now());
             })
-            ->with(['package.codePackageSubjects.subject', 'package.codePackageSubjects.unit'])
+            ->with(['package.codePackageSubjects.subject', 'package.codePackageSubjects.unit.teacher'])
             ->get();
     }
 
