@@ -4,10 +4,12 @@ namespace App\Enums;
 
 enum PermissionEnum: string
 {
-  
-    case YOUTUBE_LINK_VIDEO_ADD = 'YoutubeLinkVideo-add';
+ 
+    // Youtube link video permissions
+    case YOUTUBE_LINK_VIDEO_SHOW = 'YoutubeLinkVideo-show';
 
-   
+
+
     /**
      * Get all permissions as an array
      */
