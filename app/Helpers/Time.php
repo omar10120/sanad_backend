@@ -4,9 +4,7 @@ namespace App\Helpers;
 
 class Time
 {
-    /**
-     * Convert a time string (H:i:s or H:i) to total seconds.
-     */
+   
     public static function toSeconds(string $time): int
     {
         $parts = explode(':', $time);
@@ -21,9 +19,7 @@ class Time
         return $seconds;
     }
 
-    /**
-     * Convert total seconds to TIME format (H:i:s).
-     */
+    
     public static function fromSeconds(int $seconds): string
     {
         $hours = floor($seconds / 3600);
