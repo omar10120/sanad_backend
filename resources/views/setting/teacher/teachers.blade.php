@@ -190,8 +190,7 @@
                         <div class="row mb-3">
                             <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Estimation_time') }} </label>
                             <div class="col-md-8">
-                                <!-- <input class="form-control" name="estimation_time" type="number" min="0" > -->
-                                    <input class="form-control" type="time" id="estimation_time" name="estimation_time" step="1">
+                                <input class="form-control duration-input" type="text" id="estimation_time" name="estimation_time" placeholder="HH:MM:SS" value="00:00:00">
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -293,8 +292,7 @@
                         <div class="row mb-3">
                             <label class="col-md-4 col-form-label text-md-end">{{ trans('main_trans.Estimation_time') }} </label>
                             <div class="col-md-8">
-                                <!-- <input class="form-control" name="estimation_time" id="edit_estimation_time" type="number" min="0" > -->
-                                <input class="form-control" type="time" id="edit_estimation_time" name="estimation_time" step="1">
+                                <input class="form-control duration-input" type="text" id="edit_estimation_time" name="estimation_time" placeholder="HH:MM:SS">
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -414,11 +412,77 @@
     <script>
         $('.subject-videos-select').select2({ width: '100%' });
 
+        function formatDuration(value) {
+            if (!value) return '00:00:00';
+            var clean = String(value).replace(/[^0-9:]/g, '');
+            var parts = clean.split(':').filter(Boolean);
+            
+            var hours = '00';
+            var minutes = '00';
+            var seconds = '00';
+            
+            if (parts.length === 1) {
+                var val = parseInt(parts[0], 10) || 0;
+                if (val > 59) {
+                    var h = Math.floor(val / 60);
+                    var m = val % 60;
+                    hours = String(h).padStart(2, '0');
+                    minutes = String(m).padStart(2, '0');
+                } else {
+                    minutes = String(val).padStart(2, '0');
+                }
+            } else if (parts.length === 2) {
+                var m = parseInt(parts[0], 10) || 0;
+                var s = parseInt(parts[1], 10) || 0;
+                if (s > 59) {
+                    m += Math.floor(s / 60);
+                    s = s % 60;
+                }
+                if (m > 59) {
+                    var h = Math.floor(m / 60);
+                    m = m % 60;
+                    hours = String(h).padStart(2, '0');
+                }
+                minutes = String(m).padStart(2, '0');
+                seconds = String(s).padStart(2, '0');
+            } else if (parts.length >= 3) {
+                var h = parseInt(parts[0], 10) || 0;
+                var m = parseInt(parts[1], 10) || 0;
+                var s = parseInt(parts[2], 10) || 0;
+                if (s > 59) {
+                    m += Math.floor(s / 60);
+                    s = s % 60;
+                }
+                if (m > 59) {
+                    h += Math.floor(m / 60);
+                    m = m % 60;
+                }
+                hours = String(h).padStart(2, '0');
+                minutes = String(m).padStart(2, '0');
+                seconds = String(s).padStart(2, '0');
+            }
+            
+            return hours + ':' + minutes + ':' + seconds;
+        }
+
+        $(document).on('blur', '.duration-input', function () {
+            $(this).val(formatDuration($(this).val()));
+        });
+
+        $(document).on('keypress', '.duration-input', function (e) {
+            if (e.which !== 58 && (e.which < 48 || e.which > 57)) {
+                e.preventDefault();
+            }
+        });
+
         $('#modal2').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
             $('#edit_id').val(button.data('id'));
             $('#edit_name').val(button.data('name'));
-            $('#edit_estimation_time').val(button.data('estimation_time') || '00:00');
+            
+            var estTime = button.data('estimation_time') || '00:00:00';
+            $('#edit_estimation_time').val(formatDuration(estTime));
+            
             $('#edit_whatsapp_link').val(button.data('whatsapp_link'));
             $('#edit_instagram_link').val(button.data('instagram_link'));
             $('#edit_telegram_link').val(button.data('telegram_link'));

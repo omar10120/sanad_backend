@@ -178,9 +178,7 @@
                         <div class="row mb-3 mx-1">
                             <label for="video_time" class="col-sm-3 col-form-label">{{ trans('main_trans.Video_time') }}</label>
                             <div class="col-sm-9">
-                                <!-- <input class="form-control" name="video_time" id="video_time" type="number" min="0" placeholder="{{ trans('main_trans.Video_time_placeholder') }}"> -->
-                                <input class="form-control" type="time" id="video_time" name="video_time" step="1"
-                                     >
+                                <input class="form-control duration-input" type="text" id="video_time" name="video_time" placeholder="HH:MM:SS" value="00:00:00">
                             </div>
                         </div>
                         <div class="row mb-3 mx-1">
@@ -243,10 +241,7 @@
                         <div class="row mb-3 mx-1">
                             <label for="video_time" class="col-sm-3 col-form-label">{{ trans('main_trans.Video_time') }}</label>
                             <div class="col-sm-9">
-                                <!-- <input class="form-control" name="video_time" id="video_time" type="number" min="0"> -->
-                                <!-- <input class="form-control" type="time" id="video_time" name="video_time"> -->
-                                <input class="form-control" type="time" id="video_time" name="video_time" step="1"
-                                >
+                                <input class="form-control duration-input" type="text" id="edit_video_time" name="video_time" placeholder="HH:MM:SS">
                             </div>
                         </div>
                         <div class="row mb-3 mx-1">
@@ -331,11 +326,74 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
 <script>
+    function formatDuration(value) {
+        if (!value) return '00:00:00';
+        var clean = String(value).replace(/[^0-9:]/g, '');
+        var parts = clean.split(':').filter(Boolean);
+        
+        var hours = '00';
+        var minutes = '00';
+        var seconds = '00';
+        
+        if (parts.length === 1) {
+            var val = parseInt(parts[0], 10) || 0;
+            if (val > 59) {
+                var h = Math.floor(val / 60);
+                var m = val % 60;
+                hours = String(h).padStart(2, '0');
+                minutes = String(m).padStart(2, '0');
+            } else {
+                minutes = String(val).padStart(2, '0');
+            }
+        } else if (parts.length === 2) {
+            var m = parseInt(parts[0], 10) || 0;
+            var s = parseInt(parts[1], 10) || 0;
+            if (s > 59) {
+                m += Math.floor(s / 60);
+                s = s % 60;
+            }
+            if (m > 59) {
+                var h = Math.floor(m / 60);
+                m = m % 60;
+                hours = String(h).padStart(2, '0');
+            }
+            minutes = String(m).padStart(2, '0');
+            seconds = String(s).padStart(2, '0');
+        } else if (parts.length >= 3) {
+            var h = parseInt(parts[0], 10) || 0;
+            var m = parseInt(parts[1], 10) || 0;
+            var s = parseInt(parts[2], 10) || 0;
+            if (s > 59) {
+                m += Math.floor(s / 60);
+                s = s % 60;
+            }
+            if (m > 59) {
+                h += Math.floor(m / 60);
+                m = m % 60;
+            }
+            hours = String(h).padStart(2, '0');
+            minutes = String(m).padStart(2, '0');
+            seconds = String(s).padStart(2, '0');
+        }
+        
+        return hours + ':' + minutes + ':' + seconds;
+    }
+
+    $(document).on('blur', '.duration-input', function () {
+        $(this).val(formatDuration($(this).val()));
+    });
+
+    $(document).on('keypress', '.duration-input', function (e) {
+        if (e.which !== 58 && (e.which < 48 || e.which > 57)) {
+            e.preventDefault();
+        }
+    });
+
     $('#modal1').on('show.bs.modal', function() {
         var modal = $(this);
         modal.find('.modal-body #name').val('');
         modal.find('.modal-body #youtube_link').val('');
-        modal.find('.modal-body #video_time').val('00:00');
+        modal.find('.modal-body #video_time').val('00:00:00');
         modal.find('.modal-body #lesson_video_id').val('{{ $lesson_video_selected->id }}');
         modal.find('.modal-body #is_active').val('1');
     });
@@ -346,7 +404,10 @@
         modal.find('.modal-body #id').val(button.data('id'));
         modal.find('.modal-body #name').val(button.data('name'));
         modal.find('.modal-body #youtube_link').val(button.data('youtube_link'));
-        modal.find('.modal-body #video_time').val(button.data('video_time') || '00:00');
+        
+        var vTime = button.data('video_time') || '00:00:00';
+        modal.find('.modal-body #edit_video_time').val(formatDuration(vTime));
+        
         modal.find('.modal-body #lesson_video_id').val(button.data('lesson_video_selected'));
         modal.find('.modal-body #edit_is_active').val(String(button.data('is_active')));
     });
