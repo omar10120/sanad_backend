@@ -59,30 +59,82 @@ class SubjectVideoService
     }
 
     public function deleteSubjectVideo(int $id): array
-{
-    $subjectVideo = SubjectVideo::with('teachers')->findOrFail($id);
-    
-    try {
-        // Remove the relationships first
-        $subjectVideo->teachers()->detach(); // For many-to-many
-        
-        // Or for one-to-many:
-        // $subjectVideo->teachers()->delete(); // Delete related teachers
-        
-        // Then delete the subject video
-        $subjectVideo->delete();
-        
-        return [
-            'success' => true,
-            'message' => trans('main_trans.Subject_video_delete_successfully'),
-        ];
-    } catch (Exception $e) {
-        return [
-            'success' => false,
-            'message' => $e->getMessage(),
-        ];
+    {
+        try {
+            // Soft-delete only — keep type/teacher pivots so restore works.
+            SubjectVideo::findOrFail($id)->delete();
+
+            return [
+                'success' => true,
+                'message' => trans('main_trans.Subject_video_delete_successfully'),
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
     }
-}
+
+    public function getArchivedSubjectVideosByType(int $typeId): Collection
+    {
+        return SubjectVideo::onlyTrashed()
+            ->where(function ($query) use ($typeId) {
+                $query->whereHas('types', function ($q) use ($typeId) {
+                    $q->where('types.id', $typeId);
+                })->orWhereDoesntHave('types');
+            })
+            ->with(['types', 'teachers'])
+            ->withCount('teachers')
+            ->orderByDesc('deleted_at')
+            ->get();
+    }
+
+    public function getTypeById(int $typeId): Type
+    {
+        return Type::findOrFail($typeId);
+    }
+
+    public function restoreSubjectVideo(int $id, ?int $typeId = null): void
+    {
+        $subjectVideo = SubjectVideo::onlyTrashed()->findOrFail($id);
+        $subjectVideo->restore();
+
+        if ($typeId && ! $subjectVideo->types()->where('types.id', $typeId)->exists()) {
+            $subjectVideo->types()->attach($typeId);
+        }
+    }
+
+    public function forceDeleteSubjectVideo(int $id): array
+    {
+        try {
+            $subjectVideo = SubjectVideo::onlyTrashed()->with('teachers')->findOrFail($id);
+
+            if (! $subjectVideo->canBeDeleted()) {
+                throw new Exception(trans('main_trans.Subject_video_has_related_data'));
+            }
+
+            DB::transaction(function () use ($subjectVideo) {
+                $subjectVideo->types()->detach();
+
+                if ($subjectVideo->icon_photo) {
+                    $this->deleteSubjectVideoPhoto($subjectVideo->id, $subjectVideo->icon_photo);
+                }
+
+                $subjectVideo->forceDelete();
+            });
+
+            return [
+                'success' => true,
+                'message' => trans('main_trans.Subject_video_delete_successfully'),
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
 
     public function toggleSubjectVideoStatus(SubjectVideo $subjectVideo): bool
     {

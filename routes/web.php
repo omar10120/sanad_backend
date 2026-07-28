@@ -10,6 +10,7 @@ use App\Http\Controllers\QuestionGroupController;
 use App\Http\Controllers\QuestionReportController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SubjectVideoController;
+use App\Http\Controllers\ArchivedSubjectVideoController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\ArchivedTeacherController;
 use App\Http\Controllers\UnitController;
@@ -132,6 +133,12 @@ Route::group(
     Route::patch('/subjects-video/{subjectVideo}/toggle', [SubjectVideoController::class, 'toggle'])->name('subjects-video.toggle');
     Route::post('/subjects-video/reorder', [SubjectVideoController::class, 'reorder'])
         ->name('subjects-video.reorder');
+    Route::get('/archived-subject-video/{type}', [ArchivedSubjectVideoController::class, 'show'])
+        ->name('archived-subject-video.type');
+    Route::patch('/archived-subject-video/update', [ArchivedSubjectVideoController::class, 'update'])
+        ->name('archived-subject-video.update');
+    Route::delete('/archived-subject-video/destroy', [ArchivedSubjectVideoController::class, 'destroy'])
+        ->name('archived-subject-video.destroy');
 
     Route::get('/subject-video-teacher/{subject_video}', [TeacherController::class, 'bySubjectVideo'])
         ->name('subject-video.teacher');

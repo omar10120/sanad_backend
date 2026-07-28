@@ -37,11 +37,15 @@ class SubjectVideoController extends Controller
         $types = $this->subjectVideoService->getAllTypes();
         $type_selected = $this->subjectVideoService->getTypeWithSubjectVideos($type_id);
         $subjectVideos = $type_selected->subjectVideos;
+        $archivedSubjectVideosCount = $this->subjectVideoService
+            ->getArchivedSubjectVideosByType((int) $type_id)
+            ->count();
 
         return view('setting.subject-video.subjects', compact(
             'subjectVideos',
             'types',
             'type_selected',
+            'archivedSubjectVideosCount',
         ));
     }
 

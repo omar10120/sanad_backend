@@ -126,7 +126,8 @@ class SubjectVideo extends Model
         });
 
         static::deleting(function (SubjectVideo $subjectVideo) {
-            if (!$subjectVideo->canBeDeleted()) {
+            // Soft delete is always allowed. Hard delete requires no related teachers.
+            if ($subjectVideo->isForceDeleting() && ! $subjectVideo->canBeDeleted()) {
                 throw new Exception(trans('main_trans.Subject_video_has_related_data'));
             }
         });

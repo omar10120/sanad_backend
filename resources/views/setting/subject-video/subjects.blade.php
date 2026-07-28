@@ -43,7 +43,7 @@
                         </a>
                     </div>
                     @can('SubjectVideo-add')
-                        <div class="col-12 col-sm-12 col-lg-4 col-xl-6">
+                        <div class="col-12 col-sm-12 col-lg-4 @can('SubjectVideo-show-deleted') col-xl-4 @else col-xl-6 @endcan">
                             <a class="modal-effect btn btn-outline-primary btn-block" data-effect="effect-flip-vertical"
                                data-toggle="modal" href="#modal1">{{ trans('main_trans.Add_course_subject') }}</a>
                         </div>
@@ -54,6 +54,16 @@
                                 <i class="fas fa-sort"></i> {{ __('main_trans.Reorder') }}
                             </button>
                         </div>
+                    @endcan
+                    @can('SubjectVideo-show-deleted')
+                        @if($archivedSubjectVideosCount)
+                            <div class="col-12 col-sm-12 col-lg-4 col-xl-2">
+                                <a class="btn btn-outline-primary btn-block"
+                                   href="{{ route('archived-subject-video.type', $type_selected->id) }}">
+                                    {{ trans('main_trans.Deleted_course_subjects') }}
+                                </a>
+                            </div>
+                        @endif
                     @endcan
                 </div>
 
