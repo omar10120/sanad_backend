@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Helpers\GetVideoTimePerSecond;
 
 class TeacherResource extends JsonResource
 {
@@ -18,6 +19,7 @@ class TeacherResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'estimation_time' => $this->estimation_time,
+            'estimation_time_persecond' => GetVideoTimePerSecond::getVideoTimePerSecond($this->estimation_time),
             'whatsapp_link' => $this->whatsapp_link,
             'instagram_link' => $this->instagram_link,
             'telegram_link' => $this->telegram_link,
