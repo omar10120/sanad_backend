@@ -28,6 +28,7 @@ return [
     'Restore'=>'Restore',
     'Are_you_sure_to_delete'=>'Are you sure to delete?',
     'Are_you_sure_to_move'=>'Are you sure to move?',
+    'estimation_time_must_be_time' => 'estimation time must be time (HH:MM:SS)',
     'Are_you_sure_to_sort'=>'Are you sure to sort?',
     'Are_you_sure_to_restore'=>'Are you sure to restore?',
     'Please_check'=>'Please check all information before clicking the button',

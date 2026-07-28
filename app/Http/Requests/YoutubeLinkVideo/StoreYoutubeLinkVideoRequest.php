@@ -46,7 +46,7 @@ class StoreYoutubeLinkVideoRequest extends FormRequest
             'youtube_link.string' => trans('main_trans.Youtube_link_must_be_string'),
             'youtube_link.max' => trans('main_trans.Youtube_link_max_length'),
             'youtube_link.url' => trans('main_trans.Youtube_link_must_be_url'),
-            'video_time.time' => trans('main_trans.Video_time_must_be_time'),
+            'video_time.regex' => trans('main_trans.Video_time_must_be_time'),
             'lesson_video_id.required' => trans('main_trans.Lesson_video_id_required'),
             'lesson_video_id.integer' => trans('main_trans.Lesson_video_id_must_be_integer'),
             'lesson_video_id.exists' => trans('main_trans.Lesson_video_not_exists'),

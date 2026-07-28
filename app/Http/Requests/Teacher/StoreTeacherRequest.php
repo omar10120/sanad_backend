@@ -17,9 +17,7 @@ class StoreTeacherRequest extends FormRequest
             'name' => 'required|string|max:255',
             'estimation_time' => [
                 'nullable',
-                'regex:/^\d{2}:\d{2}:\d{2}$/' // HH:MM:SS format
-
-              
+                'regex:/^\d{2}:\d{2}:\d{2}$/' 
             ],
             'whatsapp_link' => 'nullable|string|max:500',
             'instagram_link' => 'nullable|string|max:500',
@@ -31,6 +29,7 @@ class StoreTeacherRequest extends FormRequest
             'subject_video_id' => 'required|integer|exists:subjects_video,id',
             'subject_videos' => 'nullable|array',
             'subject_videos.*' => 'integer|exists:subjects_video,id',
+            'estimation_time.regex' => trans('main_trans.estimation_time_must_be_time'),
             'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:1048',
         ];
     }

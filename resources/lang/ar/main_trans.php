@@ -17,6 +17,7 @@ return [
     'Pages'=>'الصفحات',
     'Show_users'=>'عرض المستخدمين',
     'Url_flag'=>'assets/img/flags/syria_flag.png',
+    'estimation_time_must_be_time' => 'الوقت المتوقع يجب ان يكون على الشكل (HH:MM:SS)',
     'Url_flag2'=>'assets/img/flags/uk_flag.png',
     'Back'=>'رجوع',
     'Add'=>'إضافة',

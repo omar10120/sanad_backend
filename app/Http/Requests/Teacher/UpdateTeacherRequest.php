@@ -31,6 +31,7 @@ class UpdateTeacherRequest extends FormRequest
             'is_active' => 'required|boolean',
             'subject_videos' => 'nullable|array',
             'subject_videos.*' => 'integer|exists:subjects_video,id',
+            'estimation_time.regex' => trans('main_trans.estimation_time_must_be_time'),
             'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:1048',
         ];
     }
