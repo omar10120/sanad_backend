@@ -17,6 +17,7 @@ class StoreTeacherRequest extends FormRequest
             'name' => 'required|string|max:255',
             'estimation_time' => [
                 'nullable',
+                'regex:/^\d{2}:\d{2}:\d{2}$/' // HH:MM:SS format
 
               
             ],

@@ -17,7 +17,8 @@ class UpdateTeacherRequest extends FormRequest
             'id' => 'required|integer|exists:teachers,id',
             'name' => 'required|string|max:255',
             'estimation_time' => [
-                'nullable'
+                'nullable',
+                'regex:/^\d{2}:\d{2}:\d{2}$/'
                 
               
             ],

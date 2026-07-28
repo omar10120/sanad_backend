@@ -19,6 +19,7 @@ class StoreYoutubeLinkVideoRequest extends FormRequest
             'youtube_link' => ['required', 'string', 'max:500', 'url'],
             'video_time' => [
                 'nullable',
+                'regex:/^\d{2}:\d{2}:\d{2}$/'
               
             ],
             'lesson_video_id' => ['required', 'integer', 'exists:lessons_video,id'],
