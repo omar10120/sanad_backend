@@ -1164,7 +1164,7 @@ return [
      'Oman' => 'عمان',
 
      // Subject Video translations
-     
+     'SubjectVideo-show' => 'عرض مواد الكورسات',
      'SubjectVideo-add' => 'إضافة مواد الكورسات',
      'SubjectVideo-edit' => 'تعديل مواد الكورسات',
      'SubjectVideo-delete' => 'حذف مواد الكورسات',

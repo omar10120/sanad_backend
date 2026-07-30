@@ -1159,7 +1159,7 @@ return [
     'Yemen' => 'Yemen',
     'Oman' => 'Oman',
     // Subject Video translations
-    
+    'SubjectVideo-show' => 'Subject Video show',
     'SubjectVideo-add' => 'Subject Video add',
     'SubjectVideo-edit' => 'Subject Video edit',
     'SubjectVideo-delete' => 'Subject Video delete',
