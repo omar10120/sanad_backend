@@ -647,7 +647,7 @@
         <p>حمّل التطبيق الآن مجاناً وتمتع بميزات التطبيق الفريدة من نوعها</p>
         <p>الإصدار الأخير: V1.5.2</p>
         <div class="download-buttons">
-            <a href="{{ asset('assets/apps/Sanad Al Taleb V1.5.2.apk') }}" class="download-button" download>
+            <a href="{{ asset('assets/apps/Sanad Al Taleb V1.5.2-production.apk') }}" class="download-button" download>
                 <i class="fas fa-download"></i> تحميل مباشر (APK)
             </a>
             <a href="https://t.me/SanadAlTaleb/1800" target="_blank" class="download-button">
