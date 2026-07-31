@@ -37,10 +37,10 @@ class NotificationController extends Controller
 
     public function create()
     {
-//        if (!config('features.advanced_notifications')) {
-//            session()->flash('error', trans('main_trans.Pro_Feature_Message'));
-//            return redirect()->route('home');
-//        }
+       if (!config('features.advanced_notifications')) {
+           session()->flash('error', trans('main_trans.Pro_Feature_Message'));
+           return redirect()->route('home');
+       }
         $this->checkPermission(PermissionEnum::NOTIFICATION_ADD);
         $types = Type::where('is_active', true)->get();
         $students = Student::where('status', 1)->get();
