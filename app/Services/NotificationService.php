@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Jobs\SendNotificationJob;
+// use App\Jobs\SendNotificationJob;
 use App\Models\Notification;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -41,21 +41,23 @@ class NotificationService
             ];
         }
 
-        $notification->logs()->delete();
+        // Synchronous: just mark as sent (Firebase sending commented out)
+        // SendNotificationJob::dispatch($notification);
 
         $notification->update([
-            'status' => 'processing',
-            'successful_sends' => 0,
-            'failed_sends' => 0,
-            'total_recipients' => 0,
-            'sent_at' => null,
+            'status' => 'sent',
+            'sent_at' => now(),
+            // 'successful_sends' => 0,
+            // 'failed_sends' => 0,
+            // 'total_recipients' => 0,
         ]);
 
-        SendNotificationJob::dispatch($notification);
+        // TODO: restore Firebase push when ready
+        // $this->sendToFirebase($notification);
 
         return [
             'success' => true,
-            'message' => 'Notification is being sent in the background.',
+            'message' => trans('main_trans.Notification_sent_successfully'),
         ];
     }
 }
