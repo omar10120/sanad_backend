@@ -7,18 +7,18 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "ext-curl": "*",
         "ext-gd": "*",
-        
         "barryvdh/laravel-dompdf": "^3.1",
         "google/apiclient": "2.18.3",
+        "kreait/laravel-firebase": "*",
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "mcamara/laravel-localization": "^2.2",
         "phpoffice/phpspreadsheet": "^4.2",
         "simplesoftwareio/simple-qrcode": "^4.2",
-        "spatie/laravel-permission": "^6.10",
-        "ext-curl": "*"
+        "spatie/laravel-permission": "^6.10"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^4.4",

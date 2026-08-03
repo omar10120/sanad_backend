@@ -155,8 +155,13 @@
                         @endif
 
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary">{{ trans('main_trans.Save') }}</button>
-                            <a href="{{ route('notifications.index') }}" class="btn btn-secondary">{{ trans('main_trans.Cancel') }}</a>
+                            <button type="submit" id="submit-notification-btn" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> {{ trans('main_trans.Send_notification') }}
+                            </button>
+                            <a href="{{ route('notifications.index') }}" class="btn btn-secondary" id="cancel-notification-btn">{{ trans('main_trans.Cancel') }}</a>
+                            <small class="d-block text-muted mt-2" id="sending-hint" style="display: none;">
+                                <i class="fas fa-spinner fa-spin"></i> {{ trans('main_trans.Notification_sending_please_wait') }}
+                            </small>
                         </div>
                     </form>
                 </div>
@@ -205,6 +210,17 @@
             // Trigger change event on page load if there's a value
             $('#target_type').trigger('change');
             @endif
+
+            $('form').on('submit', function() {
+                var $btn = $('#submit-notification-btn');
+                if ($btn.prop('disabled')) {
+                    return false;
+                }
+                $btn.prop('disabled', true)
+                    .html('<i class="fas fa-spinner fa-spin"></i> {{ trans('main_trans.Notification_sending_please_wait') }}');
+                $('#cancel-notification-btn').addClass('disabled').css('pointer-events', 'none');
+                $('#sending-hint').show();
+            });
         });
     </script>
 @endsection

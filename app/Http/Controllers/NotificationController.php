@@ -56,7 +56,23 @@ class NotificationController extends Controller
 
         $notification = $this->notificationService->createNotification($data);
 
-        session()->flash('add', trans('main_trans.Notification_add_successfully'));
+        if (! empty($data['scheduled_at'])) {
+            $this->notificationService->updateNotification($notification, [
+                'status' => 'scheduled',
+            ]);
+            session()->flash('add', trans('main_trans.Notification_add_successfully'));
+
+            return redirect()->route('notifications.index');
+        }
+
+        $result = $this->notificationService->sendNotification($notification->fresh());
+
+        if ($result['success']) {
+            session()->flash('add', $result['message']);
+        } else {
+            session()->flash('error', $result['message']);
+        }
+
         return redirect()->route('notifications.index');
     }
 

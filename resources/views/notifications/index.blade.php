@@ -108,7 +108,7 @@
                                                 </a>
                                             @endcan
 
-                                            @if(in_array($notification->status, ['draft', 'failed'], true))
+                                            @if(in_array($notification->status, ['draft', 'failed', 'processing'], true))
                                                 @can('Notification-edit')
                                                     @if($notification->status === 'draft')
                                                     <a href="{{ route('notifications.edit', $notification->id) }}" class="btn btn-sm btn-warning" title="{{ trans('main_trans.Edit') }}">
@@ -118,9 +118,9 @@
                                                 @endcan
 
                                                 @can('Notification-send')
-                                                    <form method="POST" action="{{ route('notifications.send', $notification->id) }}" style="display: inline;">
+                                                    <form method="POST" action="{{ route('notifications.send', $notification->id) }}" class="d-inline send-notification-form" style="display: inline;">
                                                         @csrf
-                                                        <button type="submit" class="btn btn-sm btn-success" title="{{ trans('main_trans.Send_now') }}" onclick="return confirm('{{ trans('main_trans.Are_you_sure_to_send') }}?')">
+                                                        <button type="submit" class="btn btn-sm btn-success send-notification-btn" title="{{ trans('main_trans.Send_now') }}" onclick="return confirm('{{ trans('main_trans.Are_you_sure_to_send') }}?')">
                                                             <i class="fas fa-paper-plane"></i>
                                                         </button>
                                                     </form>
@@ -180,6 +180,11 @@
                 sSearch: '',
                 lengthMenu: '_MENU_',
             }
+        });
+
+        $(document).on('submit', '.send-notification-form', function() {
+            var $btn = $(this).find('.send-notification-btn');
+            $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
         });
     </script>
 @endsection

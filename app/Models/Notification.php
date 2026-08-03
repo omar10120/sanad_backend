@@ -57,7 +57,7 @@ class Notification extends Model
 
     public function canBeSent(): bool
     {
-        return in_array($this->status, ['draft', 'failed'], true) && $this->is_active;
+        return in_array($this->status, ['draft', 'failed', 'processing'], true) && $this->is_active;
     }
 
     public function getSuccessRateAttribute(): float

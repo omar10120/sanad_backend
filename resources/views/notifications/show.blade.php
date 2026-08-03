@@ -36,7 +36,7 @@
                     <div class="d-flex justify-content-between">
                         <h4 class="card-title mg-b-0">{{ trans('main_trans.Notification_details') }}</h4>
                         <div>
-                            @if(in_array($notification->status, ['draft', 'failed'], true))
+                            @if(in_array($notification->status, ['draft', 'failed', 'processing'], true))
                                 @can('Notification-edit')
                                     @if($notification->status === 'draft')
                                     <a href="{{ route('notifications.edit', $notification->id) }}" class="btn btn-warning">
@@ -46,9 +46,9 @@
                                 @endcan
 
                                 @can('Notification-send')
-                                    <form method="POST" action="{{ route('notifications.send', $notification->id) }}" style="display: inline;">
+                                    <form method="POST" action="{{ route('notifications.send', $notification->id) }}" id="send-notification-form" style="display: inline;">
                                         @csrf
-                                        <button type="submit" class="btn btn-success" onclick="return confirm('{{ trans('main_trans.Are_you_sure_to_send') }}?')">
+                                        <button type="submit" id="send-notification-btn" class="btn btn-success" onclick="return confirm('{{ trans('main_trans.Are_you_sure_to_send') }}?')">
                                             <i class="fas fa-paper-plane"></i> {{ trans('main_trans.Send_now') }}
                                         </button>
                                     </form>
@@ -266,4 +266,11 @@
         });
     </script>
     @endif
+    <script>
+        $('#send-notification-form').on('submit', function() {
+            var $btn = $('#send-notification-btn');
+            $btn.prop('disabled', true)
+                .html('<i class="fas fa-spinner fa-spin"></i> {{ trans('main_trans.Notification_sending_please_wait') }}');
+        });
+    </script>
 @endsection
