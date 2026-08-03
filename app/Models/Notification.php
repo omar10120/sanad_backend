@@ -44,15 +44,31 @@ class Notification extends Model
         return $this->hasMany(NotificationLog::class);
     }
 
-    public function getTargetStudentsQuery()
+    // public function getTargetStudentsQuery()
+    // {
+    //     $query = Student::where('status', 1);
+
+    //     return match ($this->target_type) {
+    //         'type' => $query->whereIn('type_id', $this->target_ids ?? []),
+    //         'student' => $query->whereIn('id', $this->target_ids ?? []),
+    //         default => $query,
+    //     };
+    // }
+
+
+      public function getTargetStudentsQuery()
     {
         $query = Student::where('status', 1);
-
-        return match ($this->target_type) {
-            'type' => $query->whereIn('type_id', $this->target_ids ?? []),
-            'student' => $query->whereIn('id', $this->target_ids ?? []),
-            default => $query,
-        };
+        
+        switch ($this->target_type) {
+            case 'type':
+                return $query->whereIn('type_id', $this->target_ids ?? []);
+            case 'student':
+                return $query->whereIn('id', $this->target_ids ?? []);
+            case 'all':
+            default:
+                return $query;
+        }
     }
 
     public function canBeSent(): bool

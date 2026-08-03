@@ -49,7 +49,10 @@ class NotificationService
             'sent_at' => now(),
             // 'successful_sends' => 0,
             // 'failed_sends' => 0,
-            // 'total_recipients' => 0,
+            'total_recipients' => $notification->getTargetStudentsQuery()->count(),
+
+
+            
         ]);
 
         // TODO: restore Firebase push when ready
