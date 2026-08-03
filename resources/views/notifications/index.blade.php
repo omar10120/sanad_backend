@@ -49,7 +49,7 @@
                                 <th class="wd-10p border-bottom-0">{{ trans('main_trans.Notification_type') }}</th>
                                 <th class="wd-10p border-bottom-0">{{ trans('main_trans.Target_type') }}</th>
                                 <th class="wd-10p border-bottom-0">{{ trans('main_trans.Status') }}</th>
-                                <th class="wd-10p border-bottom-0">{{ trans('main_trans.Success_rate') }}</th>
+                                <!-- <th class="wd-10p border-bottom-0">{{ trans('main_trans.Success_rate') }}</th> -->
                                 <th class="wd-10p border-bottom-0">{{ trans('main_trans.Total_recipients') }}</th>
                                 <th class="wd-10p border-bottom-0">{{ trans('main_trans.Created_at') }}</th>
                                 <th class="wd-10p border-bottom-0">{{ trans('main_trans.Actions') }}</th>
@@ -81,7 +81,7 @@
                                             {{ trans('main_trans.' . ucfirst($notification->status)) }}
                                         </span>
                                     </td>
-                                    <td>
+                                    <!-- <td>
                                         @if(config('features.advanced_notifications'))
                                             @if($notification->status === 'sent')
                                                 <span class="badge badge-{{ $notification->success_rate >= 80 ? 'success' : ($notification->success_rate >= 50 ? 'warning' : 'danger') }}">
@@ -97,7 +97,7 @@
                                                 <i class="fas fa-crown mr-1"></i> Pro
                                             </span>
                                         @endif
-                                    </td>
+                                    </td> -->
                                     <td>{{ $notification->total_recipients }}</td>
                                     <td>{{ $notification->created_at->format('Y-m-d H:i') }}</td>
                                     <td>
